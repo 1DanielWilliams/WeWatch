@@ -6,52 +6,64 @@
     android:layout_height="match_parent"
     tools:context=".activities.login.LogInActivity1">
 
-    <Button
-        android:id="@+id/btnNextCreate2"
-        android:layout_width="wrap_content"
+<!--    TOOLBAR-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="320dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="#808080"
-        android:text="NEXT"
-        app:cornerRadius="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText4" />
-
-    <TextView
-        android:id="@+id/tvCancelSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="26dp"
-        android:text="Cancel"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintStart_toEndOf="@+id/tvCancelSign"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetLeft="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:titleTextColor="@android:color/black"
+        tools:layout_editor_absoluteX="53dp">
+
+        <Button
+            android:id="@+id/btnCancelLogin1"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:textColor="#808080"
+            android:stateListAnimator="@null"
+            android:text="Cancel" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_play"
+            android:layout_marginStart="90dp"
+            tools:layout_editor_absoluteX="100dp"
+            tools:layout_editor_absoluteY="28dp" />
+    </androidx.appcompat.widget.Toolbar>
+    <!--    TOOLBAR-->
+
+    <Button
+        android:id="@+id/btnNextLogin1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#808080"
+        android:text="Next"
+        app:cornerRadius="50dp"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="323dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="48dp"
         android:text="To get started, First enter your email, or @username"
         android:textColor="@color/black"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
-
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <EditText
         android:id="@+id/editText4"

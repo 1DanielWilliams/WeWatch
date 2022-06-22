@@ -12,24 +12,23 @@ import com.example.capstone.R;
 
 public class SignUpActivity1 extends AppCompatActivity {
 
-    private Button btnNextCreate1;
-    private Button btnCancel;
+    private Button btnNextSignup1;
+    private Button btnCancelSignup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup1);
 
-        btnNextCreate1 = findViewById(R.id.btnNextCreate1);
-        btnCancel = findViewById(R.id.btnCancel);
+        btnNextSignup1 = findViewById(R.id.btnNextSignup1);
+        btnCancelSignup = findViewById(R.id.btnCancelSignup);
 
-        btnNextCreate1.setOnClickListener(v -> {
+        btnNextSignup1.setOnClickListener(v -> {
             Intent i = new Intent(SignUpActivity1.this, SignUpActivity2.class);
             startActivity(i);
         });
 
-//        btnCancel.setStateListAnimator(null);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnCancelSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NavUtils.navigateUpFromSameTask(SignUpActivity1.this);
