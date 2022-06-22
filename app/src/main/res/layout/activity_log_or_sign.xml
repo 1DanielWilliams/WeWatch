@@ -23,6 +23,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             app:srcCompat="@android:drawable/ic_media_play"
             tools:layout_editor_absoluteX="100dp"
             tools:layout_editor_absoluteY="28dp" />
@@ -47,7 +48,7 @@
         android:layout_width="332dp"
         android:layout_height="60dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="192dp"
+        android:layout_marginTop="232dp"
         android:backgroundTint="@android:color/black"
         android:text="Create Account"
         app:cornerRadius="50dp"

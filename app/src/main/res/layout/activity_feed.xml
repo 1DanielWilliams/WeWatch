@@ -4,6 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FeedActivity">
+    android:background="@color/white"
+    tools:context=".activities.FeedActivity">
+
+    <!--    TOOLBAR-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@android:color/black"
+        tools:layout_editor_absoluteX="53dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_search" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Feed"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="100dp"
+            tools:layout_editor_absoluteY="28dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:backgroundTint="@android:color/transparent"
+            android:rotation="180"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="409dp"
+        android:layout_height="673dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="57dp" />
+
+    <!--    TOOLBAR-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
