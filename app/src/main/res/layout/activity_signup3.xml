@@ -38,6 +38,7 @@
         android:backgroundTint="@android:color/black"
         android:text="Sign Up"
         android:textAllCaps="false"
+        android:textSize="17sp"
         app:cornerRadius="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

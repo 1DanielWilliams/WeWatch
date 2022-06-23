@@ -4,7 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_feed.xml" value="0.2299133300781251" />
-        <entry key="app/src/main/res/layout/activity_log_or_sign.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_log_or_sign.xml" value="0.27790069580078125" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2798913043478261" />
         <entry key="app/src/main/res/layout/activity_login1.xml" value="0.32204437255859375" />
         <entry key="app/src/main/res/layout/activity_login2.xml" value="0.2798913043478261" />
@@ -14,7 +14,7 @@
         <entry key="app/src/main/res/layout/activity_signup1.xml" value="0.23583831787109377" />
         <entry key="app/src/main/res/layout/activity_signup2.xml" value="0.24260947122158377" />
         <entry key="app/src/main/res/layout/activity_signup3.xml" value="0.33270263671875" />
-        <entry key="app/src/main/res/layout/item_movie.xml" value="0.27852427164713545" />
+        <entry key="app/src/main/res/layout/item_movie.xml" value="0.44101629701920725" />
         <entry key="app/src/main/res/layout/toolbar_basic.xml" value="0.28533095153994115" />
         <entry key="app/src/main/res/layout/toolbar_with_cancel.xml" value="0.13043478260869565" />
       </map>

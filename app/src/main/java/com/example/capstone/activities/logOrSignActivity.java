@@ -26,7 +26,7 @@ public class logOrSignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_or_sign);
 
-        setUpToolbar();
+//        setUpToolbar();
 
 
         btnCreateAccount = findViewById(R.id.btnCreateAccount);

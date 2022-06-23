@@ -46,6 +46,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEvents"
         android:layout_width="409dp"
         android:layout_height="673dp"
         tools:layout_editor_absoluteX="1dp"

@@ -7,8 +7,6 @@
     tools:context=".activities.login.LogInActivity1">
 
 <!--    TOOLBAR-->
-    <!--    TOOLBAR-->
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -38,6 +36,9 @@
             tools:layout_editor_absoluteX="100dp"
             tools:layout_editor_absoluteY="28dp" />
     </androidx.appcompat.widget.Toolbar>
+<!--    TOOLBAR-->
+
+
 
     <Button
         android:id="@+id/btnNextLogin1"
