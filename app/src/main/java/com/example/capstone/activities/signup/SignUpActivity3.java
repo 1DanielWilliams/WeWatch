@@ -5,14 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.capstone.R;
+import com.example.capstone.activities.FeedActivity;
 
 import java.util.Objects;
 
 public class SignUpActivity3 extends AppCompatActivity {
+
+    private Button btnCreateAccount2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,17 @@ public class SignUpActivity3 extends AppCompatActivity {
 
         setUpToolbar();
 
+        btnCreateAccount2 = findViewById(R.id.btnCreateAccount2);
+
+        // Check authenticate user and log them in/sign them up
+        btnCreateAccount2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i  = new Intent(SignUpActivity3.this, FeedActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
 
     }
 

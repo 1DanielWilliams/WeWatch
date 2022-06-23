@@ -3,20 +3,24 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.2299133300781251" />
+        <entry key="app/src/main/res/drawable/round_button.xml" value="0.2165" />
+        <entry key="app/src/main/res/layout/activity_detail_event.xml" value="0.246684350132626" />
+        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.1894093686354379" />
         <entry key="app/src/main/res/layout/activity_log_or_sign.xml" value="0.27790069580078125" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2798913043478261" />
         <entry key="app/src/main/res/layout/activity_login1.xml" value="0.32204437255859375" />
-        <entry key="app/src/main/res/layout/activity_login2.xml" value="0.2798913043478261" />
+        <entry key="app/src/main/res/layout/activity_login2.xml" value="0.194921875" />
         <entry key="app/src/main/res/layout/activity_random.xml" value="0.14266304347826086" />
         <entry key="app/src/main/res/layout/activity_sign_up2.xml" value="0.18211752786220872" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2798913043478261" />
         <entry key="app/src/main/res/layout/activity_signup1.xml" value="0.23583831787109377" />
         <entry key="app/src/main/res/layout/activity_signup2.xml" value="0.24260947122158377" />
         <entry key="app/src/main/res/layout/activity_signup3.xml" value="0.33270263671875" />
+        <entry key="app/src/main/res/layout/header_navigation_drawer.xml" value="0.36354166666666665" />
         <entry key="app/src/main/res/layout/item_movie.xml" value="0.44101629701920725" />
         <entry key="app/src/main/res/layout/toolbar_basic.xml" value="0.28533095153994115" />
         <entry key="app/src/main/res/layout/toolbar_with_cancel.xml" value="0.13043478260869565" />
+        <entry key="app/src/main/res/menu/navigation_drawer.xml" value="0.36354166666666665" />
       </map>
     </option>
   </component>

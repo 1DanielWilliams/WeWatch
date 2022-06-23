@@ -17,18 +17,20 @@
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
         <activity
-            android:name=".activities.login.LogInActivity2"
-            android:parentActivityName=".activities.login.LogInActivity1"
+            android:name=".activities.detailEventActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.login.LogInActivity2"
+            android:exported="false"
+            android:parentActivityName=".activities.login.LogInActivity1" />
         <activity
             android:name=".activities.signup.SignUpActivity3"
-            android:parentActivityName=".activities.signup.SignUpActivity2"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activities.signup.SignUpActivity2" />
         <activity
             android:name=".activities.signup.SignUpActivity2"
-            android:parentActivityName=".activities.signup.SignUpActivity1"
-
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activities.signup.SignUpActivity1" />
         <activity
             android:name=".activities.logOrSignActivity"
             android:exported="true">
@@ -40,15 +42,15 @@
         </activity>
         <activity
             android:name=".activities.signup.SignUpActivity1"
-            android:parentActivityName=".activities.logOrSignActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activities.logOrSignActivity" />
         <activity
             android:name=".activities.FeedActivity"
             android:exported="false" />
         <activity
             android:name=".activities.login.LogInActivity1"
-            android:parentActivityName=".activities.logOrSignActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activities.logOrSignActivity" />
     </application>
 
 </manifest>

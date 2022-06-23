@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.capstone.R;
+import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.logOrSignActivity;
 
 public class LogInActivity2 extends AppCompatActivity {
@@ -38,11 +39,13 @@ public class LogInActivity2 extends AppCompatActivity {
             }
         });
 
+        // authenticate user and log them in
         btnLogin2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(LogInActivity2.this, logOrSignActivity.class);
-
+                Intent i = new Intent(LogInActivity2.this, FeedActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }
