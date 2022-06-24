@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
         <activity
+            android:name=".activities.TVShowSelectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.MessageActivity"
             android:exported="false" />
         <activity

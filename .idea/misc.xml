@@ -5,7 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/round_button.xml" value="0.2165" />
         <entry key="app/src/main/res/layout/activity_detail_event.xml" value="0.246684350132626" />
-        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.3040008544921875" />
         <entry key="app/src/main/res/layout/activity_log_or_sign.xml" value="0.27790069580078125" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2798913043478261" />
         <entry key="app/src/main/res/layout/activity_login1.xml" value="0.32204437255859375" />
@@ -21,6 +21,7 @@
         <entry key="app/src/main/res/layout/activity_signup3.xml" value="0.33270263671875" />
         <entry key="app/src/main/res/layout/header_navigation_drawer.xml" value="0.6650137419747832" />
         <entry key="app/src/main/res/layout/item_event.xml" value="0.3645833333333333" />
+        <entry key="app/src/main/res/layout/item_message.xml" value="0.6082936604817708" />
         <entry key="app/src/main/res/layout/item_movie.xml" value="0.44101629701920725" />
         <entry key="app/src/main/res/layout/toolbar_basic.xml" value="0.28533095153994115" />
         <entry key="app/src/main/res/layout/toolbar_with_cancel.xml" value="0.13043478260869565" />
