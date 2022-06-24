@@ -6,12 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
+import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.google.android.material.navigation.NavigationView;
 
@@ -24,6 +23,7 @@ public class FeedActivity extends AppCompatActivity {
     private List<Event> allEvents;
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
+    private NavigationView navDrawerFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +31,7 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
 
         rvEvents = findViewById(R.id.rvEvents);
+        navDrawerFeed = findViewById(R.id.navDrawerFeed);
 
         allEvents = new ArrayList<>();
         adapter = new EventsAdapter(this, allEvents);
@@ -38,16 +39,12 @@ public class FeedActivity extends AppCompatActivity {
         rvEvents.setAdapter(adapter);
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
 
-        // do someting to get all the events
+        // TODO: do someting to get all the events
         // add it to the list and notify the adapter
 
         drawerLayout = findViewById(R.id.drawerLayout);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
-        imBtnMenuFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.open();
-            }
-        });
+        NavigationMethods.setUpNavDrawer(FeedActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
+
     }
 }

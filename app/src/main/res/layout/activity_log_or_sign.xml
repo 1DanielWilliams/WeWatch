@@ -13,29 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-<!--&lt;!&ndash;    TOOLBAR&ndash;&gt;-->
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:id="@+id/toolbar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@color/white"-->
-<!--        android:minHeight="?attr/actionBarSize"-->
-<!--        app:contentInsetLeft="0dp"-->
-<!--        app:contentInsetStart="186dp"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:titleTextColor="@android:color/black"-->
-<!--        tools:layout_editor_absoluteX="53dp">-->
-
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            app:srcCompat="@android:drawable/ic_media_play"-->
-<!--            tools:layout_editor_absoluteX="100dp"-->
-<!--            tools:layout_editor_absoluteY="28dp" />-->
-<!--    </androidx.appcompat.widget.Toolbar>-->
-<!--&lt;!&ndash;    TOOLBAR&ndash;&gt;-->
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="338dp"

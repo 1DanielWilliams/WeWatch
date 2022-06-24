@@ -38,14 +38,6 @@
             android:textStyle="bold"
             tools:layout_editor_absoluteX="100dp"
             tools:layout_editor_absoluteY="28dp" />
-
-<!--        <ImageButton-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="end"-->
-<!--            android:backgroundTint="@android:color/transparent"-->
-<!--            android:rotation="180"-->
-<!--            android:src="@android:drawable/ic_menu_sort_by_size" />-->
     </androidx.appcompat.widget.Toolbar>
 
     <ImageView

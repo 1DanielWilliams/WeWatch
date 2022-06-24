@@ -9,7 +9,7 @@
             android:title="Feed"
             android:checked="true" />
         <item
-            android:id="@+id/item2"
+            android:id="@+id/movies"
             android:icon="@android:drawable/ic_menu_search"
             android:title="Movies" />
         <item
