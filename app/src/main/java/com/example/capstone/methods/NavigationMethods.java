@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
+import com.example.capstone.activities.MessageActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.ProfileActivity;
 import com.example.capstone.activities.logOrSignActivity;
@@ -34,19 +35,48 @@ public class NavigationMethods {
         navDrawerFeed.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent i;
+                Class currClass = context.getClass();
                 switch (item.getItemId()) {
-                    case R.id.movies:
-                        Intent i = new Intent(context, MovieSelectionActivity.class);
-                        context.startActivity(i);
-                        item.setChecked(true);
+                    case R.id.optFeed:
+                        if (currClass != FeedActivity.class) {
+                            i = new Intent(context, FeedActivity.class);
+                            context.startActivity(i);
+                            item.setChecked(true);
+                        }
                         drawerLayout.close();
                         return true;
+                    case R.id.optMovies:
+                        if (currClass != MovieSelectionActivity.class) {
+                            i = new Intent(context, MovieSelectionActivity.class);
+                            context.startActivity(i);
+                            item.setChecked(true);
+                        }
+                        drawerLayout.close();
+                        return true;
+                    case R.id.optMessages:
+                        if (currClass != MessageActivity.class) {
+                            i = new Intent(context, MessageActivity.class);
+                            context.startActivity(i);
+                            item.setChecked(true);
+                        }
+                         drawerLayout.close();
+                         return true;
+                    default:
+                        return false;
                 }
-//                item.setChecked(true);
-//                drawerLayout.close();
-                return false;
             }
         });
+
+        // Determines which item to check in the menu
+        Class<? extends Context> aClass = context.getClass();
+        if (FeedActivity.class.equals(aClass)) {
+            navDrawerFeed.setCheckedItem(R.id.optFeed);
+        } else if (MessageActivity.class.equals(aClass)) {
+            navDrawerFeed.setCheckedItem(R.id.optMessages);
+        }else if (MovieSelectionActivity.class.equals(aClass)) {
+            navDrawerFeed.setCheckedItem(R.id.optMovies);
+        } // TODO: one more for TV shows
     }
 
     public static void showMenu(Context context, View v, int popup_menu) {

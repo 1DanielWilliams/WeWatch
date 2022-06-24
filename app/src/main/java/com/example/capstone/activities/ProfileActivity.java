@@ -26,7 +26,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         upArrowProfile = findViewById(R.id.upArrowProfile);
         toolbar = findViewById(R.id.toolbar);
-
         toolbar.setContentInsetsAbsolute(0, 0);
 
         upArrowProfile.setOnClickListener(v -> {

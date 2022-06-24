@@ -1,6 +1,7 @@
 package com.example.capstone.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,8 @@ public class FeedActivity extends AppCompatActivity {
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
     private NavigationView navDrawerFeed;
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,10 @@ public class FeedActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawerLayout);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(FeedActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
+//        navDrawerFeed.setCheckedItem(R.id.optFeed);
 
     }
 }

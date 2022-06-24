@@ -10,9 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
         android:fitsSystemWindows="true"
-        tools:context=".activities.FeedActivity">
+        tools:context=".activities.MessageActivity">
 
         <!--    TOOLBAR-->
         <androidx.appcompat.widget.Toolbar
@@ -36,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Feed"
+                android:text="Messages"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -54,14 +53,7 @@
         </androidx.appcompat.widget.Toolbar>
         <!--    TOOLBAR-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEvents"
-            android:layout_width="409dp"
-            android:layout_height="673dp"
-            android:layout_marginTop="1dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_gravity="start"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

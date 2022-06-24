@@ -4,22 +4,25 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/item1"
+            android:id="@+id/optFeed"
             android:icon="@android:drawable/star_on"
             android:title="Feed"
-            android:checked="true" />
+            android:checked="false" />
         <item
-            android:id="@+id/movies"
+            android:id="@+id/optMovies"
             android:icon="@android:drawable/ic_menu_search"
-            android:title="Movies" />
+            android:title="Movies"
+            android:checked="false"/>
         <item
-            android:id="@+id/item3"
+            android:id="@+id/optTV"
             android:icon="@android:drawable/picture_frame"
-            android:title="TV Shows" />
+            android:title="TV Shows"
+            android:checked="false"/>
         <item
-            android:id="@+id/item4"
+            android:id="@+id/optMessages"
             android:icon="@android:drawable/picture_frame"
-            android:title="Messages" />
+            android:title="Messages"
+            android:checked="false"/>
     </group>
 
     <group
