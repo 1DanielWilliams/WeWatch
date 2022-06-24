@@ -17,6 +17,7 @@ import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.MessageActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.ProfileActivity;
+import com.example.capstone.activities.TVShowSelectionActivity;
 import com.example.capstone.activities.logOrSignActivity;
 import com.google.android.material.navigation.NavigationView;
 
@@ -62,6 +63,14 @@ public class NavigationMethods {
                         }
                          drawerLayout.close();
                          return true;
+                    case R.id.optTV:
+                        if (currClass != TVShowSelectionActivity.class) {
+                            i = new Intent(context, TVShowSelectionActivity.class);
+                            context.startActivity(i);
+                            item.setChecked(true);
+                        }
+                        drawerLayout.close();
+                        return true;
                     default:
                         return false;
                 }
@@ -76,7 +85,9 @@ public class NavigationMethods {
             navDrawerFeed.setCheckedItem(R.id.optMessages);
         }else if (MovieSelectionActivity.class.equals(aClass)) {
             navDrawerFeed.setCheckedItem(R.id.optMovies);
-        } // TODO: one more for TV shows
+        } else if (TVShowSelectionActivity.class.equals(aClass)) {
+            navDrawerFeed.setCheckedItem(R.id.optTV);
+        }
     }
 
     public static void showMenu(Context context, View v, int popup_menu) {
@@ -86,11 +97,11 @@ public class NavigationMethods {
         popup.setOnMenuItemClickListener(item -> {
             Intent i;
             switch (item.getItemId()) {
-                case 2131231273: // TODO: not sure where these IDs come from
+                case 2131231092: // TODO: not sure where these IDs come from
                     i = new Intent(context, ProfileActivity.class);
                     context.startActivity(i);
                     return true;
-                case 2131231274: // TODO: not sure where these IDs come from
+                case 2131231093: // TODO: not sure where these IDs come from
                     Toast.makeText(context, "Logged user out", Toast.LENGTH_SHORT).show();
                     i = new Intent(context, logOrSignActivity.class);
                     context.startActivity(i);

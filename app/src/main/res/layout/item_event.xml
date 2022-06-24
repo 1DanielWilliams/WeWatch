@@ -12,7 +12,7 @@
         android:cropToPadding="false"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteX="0dp"
         tools:srcCompat="@drawable/Poster2" />
 
     <com.google.android.material.button.MaterialButton

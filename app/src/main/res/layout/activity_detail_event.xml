@@ -137,13 +137,13 @@
 
 <!--    android:background="@drawable/round_button"-->
 <!--    want to put icon in the background-->
+<!--    android:backgroundTint="@android:color/white"-->
 
     <Button
         android:id="@+id/button4"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:backgroundTint="@android:color/white"
-
+        android:background="@drawable/round_button"
         tools:layout_editor_absoluteX="20dp"
         tools:layout_editor_absoluteY="635dp" />
 
