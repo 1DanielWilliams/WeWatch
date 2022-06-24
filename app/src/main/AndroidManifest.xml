@@ -20,7 +20,7 @@
             android:name=".activities.TVShowSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MessageActivity"
+            android:name=".activities.ConversationActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ProfileActivity"

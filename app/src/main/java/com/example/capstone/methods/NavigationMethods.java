@@ -14,7 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
-import com.example.capstone.activities.MessageActivity;
+import com.example.capstone.activities.ConversationActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.ProfileActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
@@ -56,8 +56,8 @@ public class NavigationMethods {
                         drawerLayout.close();
                         return true;
                     case R.id.optMessages:
-                        if (currClass != MessageActivity.class) {
-                            i = new Intent(context, MessageActivity.class);
+                        if (currClass != ConversationActivity.class) {
+                            i = new Intent(context, ConversationActivity.class);
                             context.startActivity(i);
                             item.setChecked(true);
                         }
@@ -81,7 +81,7 @@ public class NavigationMethods {
         Class<? extends Context> aClass = context.getClass();
         if (FeedActivity.class.equals(aClass)) {
             navDrawerFeed.setCheckedItem(R.id.optFeed);
-        } else if (MessageActivity.class.equals(aClass)) {
+        } else if (ConversationActivity.class.equals(aClass)) {
             navDrawerFeed.setCheckedItem(R.id.optMessages);
         }else if (MovieSelectionActivity.class.equals(aClass)) {
             navDrawerFeed.setCheckedItem(R.id.optMovies);
