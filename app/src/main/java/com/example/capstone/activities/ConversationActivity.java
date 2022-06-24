@@ -42,14 +42,18 @@ public class ConversationActivity extends AppCompatActivity {
         allConversations = new ArrayList<>();
         adapter = new ConversationsAdapter(this, allConversations);
 
-        rvMessages.setAdapter(adapter);
-        rvMessages.setLayoutManager(new LinearLayoutManager(this));
 
         toolbar.setContentInsetsAbsolute(0, 0);
 
         NavigationMethods.setUpNavDrawer(ConversationActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
+        rvMessages.setAdapter(adapter);
+        rvMessages.setLayoutManager(new LinearLayoutManager(this));
+
+        // DO osmehting to add to the rv
+
     }
+
 
 
 }
