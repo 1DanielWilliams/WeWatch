@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,19 +17,12 @@ import android.widget.Toast;
 import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.logOrSignActivity;
-import com.example.capstone.methods.UiChanges;
-import com.parse.FindCallback;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
+import com.example.capstone.methods.LogInUser;
+import com.example.capstone.methods.OnETChange;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.List;
-
 public class LogInActivity2 extends AppCompatActivity {
-
-    private final String TAG = "LogInActivity2";
-
 
     private Button btnCancelLogin;
     private Button btnLogin;
@@ -47,7 +42,7 @@ public class LogInActivity2 extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin2);
         etLoginPassword = findViewById(R.id.etLoginPassword);
 
-        UiChanges.buttonToBlack(etLoginPassword, btnLogin);
+        OnETChange.buttonToBlack(etLoginPassword, btnLogin);
 
         btnCancelLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,62 +54,11 @@ public class LogInActivity2 extends AppCompatActivity {
 
         // authenticates user and logs them in
         btnLogin.setOnClickListener(v -> {
-            loginUser();
+            String logIn = getIntent().getStringExtra("logIn");
+            String password = etLoginPassword.getText().toString();
+
+            LogInUser.loginUser(this, logIn, password, etLoginPassword);
         });
     }
 
-    private void loginUser() {
-        String logIn = getIntent().getStringExtra("logIn");
-        String password = etLoginPassword.getText().toString();
-
-        if (password.equals("")) {
-            Toast.makeText(LogInActivity2.this, "Enter a password", Toast.LENGTH_SHORT).show();
-        }
-
-        // Checks if a email was given
-        if (logIn.indexOf('@') == -1) {
-            loginWtihUsername(logIn, password);
-        } else {
-            loginWithEmail(logIn, password);
-        }
-    }
-
-    // finds the username of a user by using their email
-    private void loginWithEmail(String logIn, String password) {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("email", logIn);
-
-        query.findInBackground((users, e) -> {
-            if (e != null) {
-                Log.e(TAG, "done: error", e);
-                return;
-            } else if (users.size() == 0) {
-                Toast.makeText(LogInActivity2.this, "Incorrect email address", Toast.LENGTH_SHORT).show();
-                etLoginPassword.setText("");
-                NavUtils.navigateUpFromSameTask(LogInActivity2.this);
-                return;
-            }
-
-            String username = users.get(0).getUsername();
-            loginWtihUsername(username, password);
-        });
-    }
-
-
-    private void loginWtihUsername(String logIn, String password) {
-        ParseUser.logInInBackground(logIn, password, (user, e) -> {
-            // If the user inputs the wrong password
-            if (e != null) {
-                Log.e(TAG, "done: trouble logging in", e);
-                Toast.makeText(LogInActivity2.this, "Incorrect password", Toast.LENGTH_SHORT).show();
-                etLoginPassword.setText("");
-                return;
-            }
-
-            Toast.makeText(LogInActivity2.this, "Success", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(LogInActivity2.this, FeedActivity.class);
-            startActivity(i);
-            finish();
-        });
-    }
 }

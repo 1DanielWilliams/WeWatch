@@ -52,27 +52,28 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <EditText
-        android:id="@+id/etSignEmail"
+        android:id="@+id/etFinalEmail"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="20dp"
         android:hint="School email "
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSignName" />
+        app:layout_constraintTop_toBottomOf="@+id/etFinalName" />
 
     <EditText
-        android:id="@+id/etSignPassword"
+        android:id="@+id/etFinalPassword"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="20dp"
         android:hint="Password"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSignEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/etFinalEmail" />
 
     <EditText
-        android:id="@+id/etSignName"
+        android:id="@+id/etFinalName"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"

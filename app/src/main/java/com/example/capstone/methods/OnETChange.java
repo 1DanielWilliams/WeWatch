@@ -6,7 +6,7 @@ import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class UiChanges {
+public class OnETChange {
 
     public static void buttonToBlack(EditText et, Button btn) {
         et.addTextChangedListener(new TextWatcher() {
