@@ -5,7 +5,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.capstone.R;
+import com.example.capstone.methods.UiChanges;
 
 public class LogInActivity1 extends AppCompatActivity {
     
@@ -41,6 +45,9 @@ public class LogInActivity1 extends AppCompatActivity {
             loginUser();
         });
 
+        UiChanges.buttonToBlack(etLoginUser, btnNextLogin1);
+
+
         btnCancelLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,6 +55,7 @@ public class LogInActivity1 extends AppCompatActivity {
             }
         });
     }
+
 
 
     private void loginUser() {

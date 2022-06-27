@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.capstone.R;
 
@@ -16,6 +17,10 @@ public class SignUpActivity1 extends AppCompatActivity {
     private Button btnNextSignup1;
     private Button btnCancelSignup;
     private Toolbar toolbar;
+    private EditText etSignName;
+    private EditText etSignEmail;
+    private EditText etSignPassword;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

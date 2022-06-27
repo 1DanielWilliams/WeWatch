@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.logOrSignActivity;
+import com.example.capstone.methods.UiChanges;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -29,7 +30,7 @@ public class LogInActivity2 extends AppCompatActivity {
 
 
     private Button btnCancelLogin;
-    private Button btnLogin2;
+    private Button btnLogin;
     private Toolbar toolbar;
     private EditText etLoginPassword;
 
@@ -43,8 +44,10 @@ public class LogInActivity2 extends AppCompatActivity {
 
 
         btnCancelLogin = findViewById(R.id.btnCancelLogin2);
-        btnLogin2 = findViewById(R.id.btnLogin2);
+        btnLogin = findViewById(R.id.btnLogin2);
         etLoginPassword = findViewById(R.id.etLoginPassword);
+
+        UiChanges.buttonToBlack(etLoginPassword, btnLogin);
 
         btnCancelLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,21 +58,25 @@ public class LogInActivity2 extends AppCompatActivity {
         });
 
         // authenticates user and logs them in
-        btnLogin2.setOnClickListener(v -> {
-            String logIn = getIntent().getStringExtra("logIn");
-            String password = etLoginPassword.getText().toString();
-
-            if (password.equals("")) {
-                Toast.makeText(LogInActivity2.this, "Enter a password", Toast.LENGTH_SHORT).show();
-            }
-
-            // Checks if a email was given
-            if (logIn.indexOf('@') == -1) {
-                loginUser(logIn, password);
-            } else {
-                loginWithEmail(logIn, password);
-            }
+        btnLogin.setOnClickListener(v -> {
+            loginUser();
         });
+    }
+
+    private void loginUser() {
+        String logIn = getIntent().getStringExtra("logIn");
+        String password = etLoginPassword.getText().toString();
+
+        if (password.equals("")) {
+            Toast.makeText(LogInActivity2.this, "Enter a password", Toast.LENGTH_SHORT).show();
+        }
+
+        // Checks if a email was given
+        if (logIn.indexOf('@') == -1) {
+            loginWtihUsername(logIn, password);
+        } else {
+            loginWithEmail(logIn, password);
+        }
     }
 
     // finds the username of a user by using their email
@@ -89,12 +96,12 @@ public class LogInActivity2 extends AppCompatActivity {
             }
 
             String username = users.get(0).getUsername();
-            loginUser(username, password);
+            loginWtihUsername(username, password);
         });
     }
 
 
-    private void loginUser(String logIn, String password) {
+    private void loginWtihUsername(String logIn, String password) {
         ParseUser.logInInBackground(logIn, password, (user, e) -> {
             // If the user inputs the wrong password
             if (e != null) {
