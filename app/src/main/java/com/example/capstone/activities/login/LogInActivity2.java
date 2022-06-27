@@ -55,18 +55,19 @@ public class LogInActivity2 extends AppCompatActivity {
         });
 
         // authenticates user and logs them in
-        btnLogin2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String logIn = getIntent().getStringExtra("logIn");
-                String password = etLoginPassword.getText().toString();
+        btnLogin2.setOnClickListener(v -> {
+            String logIn = getIntent().getStringExtra("logIn");
+            String password = etLoginPassword.getText().toString();
 
-                // Checks if a email was given
-                if (logIn.indexOf('@') == -1) {
-                    loginUser(logIn, password);
-                } else {
-                    loginWithEmail(logIn, password);
-                }
+            if (password.equals("")) {
+                Toast.makeText(LogInActivity2.this, "Enter a password", Toast.LENGTH_SHORT).show();
+            }
+
+            // Checks if a email was given
+            if (logIn.indexOf('@') == -1) {
+                loginUser(logIn, password);
+            } else {
+                loginWithEmail(logIn, password);
             }
         });
     }
@@ -75,22 +76,20 @@ public class LogInActivity2 extends AppCompatActivity {
     private void loginWithEmail(String logIn, String password) {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("email", logIn);
-        query.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> users, ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "done: error", e);
-                    return;
-                } else if (users.size() == 0) {
-                    Toast.makeText(LogInActivity2.this, "Incorrect email address", Toast.LENGTH_SHORT).show();
-                    etLoginPassword.setText("");
-                    NavUtils.navigateUpFromSameTask(LogInActivity2.this);
-                    return;
-                }
 
-                String username = users.get(0).getUsername();
-                loginUser(username, password);
+        query.findInBackground((users, e) -> {
+            if (e != null) {
+                Log.e(TAG, "done: error", e);
+                return;
+            } else if (users.size() == 0) {
+                Toast.makeText(LogInActivity2.this, "Incorrect email address", Toast.LENGTH_SHORT).show();
+                etLoginPassword.setText("");
+                NavUtils.navigateUpFromSameTask(LogInActivity2.this);
+                return;
             }
+
+            String username = users.get(0).getUsername();
+            loginUser(username, password);
         });
     }
 

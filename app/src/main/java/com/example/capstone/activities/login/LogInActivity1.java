@@ -37,21 +37,8 @@ public class LogInActivity1 extends AppCompatActivity {
         btnCancelLogin = findViewById(R.id.btnCancelLogin1);
         etLoginUser = findViewById(R.id.etLoginUser);
 
-        btnNextLogin1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String logIn = etLoginUser.getText().toString();
-
-                if (!logIn.equals("")) {
-                    Intent i = new Intent(LogInActivity1.this, LogInActivity2.class);
-                    i.putExtra("logIn", logIn);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(LogInActivity1.this, "Enter a username or email", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
+        btnNextLogin1.setOnClickListener(v -> {
+            loginUser();
         });
 
         btnCancelLogin.setOnClickListener(new View.OnClickListener() {
@@ -60,5 +47,18 @@ public class LogInActivity1 extends AppCompatActivity {
                 NavUtils.navigateUpFromSameTask(LogInActivity1.this);
             }
         });
+    }
+
+
+    private void loginUser() {
+        String logIn = etLoginUser.getText().toString();
+
+        if (!logIn.equals("")) {
+            Intent i = new Intent(LogInActivity1.this, LogInActivity2.class);
+            i.putExtra("logIn", logIn);
+            startActivity(i);
+        } else {
+            Toast.makeText(LogInActivity1.this, "Enter a username or email", Toast.LENGTH_SHORT).show();
+        }
     }
 }
