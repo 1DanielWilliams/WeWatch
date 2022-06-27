@@ -6,12 +6,15 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.capstone.R;
 import com.example.capstone.activities.login.LogInActivity1;
 import com.example.capstone.activities.signup.SignUpActivity1;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.Objects;
 
@@ -26,8 +29,9 @@ public class logOrSignActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_or_sign);
 
-//        setUpToolbar();
-
+        if (ParseUser.getCurrentUser() != null) {
+            goToFeed();
+        }
 
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         btnLogIn = findViewById(R.id.btnLogIn);
@@ -50,14 +54,10 @@ public class logOrSignActivity extends AppCompatActivity {
 
     }
 
-    private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
-
-        ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
-        actionBar.setDisplayShowTitleEnabled(false);
-
+    private void goToFeed() {
+        Intent i = new Intent(this, FeedActivity.class);
+        startActivity(i);
+        finish();
     }
+
 }

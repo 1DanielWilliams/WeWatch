@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Capstone</string>
+
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+
+    <!-- Paste BOTH strings as required -->
+    <string name="back4app_app_id">UvfkI4yr2Lkkphua8ljBIyavw8PVRKD2EI9MiOYe</string>
+    <string name="back4app_client_key">B0fHlYkV4a2r473HjbVNj7R33I5wudQEJkH8lHSI</string>
+
 </resources>

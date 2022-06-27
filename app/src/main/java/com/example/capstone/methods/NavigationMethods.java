@@ -20,6 +20,7 @@ import com.example.capstone.activities.ProfileActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
 import com.example.capstone.activities.logOrSignActivity;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.ParseUser;
 
 public class NavigationMethods {
 
@@ -101,8 +102,8 @@ public class NavigationMethods {
                     i = new Intent(context, ProfileActivity.class);
                     context.startActivity(i);
                     return true;
-                case 2131231093: // TODO: not sure where these IDs come from
-                    Toast.makeText(context, "Logged user out", Toast.LENGTH_SHORT).show();
+                case 2131231095: // TODO: not sure where these IDs come from
+                    ParseUser.logOut();
                     i = new Intent(context, logOrSignActivity.class);
                     context.startActivity(i);
                     return true;

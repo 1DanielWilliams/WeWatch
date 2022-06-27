@@ -18,7 +18,7 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
     private Context context;
     private List<Movie> tvShows;
 
-    public TVshowsAdapter(Context context, List<Movie> posts) {
+    public TVshowsAdapter(Context context, List<Movie> tvShows) {
         this.context = context;
         this.tvShows = tvShows;
     }

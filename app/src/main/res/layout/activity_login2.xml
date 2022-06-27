@@ -54,7 +54,7 @@
     <!--    TOOLBAR-->
 
     <EditText
-        android:id="@+id/editText5"
+        android:id="@+id/etLoginPassword"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"
