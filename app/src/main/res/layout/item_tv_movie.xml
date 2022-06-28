@@ -3,22 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RatingBar
-        android:id="@+id/ratingBar2"
-        android:layout_width="185dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="16dp"
-        android:isIndicator="true"
-        android:numStars="5"
-        android:stepSize="1"
-        android:theme="@style/RatingBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
+    android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/tvBackdropVideoContent"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
@@ -26,6 +14,19 @@
         app:srcCompat="@drawable/witcher_poster"
         tools:layout_editor_absoluteX="0dp"
         tools:srcCompat="@drawable/witcher_poster" />
+
+    <RatingBar
+        android:id="@+id/rbVoterAverageVideoContent"
+        style="@style/RatingBar"
+        android:layout_width="242dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="68dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:stepSize=".5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleVideoContent" />
 
     <TextView
         android:id="@+id/textView32"
@@ -61,19 +62,7 @@
         tools:srcCompat="@drawable/hulu" />
 
     <TextView
-        android:id="@+id/textView31"
-        android:layout_width="367dp"
-        android:layout_height="59dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:text="While traveling to California to race against The King (Richard Petty) and Chick Hicks (Michael Keaton) for the Piston "
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar2" />
-
-    <TextView
-        android:id="@+id/textView29"
+        android:id="@+id/tvTitleVideoContent"
         android:layout_width="202dp"
         android:layout_height="54dp"
         android:layout_marginStart="16dp"

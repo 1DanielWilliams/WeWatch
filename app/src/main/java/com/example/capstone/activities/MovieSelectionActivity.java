@@ -30,7 +30,7 @@ import okhttp3.Headers;
 
 public class MovieSelectionActivity extends AppCompatActivity {
 
-    private final String TMDB_KEY = "";  //getString(R.string.tmdb_api_key);
+    private final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
     private final String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_KEY + "&language=en-US";
 
     private ImageButton imBtnMenuFeed;
@@ -78,13 +78,11 @@ public class MovieSelectionActivity extends AppCompatActivity {
                     Log.i("MovieSelectionActivity", "Results: " + results.toString());
 
                     allVideoContents.addAll(VideoContent.fromJsonArray(results, "Movie"));
-//                    adapter.notifyDataSetChanged();
+                    Log.i("MovieSelectionActivity", "onSuccess: " + allVideoContents.size());
+                    adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);
                 }
-                // turn from json object array to my custom object array
-                // add to allMovies
-                // notify the adapter that it has changed
 
             }
 
