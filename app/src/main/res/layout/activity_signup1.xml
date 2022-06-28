@@ -125,10 +125,10 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="328dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="140dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivCheckmarkName"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/green_checkmark"
         tools:srcCompat="@drawable/green_checkmark" />
 
@@ -137,10 +137,10 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="328dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="140dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivCheckmarkName"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/red_x"
         tools:srcCompat="@drawable/red_x" />
 
@@ -149,10 +149,10 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="328dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="210dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivCheckmarkName"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/green_checkmark"
         tools:srcCompat="@drawable/green_checkmark" />
 
@@ -161,10 +161,10 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="328dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="210dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivCheckmarkName"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:srcCompat="@drawable/red_x"
         tools:srcCompat="@drawable/red_x" />
 

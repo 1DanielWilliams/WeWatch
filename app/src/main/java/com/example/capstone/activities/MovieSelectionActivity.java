@@ -1,5 +1,6 @@
 package com.example.capstone.activities;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -7,18 +8,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
 import com.example.capstone.adapters.MoviesAdapter;
 import com.example.capstone.methods.NavigationMethods;
-import com.example.capstone.models.Movie;
+import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Headers;
+
 public class MovieSelectionActivity extends AppCompatActivity {
+
+    private final String TMDB_KEY = "";  //getString(R.string.tmdb_api_key);
+    private final String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_KEY + "&language=en-US";
 
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
@@ -26,7 +39,10 @@ public class MovieSelectionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView rvMovies;
     private MoviesAdapter adapter;
-    private List<Movie> allMovies;
+    private List<VideoContent> allVideoContents;
+    private AsyncHttpClient client;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +59,41 @@ public class MovieSelectionActivity extends AppCompatActivity {
         NavigationMethods.setUpNavDrawer(MovieSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
 
-        allMovies = new ArrayList<>();
-        adapter = new MoviesAdapter(this, allMovies);
+        allVideoContents = new ArrayList<>();
+        adapter = new MoviesAdapter(this, allVideoContents);
 
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
 
-        // DO osmehting to add to the rv
+        client = new AsyncHttpClient();
+
+        client.get(POPULAR_URL, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                // turn into a json object
+                JSONObject jsonObject = json.jsonObject;
+
+                try {
+                    JSONArray results = jsonObject.getJSONArray("results");
+                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
+
+                    allVideoContents.addAll(VideoContent.fromJsonArray(results, "Movie"));
+//                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e("MovieSelectionActivity", "onSuccess: ", e);
+                }
+                // turn from json object array to my custom object array
+                // add to allMovies
+                // notify the adapter that it has changed
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e("MovieSelectionActivity", "onFailure: ", throwable);
+            }
+        });
+        // Do something to add to the rv
     }
 
 

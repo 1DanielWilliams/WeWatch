@@ -3,7 +3,9 @@ package com.example.capstone.backend;
 import android.app.Application;
 
 import com.example.capstone.R;
+import com.example.capstone.models.VideoContent;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class ParseApplication extends Application {
 
@@ -12,7 +14,7 @@ public class ParseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        //register different classes here
+        ParseObject.registerSubclass(VideoContent.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.back4app_app_id))

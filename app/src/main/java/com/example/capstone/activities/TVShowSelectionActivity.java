@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 import com.example.capstone.R;
 import com.example.capstone.adapters.TVshowsAdapter;
 import com.example.capstone.methods.NavigationMethods;
-import com.example.capstone.models.Movie;
+import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView rvTVshows;
     private TVshowsAdapter adapter;
-    private List<Movie> allTVShows;
+    private List<VideoContent> allTVShows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

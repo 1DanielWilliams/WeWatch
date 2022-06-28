@@ -88,9 +88,16 @@ public class SignUpActivity1 extends AppCompatActivity {
         String email = etSignEmail.getText().toString();
 
         boolean invalidPassword = password.length() < 7 || !Pattern.matches(".*[0-9].*", password) || !Pattern.matches(".*[^a-zA-Z0-9].*", password);
-        if(!email.endsWith(".edu") || screenName.length() == 0 || invalidPassword ) {
+        if(!email.endsWith(".edu") ) {
             Toast.makeText(this, "Enter a .edu email", Toast.LENGTH_SHORT).show();
             etSignEmail.setText("");
+            return;
+        } else if (screenName.length() == 0) {
+            Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (invalidPassword) {
+            Toast.makeText(this, "Password must be at least 8 characters, contain a number, and a special character", Toast.LENGTH_SHORT).show();
+            etSignPassword.setText("");
             return;
         }
 

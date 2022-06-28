@@ -9,16 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capstone.R;
-import com.example.capstone.models.Conversation;
-import com.example.capstone.models.Movie;
+import com.example.capstone.models.VideoContent;
 
 import java.util.List;
 
 public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHolder> {
     private Context context;
-    private List<Movie> tvShows;
+    private List<VideoContent> tvShows;
 
-    public TVshowsAdapter(Context context, List<Movie> tvShows) {
+    public TVshowsAdapter(Context context, List<VideoContent> tvShows) {
         this.context = context;
         this.tvShows = tvShows;
     }
@@ -32,7 +31,7 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Movie tvShow = tvShows.get(position);
+        VideoContent tvShow = tvShows.get(position);
         holder.bind(tvShow);
     }
 
@@ -49,7 +48,7 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
             // assign views to ids
 
         }
-        public void bind(Movie tvShow) {
+        public void bind(VideoContent tvShow) {
             //bind data from event object to different views above
 
         }
