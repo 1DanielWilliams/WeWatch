@@ -67,17 +67,17 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <EditText
-        android:id="@+id/etFinalEmail"
+        android:id="@+id/etSignEmail"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="20dp"
         android:hint="School email "
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etFinalName" />
+        app:layout_constraintTop_toBottomOf="@+id/etSignName" />
 
     <EditText
-        android:id="@+id/etFinalPassword"
+        android:id="@+id/etSignPassword"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"
@@ -85,10 +85,10 @@
         android:hint="Password"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etFinalEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/etSignEmail" />
 
     <EditText
-        android:id="@+id/etFinalName"
+        android:id="@+id/etSignName"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginStart="36dp"

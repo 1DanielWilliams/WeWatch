@@ -43,19 +43,17 @@ public class SignUpActivity2 extends AppCompatActivity {
 
         btnNextCreate = findViewById(R.id.btnNextCreate);
 
-        btnNextCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String screenName = getIntent().getStringExtra("screenName");
-                String password = getIntent().getStringExtra("password");
-                String email = getIntent().getStringExtra("email");
+        btnNextCreate.setOnClickListener(v -> {
 
-                Intent i = new Intent(SignUpActivity2.this, SignUpActivity3.class);
-                i.putExtra("screenName", screenName);
-                i.putExtra("password", password);
-                i.putExtra("email", email);
-                startActivity(i);
-            }
+            String screenName = getIntent().getStringExtra("screenName");
+            String password = getIntent().getStringExtra("password");
+            String email = getIntent().getStringExtra("email");
+
+            Intent i = new Intent(SignUpActivity2.this, SignUpActivity3.class);
+            i.putExtra("screenName", screenName);
+            i.putExtra("password", password);
+            i.putExtra("email", email);
+            startActivity(i);
         });
 
     }
