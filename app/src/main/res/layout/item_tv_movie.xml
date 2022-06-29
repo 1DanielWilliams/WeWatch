@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/tvBackdropVideoContent"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="254dp"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/witcher_poster"
@@ -17,22 +17,22 @@
 
     <RatingBar
         android:id="@+id/rbVoterAverageVideoContent"
-        style="@style/RatingBar"
+        android:theme="@style/RatingBar"
         android:layout_width="242dp"
         android:layout_height="46dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginBottom="16dp"
         android:isIndicator="true"
         android:numStars="5"
         android:stepSize=".5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitleVideoContent" />
+        app:layout_constraintBottom_toBottomOf="@+id/tvBackdropVideoContent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView32"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="16dp"
         android:text="+ 2"
         android:textColor="@android:color/white"
@@ -43,7 +43,7 @@
         android:id="@+id/imageView10"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toStartOf="@+id/textView32"
         app:layout_constraintTop_toTopOf="parent"
@@ -54,7 +54,7 @@
         android:id="@+id/imageView8"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toStartOf="@+id/imageView10"
         app:layout_constraintTop_toTopOf="parent"
@@ -63,13 +63,13 @@
 
     <TextView
         android:id="@+id/tvTitleVideoContent"
-        android:layout_width="202dp"
-        android:layout_height="54dp"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="The Witcher"
         android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

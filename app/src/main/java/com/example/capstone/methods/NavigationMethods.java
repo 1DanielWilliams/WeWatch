@@ -97,20 +97,20 @@ public class NavigationMethods {
 
         popup.setOnMenuItemClickListener(item -> {
             Intent i;
-            switch (item.getItemId()) {
-                case 2131231092: // TODO: not sure where these IDs come from
-                    i = new Intent(context, ProfileActivity.class);
-                    context.startActivity(i);
-                    return true;
-                case 2131231095: // TODO: not sure where these IDs come from
-                    ParseUser.logOut();
-                    i = new Intent(context, logOrSignActivity.class);
-                    context.startActivity(i);
-                    return true;
-                default:
-                    Log.i("FeedActivity", "onMenuItemClick: hit default " + item.getItemId());
-                    return false;
+            if (item.getItemId() == R.id.option_1) {
+                i = new Intent(context, ProfileActivity.class);
+                context.startActivity(i);
+                return true;
+            } else if (item.getItemId() == R.id.option_2) {
+                ParseUser.logOut();
+                i = new Intent(context, logOrSignActivity.class);
+                context.startActivity(i);
+                return true;
+            } else {
+                Log.i("FeedActivity", "onMenuItemClick: hit default " + item.getItemId());
+                return false;
             }
+
         });
 
         // TODO: do i need this?

@@ -5,11 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +42,7 @@ public class SignUpActivity1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup1);
 
-        btnNextSignup = findViewById(R.id.btnNextSignup1);
+        btnNextSignup = findViewById(R.id.btnSelectDate);
         btnCancelSignup = findViewById(R.id.btnCancelSignup);
         ivXName = findViewById(R.id.ivXName);
         ivCheckmarkName = findViewById(R.id.ivCheckmarkName);

@@ -90,11 +90,10 @@ public class SignUpActivity3 extends AppCompatActivity {
             int size = users.size();
             if (size == 0) {
                 username = screeNameLower;
-                user.setUsername(username);
             } else {
                 username = screeNameLower + String.valueOf(size + 1);
-                user.setUsername(username);
             }
+            user.setUsername(username);
 
             // Signs a user up with this unique username
             user.signUpInBackground(e1 -> {

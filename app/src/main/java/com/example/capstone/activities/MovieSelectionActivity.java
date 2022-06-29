@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -58,12 +60,15 @@ public class MovieSelectionActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(MovieSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
-
+        
         allVideoContents = new ArrayList<>();
         adapter = new MoviesAdapter(this, allVideoContents);
 
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
+
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(rvMovies);
 
         client = new AsyncHttpClient();
 
