@@ -22,7 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.VideoContentDetailFragment;
+import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
@@ -55,7 +58,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        //declare different views of post up here
 
         TextView tvTitleVideoContent;
         RatingBar rbVoterAverageVideoContent;
@@ -64,35 +66,47 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            // assign views to ids
             rbVoterAverageVideoContent = itemView.findViewById(R.id.rbVoterAverageVideoContent);
             tvTitleVideoContent = itemView.findViewById(R.id.tvTitleVideoContent);
             tvBackdropVideoContent = itemView.findViewById(R.id.tvBackdropVideoContent);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    VideoContent videoContent = videoContents.get(position);
-                    FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
-                    VideoContentDetailFragment videoContentDetailFragment = VideoContentDetailFragment.newInstance(videoContent);
-                    videoContentDetailFragment.show(fm, "fragment_edit_name");
 
-                }
-            });
+            itemView.setOnClickListener(v -> onViewClicked() );
 
         }
         public void bind(VideoContent videoContent) {
             //bind data from event object to different views above
             tvTitleVideoContent.setText(videoContent.getTitle());
             float voteAverage = videoContent.getVoteAverage().floatValue() / 2.0f;
-            Log.i("adapter", "bind: " + videoContent.getTitle() + " " + voteAverage);
-            // todo: rating bar will not show correct number
             rbVoterAverageVideoContent.setRating(voteAverage);
 
             // todo: have placeholder if it goes wrong
             Glide.with(context).load(videoContent.getBackdropUrl()).into(tvBackdropVideoContent);
             tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
 
+        }
+
+        private void onViewClicked() {
+            int position = getAdapterPosition();
+            // Retrieve the local videoContent object
+            VideoContent videoContent = videoContents.get(position);
+            ParseQuery<VideoContent> query = ParseQuery.getQuery(VideoContent.class);
+            query.whereEqualTo("title", videoContent.getTitle());
+            query.whereEqualTo("typeOfContent", videoContent.getTypeOfContent());
+
+            // Search the parse database to see if this movie already exist so that the program will not save two versions of the same VideoContent
+            try {
+                List<VideoContent> videoContents = query.find();
+                if (videoContents.size() != 0) {
+                    videoContent = videoContents.get(0);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            //get the title of the video content
+            FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
+            VideoContentDetailFragment videoContentDetailFragment = VideoContentDetailFragment.newInstance(videoContent);
+            videoContentDetailFragment.show(fm, "fragment_edit_name");
         }
     }
 }

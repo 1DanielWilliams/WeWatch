@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
+import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -26,8 +27,16 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -39,6 +48,7 @@ public class VideoContentDetailFragment extends DialogFragment {
 
 
     private static final String ARG_PARAM1 = "videoContent";
+    private Event event;
 
     private VideoContent videoContent;
 
@@ -46,14 +56,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment VideoContentDetail.
-     */
+
     public static VideoContentDetailFragment newInstance(VideoContent videoContent) {
         VideoContentDetailFragment fragment = new VideoContentDetailFragment();
         Bundle args = new Bundle();
@@ -89,28 +92,92 @@ public class VideoContentDetailFragment extends DialogFragment {
         Button btnSelectDate = view.findViewById(R.id.btnSelectDate);
         Button btnPostEvent = view.findViewById(R.id.btnPostEvent);
         TextView tvDateBtn= view.findViewById(R.id.tvDateBtn);
-        // todo: create event object
 
-        //   this.dismiss(); closes fragment
+        String title = videoContent.getTitle();
+        String posterUrl = videoContent.getPosterUrl();
 
-        tvTitle.setText(videoContent.getTitle());
+        tvTitle.setText(title);
         tvRating.setText(Double.toString(videoContent.getVoteAverage() / 2.0d));
         tvOverview.setText(videoContent.getOverview());
 
         ImageView ivPoster = view.findViewById(R.id.ivPoster);
-        Glide.with(view).load(videoContent.getPosterUrl())
+        Glide.with(view).load(posterUrl)
                 .override(1000, 1400)
                 .into(ivPoster);
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));
 
-        // set listener for select date button
-        btnSelectDate.setOnClickListener(v -> {
 
-            onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent);
+        btnSelectDate.setOnClickListener(v -> onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent) );
+
+        btnPostEvent.setOnClickListener(v -> postEvent() );
+
+    }
+
+    private void postEvent() {
+        // Query to determine if the video is currently listed on the feed tab
+        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
+        query.whereEqualTo("title", event.getTitle());
+        query.whereEqualTo("typeOfContent", event.getTypeOfContent());
+        query.findInBackground((events, e) -> {
+
+            if (e != null) {
+                Log.e("fragment", "done: trouble finding event", e);
+                return;
+            }
+
+            if (events.size() == 0) {
+                event.saveInBackground(e1 -> {
+                    if (e1 != null) {
+                        Log.e("fragment", "done: trouble finding event", e);
+                        return;
+                    }
+                });
+            } else { // if the event already exist and thus the movie currently is in VideoContent (will not always be the case: in the future when events are removed from the db. In this cause i will have to then query the VideoContent aswell)
+                // TODO: ASSUMES THIS NEW POST FOR THE MOVIE IS A DIFFERENT DATE
+
+                Event queriedEvent = events.get(0);
+
+                addToExistingEvent(queriedEvent);
+
+                queriedEvent.saveInBackground(e12 -> {
+                    if (e12 != null) {
+                        Log.e("VideoContentDetailFragment", "done: ERROR saving queried event", e12);
+                    }
+                });
+            }
         });
+        this.dismiss();
+    }
 
-        // todo: set on click listener for post
+    // Adds the new user + time + interested User array to the existing event
+    private void addToExistingEvent(Event queriedEvent) {
+        //increment the numPosted section of the VideoContent
+        try {
+            VideoContent videoContent = queriedEvent.getVideContent().fetch();
+            videoContent.setNumPosted(videoContent.getNumPosted() + 1);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
 
+        //then add to the authors array
+        List<ParseUser> authors = queriedEvent.getUsers();
+        authors.add(event.getUsers().get(0));
+        queriedEvent.setUsers(authors);
+
+
+        //add to the interested users array
+        List<List<ParseUser>> interestedUsers = queriedEvent.getInterestedUsers();
+        List<ParseUser> interestedUser = new ArrayList<>();
+        interestedUser.add(event.getInterestedUsers().get(0).get(0));
+        interestedUsers.add(interestedUser);
+
+        queriedEvent.setInterestedUsers(interestedUsers);
+
+
+        //add to the dates array
+        List<String> dates = queriedEvent.getDates();
+        dates.add(event.getDates().get(0));
+        queriedEvent.setDates(dates);
     }
 
     private String formatMinutes(int minutes) {
@@ -124,7 +191,6 @@ public class VideoContentDetailFragment extends DialogFragment {
     }
 
     private void onSelectDate(TextView tvDate, Button btnSelectDate, Button btnPostEvent) {
-        // todo: intialize post object
         CalendarConstraints.Builder constraints = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now());
 
@@ -141,7 +207,6 @@ public class VideoContentDetailFragment extends DialogFragment {
     }
 
     private void onDateSelected(MaterialDatePicker<Long> datePicker, Button btnSelectDate, Button btnPostEvent, TextView tvDate) {
-        // todo: add date to post object
         Date date =  new Date(datePicker.getSelection());
         final String[] strDate = {date.toString()};
         String[] strArrayDate = strDate[0].split(" ");
@@ -169,12 +234,41 @@ public class VideoContentDetailFragment extends DialogFragment {
             } else {
                 strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " AM";
             }
+
+            event = createEvent();
+            List<String> dates = new ArrayList<>();
+            dates.add(strDateTime);
+            event.setDates(dates);
             tvDate.setVisibility(View.VISIBLE);
             tvDate.setText(strDateTime);
             // Then switch button to new one
             btnSelectDate.setVisibility(View.GONE);
             btnPostEvent.setVisibility(View.VISIBLE);
         });
+    }
+
+    private Event createEvent() {
+        Event event = new Event();
+        event.setTitle(videoContent.getTitle());
+
+        List<ParseUser> users = new ArrayList<>();
+        users.add(ParseUser.getCurrentUser());
+        event.setUsers(users);
+
+        event.setNumInterested(0);
+        event.setTypeOfContent(videoContent.getTypeOfContent());
+        event.setVideoContent(videoContent);
+        event.setPosterUrl(videoContent.getPosterUrl());
+        event.setBackdropUrl(videoContent.getBackdropUrl());
+        event.setIsLive(false);
+
+        List<List<ParseUser>> interestedUsers = new ArrayList<>();
+        List<ParseUser> interestedUser = new ArrayList<>();
+        interestedUser.add(ParseUser.getCurrentUser());
+        interestedUsers.add(interestedUser);
+        event.setInterestedUsers(interestedUsers);
+
+        return event;
     }
 
 }
