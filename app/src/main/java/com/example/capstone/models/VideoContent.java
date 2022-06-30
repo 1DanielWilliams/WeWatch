@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @ParseClassName("VideoContent")
 public class VideoContent extends ParseObject {
@@ -51,10 +52,15 @@ public class VideoContent extends ParseObject {
     public void setBackdropUrl(String backdropUrl) { put(KEY_BACKDROP_URL, backdropUrl); }
     public String getBackdropUrl() {return  getString(KEY_BACKDROP_URL); }
 
-    public VideoContent(JSONObject jsonObject) throws JSONException {
-        setTitle(jsonObject.getString("title"));
+    public VideoContent(JSONObject jsonObject, String typeOfContent) throws JSONException {
+        if (Objects.equals(typeOfContent, "Movie")) {
+            setTitle(jsonObject.getString("title"));
+        } else if (Objects.equals(typeOfContent, "TV Show")){
+            setTitle(jsonObject.getString("name"));
+        }
         setVoteAverage(jsonObject.getDouble("vote_average"));
         setOverview(jsonObject.getString("overview"));
+        setTypeOfContent(typeOfContent);
         // assumes this is a new VideoContent being pushed to back4App
         setNumPosted(0);
         setNumInterestedIn(0);
@@ -66,8 +72,7 @@ public class VideoContent extends ParseObject {
     public static List<VideoContent> fromJsonArray(JSONArray videContentJsonArray, String typeOfContent) throws JSONException {
         List<VideoContent> videoContents = new ArrayList<>();
         for (int i = 0; i < videContentJsonArray.length(); i++) {
-            VideoContent videoContent = new VideoContent(videContentJsonArray.getJSONObject(i));
-            videoContent.setTypeOfContent(typeOfContent);
+            VideoContent videoContent = new VideoContent(videContentJsonArray.getJSONObject(i), typeOfContent);
             videoContents.add(videoContent);
         }
         return videoContents;

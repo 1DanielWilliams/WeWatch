@@ -31,11 +31,11 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     private Context context;
-    private List<VideoContent> videoContents;
+    private List<VideoContent> movies;
 
     public MoviesAdapter(Context context, List<VideoContent> videoContents) {
         this.context = context;
-        this.videoContents = videoContents;
+        this.movies = videoContents;
     }
 
 
@@ -48,13 +48,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        VideoContent videoContent = videoContents.get(position);
-        holder.bind(videoContent);
+        VideoContent movie = movies.get(position);
+        holder.bind(movie);
     }
 
     @Override
     public int getItemCount() {
-        return videoContents.size();
+        return movies.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,22 +73,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             itemView.setOnClickListener(v -> onViewClicked() );
 
         }
-        public void bind(VideoContent videoContent) {
-            //bind data from event object to different views above
-            tvTitleVideoContent.setText(videoContent.getTitle());
-            float voteAverage = videoContent.getVoteAverage().floatValue() / 2.0f;
+        public void bind(VideoContent movie) {
+
+            tvTitleVideoContent.setText(movie.getTitle());
+            float voteAverage = movie.getVoteAverage().floatValue() / 2.0f;
             rbVoterAverageVideoContent.setRating(voteAverage);
 
             // todo: have placeholder if it goes wrong
-            Glide.with(context).load(videoContent.getBackdropUrl()).into(tvBackdropVideoContent);
+            Glide.with(context).load(movie.getBackdropUrl()).into(tvBackdropVideoContent);
             tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
 
         }
 
         private void onViewClicked() {
-            int position = getAdapterPosition();
+            int position = getBindingAdapterPosition();
             // Retrieve the local videoContent object
-            VideoContent videoContent = videoContents.get(position);
+            VideoContent videoContent = movies.get(position);
             ParseQuery<VideoContent> query = ParseQuery.getQuery(VideoContent.class);
             query.whereEqualTo("title", videoContent.getTitle());
             query.whereEqualTo("typeOfContent", videoContent.getTypeOfContent());

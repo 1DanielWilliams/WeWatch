@@ -41,7 +41,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView rvMovies;
     private MoviesAdapter adapter;
-    private List<VideoContent> allVideoContents;
+    private List<VideoContent> allMovies;
     private AsyncHttpClient client;
 
 
@@ -60,9 +60,9 @@ public class MovieSelectionActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(MovieSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
-        
-        allVideoContents = new ArrayList<>();
-        adapter = new MoviesAdapter(this, allVideoContents);
+
+        allMovies = new ArrayList<>();
+        adapter = new MoviesAdapter(this, allMovies);
 
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
@@ -75,15 +75,14 @@ public class MovieSelectionActivity extends AppCompatActivity {
         client.get(POPULAR_URL, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                // turn into a json object
                 JSONObject jsonObject = json.jsonObject;
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
+//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
 
-                    allVideoContents.addAll(VideoContent.fromJsonArray(results, "Movie"));
-                    Log.i("MovieSelectionActivity", "onSuccess: " + allVideoContents.size());
+                    allMovies.addAll(VideoContent.fromJsonArray(results, "Movie"));
+//                    Log.i("MovieSelectionActivity", "onSuccess: " + allMovies.size());
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);
