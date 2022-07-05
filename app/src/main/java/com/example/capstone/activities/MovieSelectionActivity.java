@@ -79,10 +79,8 @@ public class MovieSelectionActivity extends AppCompatActivity {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
 
                     allMovies.addAll(VideoContent.fromJsonArray(results, "Movie"));
-//                    Log.i("MovieSelectionActivity", "onSuccess: " + allMovies.size());
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);

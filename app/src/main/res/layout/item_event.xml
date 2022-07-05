@@ -6,9 +6,9 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/ivBackdropEvent"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="254dp"
         android:cropToPadding="false"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +25,7 @@
         android:text="LIVE"
         android:textColor="@android:color/white"
         android:textSize="10sp"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:backgroundTint="@android:color/transparent"
         app:icon="@drawable/green_dot"
         app:iconTint="#009900"
@@ -38,15 +38,15 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDate"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-        android:layout_width="107dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="10/22 @12PM"
         android:textColor="@android:color/white"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:backgroundTint="@android:color/transparent"
         app:iconPadding="0dp"
         app:iconTint="#009900"
@@ -57,60 +57,61 @@
         app:strokeWidth="2dp" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Daniel"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="\@daniel"
         android:textColor="@android:color/white"
-        android:textSize="10sp"
+        android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/tvScreenName" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/tvTypeOfContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="52dp"
         android:text="Movie"
         android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        app:layout_constraintBottom_toTopOf="@+id/tvTitleEvent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView10"
-        android:layout_width="166dp"
-        android:layout_height="55dp"
+        android:id="@+id/tvTitleEvent"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
         android:text="Pride + Prejudice + zombies"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:textSize="21sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+        app:layout_constraintBottom_toBottomOf="@+id/ivBackdropEvent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/tvNumInterested"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:text="88 attending"
         android:textColor="@android:color/white"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -120,7 +121,7 @@
         android:layout_height="25dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
         app:layout_constraintEnd_toStartOf="@+id/imageView5"
         app:srcCompat="@drawable/hulu"
         tools:srcCompat="@drawable/hulu" />
@@ -131,7 +132,7 @@
         android:layout_height="25dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
         app:layout_constraintEnd_toStartOf="@+id/imageView6"
         app:srcCompat="@drawable/netflix"
         tools:srcCompat="@drawable/netflix" />
@@ -142,7 +143,7 @@
         android:layout_height="25dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
         app:layout_constraintEnd_toStartOf="@+id/imageView4"
         app:srcCompat="@drawable/amazon_prime"
         tools:srcCompat="@drawable/amazon_prime" />
@@ -153,7 +154,7 @@
         android:layout_height="25dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
         app:layout_constraintEnd_toStartOf="@+id/textView12"
         app:srcCompat="@drawable/showtime"
         tools:srcCompat="@drawable/showtime" />
@@ -166,6 +167,29 @@
         android:layout_marginBottom="17dp"
         android:text="+ 3"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvOtherDates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="4 other dates"
+        android:textColor="@android:color/white"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDate" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="74dp"
+        android:layout_marginBottom="39dp"
+        android:text="Available on:"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumInterested"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

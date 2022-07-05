@@ -44,12 +44,9 @@ public class LogInActivity2 extends AppCompatActivity {
 
         OnETChange.buttonToBlack(etLoginPassword, btnLogin);
 
-        btnCancelLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(LogInActivity2.this, logOrSignActivity.class);
-                NavUtils.navigateUpTo(LogInActivity2.this, i);
-            }
+        btnCancelLogin.setOnClickListener(v -> {
+            Intent i = new Intent(LogInActivity2.this, logOrSignActivity.class);
+            NavUtils.navigateUpTo(LogInActivity2.this, i);
         });
 
         // authenticates user and logs them in

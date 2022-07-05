@@ -44,7 +44,7 @@
             android:name=".activities.MovieSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.detailEventActivity"
+            android:name=".activities.DetailEventActivity"
             android:exported="false" />
         <activity
             android:name=".activities.login.LogInActivity2"

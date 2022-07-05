@@ -1,6 +1,7 @@
 package com.example.capstone.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
+import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -39,11 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link VideoContentDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class VideoContentDetailFragment extends DialogFragment {
 
 
@@ -60,7 +57,7 @@ public class VideoContentDetailFragment extends DialogFragment {
     public static VideoContentDetailFragment newInstance(VideoContent videoContent) {
         VideoContentDetailFragment fragment = new VideoContentDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM1, videoContent); //todo: is it parceable?
+        args.putParcelable(ARG_PARAM1, videoContent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,16 +66,13 @@ public class VideoContentDetailFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            videoContent = getArguments().getParcelable(ARG_PARAM1);  //todo: is it parceable?
+            videoContent = getArguments().getParcelable(ARG_PARAM1);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_video_content_detail, container, false);
     }
 
@@ -118,6 +112,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.whereEqualTo("title", event.getTitle());
         query.whereEqualTo("typeOfContent", event.getTypeOfContent());
+        query.whereEqualTo("university", ParseUser.getCurrentUser().getString("university"));
         query.findInBackground((events, e) -> {
 
             if (e != null) {
@@ -131,6 +126,9 @@ public class VideoContentDetailFragment extends DialogFragment {
                         Log.e("fragment", "done: trouble finding event", e);
                         return;
                     }
+                    Intent i = new Intent(getContext(), FeedActivity.class);
+                    startActivity(i);
+                    this.dismiss();
                 });
             } else { // if the event already exist and thus the movie currently is in VideoContent (will not always be the case: in the future when events are removed from the db. In this cause i will have to then query the VideoContent aswell)
                 // TODO: ASSUMES THIS NEW POST FOR THE MOVIE IS A DIFFERENT DATE
@@ -142,11 +140,16 @@ public class VideoContentDetailFragment extends DialogFragment {
                 queriedEvent.saveInBackground(e12 -> {
                     if (e12 != null) {
                         Log.e("VideoContentDetailFragment", "done: ERROR saving queried event", e12);
+                        return;
                     }
+                    Intent i = new Intent(getContext(), FeedActivity.class);
+                    startActivity(i);
+                    this.dismiss();
                 });
             }
         });
-        this.dismiss();
+
+
     }
 
     // Adds the new user + time + interested User array to the existing event
@@ -164,6 +167,8 @@ public class VideoContentDetailFragment extends DialogFragment {
         authors.add(event.getUsers().get(0));
         queriedEvent.setUsers(authors);
 
+        int userIndex = authors.size() - 1;
+
 
         //add to the interested users array
         List<List<ParseUser>> interestedUsers = queriedEvent.getInterestedUsers();
@@ -173,8 +178,14 @@ public class VideoContentDetailFragment extends DialogFragment {
 
         queriedEvent.setInterestedUsers(interestedUsers);
 
+        // Changes the
+        if (event.getEarliestDate().before(queriedEvent.getEarliestDate())) {
+            queriedEvent.setEarliestDate(event.getEarliestDate());
+            queriedEvent.setEarliestUserIndex(userIndex);
+        }
 
-        //add to the dates array
+
+        //add to the dates array at proper index
         List<String> dates = queriedEvent.getDates();
         dates.add(event.getDates().get(0));
         queriedEvent.setDates(dates);
@@ -210,7 +221,8 @@ public class VideoContentDetailFragment extends DialogFragment {
         Date date =  new Date(datePicker.getSelection());
         final String[] strDate = {date.toString()};
         String[] strArrayDate = strDate[0].split(" ");
-        strDate[0] = strArrayDate[1] + " " + strArrayDate[2];
+        String dateNum = String.valueOf(Integer.parseInt(strArrayDate[2]) + 1);
+        strDate[0] = strArrayDate[1] + " " + dateNum;
 
         MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -235,10 +247,14 @@ public class VideoContentDetailFragment extends DialogFragment {
                 strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " AM";
             }
 
-            event = createEvent();
+            date.setHours(timePicker.getHour());
+            date.setMinutes(timePicker.getMinute());
+
+            event = createEvent(date);
             List<String> dates = new ArrayList<>();
             dates.add(strDateTime);
             event.setDates(dates);
+
             tvDate.setVisibility(View.VISIBLE);
             tvDate.setText(strDateTime);
             // Then switch button to new one
@@ -247,7 +263,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         });
     }
 
-    private Event createEvent() {
+    private Event createEvent(Date date) {
         Event event = new Event();
         event.setTitle(videoContent.getTitle());
 
@@ -255,7 +271,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         users.add(ParseUser.getCurrentUser());
         event.setUsers(users);
 
-        event.setNumInterested(0);
+        event.setNumInterested(1);
         event.setTypeOfContent(videoContent.getTypeOfContent());
         event.setVideoContent(videoContent);
         event.setPosterUrl(videoContent.getPosterUrl());
@@ -267,6 +283,10 @@ public class VideoContentDetailFragment extends DialogFragment {
         interestedUser.add(ParseUser.getCurrentUser());
         interestedUsers.add(interestedUser);
         event.setInterestedUsers(interestedUsers);
+
+        event.setEarliestDate(date);
+        event.setEarliestUserIndex(0);
+        event.setUniversity(ParseUser.getCurrentUser().getString("university"));
 
         return event;
     }

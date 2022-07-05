@@ -21,6 +21,9 @@ public class Event extends ParseObject {
     public static final String KEY_BACKDROP_URL = "backdropUrl";
     public static final String KEY_DATES = "dates";
     public static final String KEY_TYPE_OF_CONTENT = "typeOfContent";
+    public static final String KEY_EARLIEST_DATE = "earliestDate";
+    public static final String KEY_EARLIEST_USER_INDEX = "earliestUserIndex";
+    public static final String KEY_UNIVERSITY = "university";
 
 
     public Event() {}
@@ -55,6 +58,14 @@ public class Event extends ParseObject {
     public void setTypeOfContent(String typeOfContent) { put(KEY_TYPE_OF_CONTENT, typeOfContent); }
     public String getTypeOfContent() {return  getString(KEY_TYPE_OF_CONTENT); }
 
+    public void setEarliestDate(Date earliestDate) { put(KEY_EARLIEST_DATE, earliestDate);}
+    public Date getEarliestDate() {return getDate(KEY_EARLIEST_DATE); }
+
+    public void setEarliestUserIndex(int earliestUserIndex) {put(KEY_EARLIEST_USER_INDEX, earliestUserIndex); }
+    public int getEarliestUserIndex() {return getInt(KEY_EARLIEST_USER_INDEX); }
+
+    public void setUniversity(String university) {put(KEY_UNIVERSITY, university);}
+    public String getUniversity() {return getString(KEY_UNIVERSITY); }
 
 //    public List<Integer> availablePlatforms; //can use an array of constants to represent the key
 

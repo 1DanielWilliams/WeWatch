@@ -43,12 +43,9 @@ public class logOrSignActivity extends AppCompatActivity {
 
         btnLogIn = findViewById(R.id.btnLogIn);
 
-        btnLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(logOrSignActivity.this, LogInActivity1.class);
-                startActivity(i);
-            }
+        btnLogIn.setOnClickListener(v -> {
+            Intent i = new Intent(logOrSignActivity.this, LogInActivity1.class);
+            startActivity(i);
         });
 
 
