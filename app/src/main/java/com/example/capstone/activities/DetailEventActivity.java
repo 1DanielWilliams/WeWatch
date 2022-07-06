@@ -1,5 +1,6 @@
 package com.example.capstone.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -13,20 +14,29 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.models.Event;
+import com.example.capstone.models.GroupChat;
+import com.example.capstone.models.Message;
+import com.example.capstone.models.User;
 import com.example.capstone.models.VideoContent;
-import com.parse.DeleteCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class DetailEventActivity extends AppCompatActivity {
 
@@ -41,6 +51,8 @@ public class DetailEventActivity extends AppCompatActivity {
     private TextView tvScreenNameDetail;
     private TextView tvNumInterestedDetail;
     private ImageButton iBtnOtherDates;
+    private ImageButton iBtnGroupChatDetail;
+    FirebaseDatabase database;
 
     private ImageButton iBtnInterested;
     private TextView tvInterested;
@@ -87,6 +99,92 @@ public class DetailEventActivity extends AppCompatActivity {
                 startActivity(i);
                 finish();
             });
+        });
+
+        iBtnGroupChatDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser user = ParseUser.getCurrentUser();
+                String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
+
+                // Checks if the user has already been added to the group chat
+                List<String> userGroupChatIDs = user.getList("groupChatID");
+                AtomicBoolean inGroupChat = new AtomicBoolean(false);
+                if (userGroupChatIDs != null) {
+                    userGroupChatIDs.forEach(s -> {
+                        if (Objects.equals(s, groupChatID)) { inGroupChat.set(true); }
+                    });
+                }
+
+                if (isInterested.get() && !inGroupChat.get()) {
+                    // Creates a unique id for the event currently displayed and stores it with the authenticated user
+
+                    List<String> groupChatIDs = user.getList("groupChatID");
+                    if (groupChatIDs != null) {
+                        groupChatIDs = user.getList("groupChatID");
+                    } else {
+                        groupChatIDs = new ArrayList<>();
+                    }
+                    groupChatIDs.add(groupChatID);
+                    user.put("groupChatID", groupChatIDs);
+                    user.saveInBackground();
+
+
+                    DatabaseReference ref = database.getReference("group_chats");
+                    // todo: will be useful for finding gc to update messages with
+                    ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            final boolean[] groupChatExist = {false};
+
+                            task.getResult().getChildren().forEach(dataSnapshot -> {
+                                GroupChat groupChat = dataSnapshot.getValue(GroupChat.class);
+                                if (groupChatID.equals(groupChat.getId())) {
+                                    //it already exist in the data base
+                                    groupChatExist[0] = true;
+                                }
+                            });
+
+                            if (groupChatExist[0]) {
+                                Log.i("DetailEventActivity", "onComplete: add user to existing group chat" );
+
+                            } else {
+                                List<User> users = new ArrayList<>();
+                                User firstUser = new User(user.getObjectId(), user.getUsername(), user.getString("screenName"));
+                                users.add(firstUser);
+
+                                List<Message> messages = new ArrayList<>();
+                                messages.add(new Message("Hi", firstUser));
+                                ref.push().setValue(new GroupChat(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, users, messages));
+                            }
+                        }
+                    });
+                } else if(isInterested.get() && inGroupChat.get()) {
+                    Toast.makeText(DetailEventActivity.this, "Already in the groupchat", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
+                }
+
+
+
+
+
+                //check if the group chat exist already by querying the "groupchat" path for an id that == the group chat id
+
+                    //use this instance of the group chat
+                    //check if current user has been added to the group chat
+                // if not, create the group chat
+
+
+
+//                DatabaseReference myRef = database.getReference("hello"); //think you can put your own path in that
+//                Conversation conversation = new Conversation();
+//                conversation.isGroupChat = true;
+//                conversation.preview = "deez Nutz";
+//                myRef.setValue(conversation);
+            }
         });
 
         iBtnOtherDates.setOnClickListener(v -> {
@@ -139,6 +237,8 @@ public class DetailEventActivity extends AppCompatActivity {
         tvDelete = findViewById(R.id.tvDelete);
         tvNumInterestedDetail = findViewById(R.id.tvNumInterestedDetail);
         iBtnOtherDates = findViewById(R.id.iBtnOtherDates);
+        iBtnGroupChatDetail = findViewById(R.id.iBtnGroupChatDetail);
+        database = FirebaseDatabase.getInstance();
 
         tvDateDetail.setText(event.getDates().get(event.getEarliestUserIndex()));
         tvTitleDetail.setText(event.getTitle());

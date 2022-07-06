@@ -11,4 +11,6 @@ public class Conversation {
     // preview
     // array of messages
     // timestanmp of last message
+
+    public Conversation(){}
 }

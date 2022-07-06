@@ -145,7 +145,7 @@
         android:text="While traveling to California to race against The King (Richard Petty) and Chick Hicks (Michael Keaton) for the Piston Cup Championship, Lightning McQueen (Owen Wilson) becomes lost after falling out of his trailer in a run down town called Radiator Springs."
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton3"
+        app:layout_constraintBottom_toTopOf="@+id/iBtnGroupChatDetail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -208,7 +208,7 @@
         android:text="Group Chat"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton3" />
+        app:layout_constraintTop_toBottomOf="@+id/iBtnGroupChatDetail" />
 
     <TextView
         android:id="@+id/textView9"
@@ -233,7 +233,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageButton5" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/iBtnGroupChatDetail"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="40dp"
