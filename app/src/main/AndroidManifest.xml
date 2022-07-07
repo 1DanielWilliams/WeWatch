@@ -47,9 +47,9 @@
             android:name=".activities.DetailEventActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.login.LogInActivity2"
+            android:name=".activities.login.PasswordLogInActivity"
             android:exported="false"
-            android:parentActivityName=".activities.login.LogInActivity1" />
+            android:parentActivityName=".activities.login.UsernameLogInActivity" />
         <activity
             android:name=".activities.signup.SignUpActivity3"
             android:exported="false"
@@ -75,7 +75,7 @@
             android:name=".activities.FeedActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.login.LogInActivity1"
+            android:name=".activities.login.UsernameLogInActivity"
             android:exported="false"
             android:parentActivityName=".activities.logOrSignActivity" />
     </application>

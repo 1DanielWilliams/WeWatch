@@ -62,8 +62,8 @@ public class VideoContent extends ParseObject {
         setOverview(jsonObject.getString("overview"));
         setTypeOfContent(typeOfContent);
         // assumes this is a new VideoContent being pushed to back4App
-        setNumPosted(0);
-        setNumInterestedIn(0);
+        setNumPosted(1);
+        setNumInterestedIn(1);
 
         setPosterUrl(String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("poster_path")));
         setBackdropUrl(String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("backdrop_path")));

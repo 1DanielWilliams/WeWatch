@@ -98,7 +98,7 @@
         android:layout_marginBottom="24dp"
         android:text="Pride + Prejudice + zombies"
         android:textColor="@android:color/white"
-        android:textSize="28sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/ivBackdropEvent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -5,22 +5,22 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/optFeed"
-            android:icon="@android:drawable/star_on"
+            android:icon="@drawable/activity_feed_black_50"
             android:title="Feed"
             android:checked="false" />
         <item
             android:id="@+id/optMovies"
-            android:icon="@android:drawable/ic_menu_search"
+            android:icon="@drawable/movie_navdraw_50"
             android:title="Movies"
             android:checked="false"/>
         <item
             android:id="@+id/optTV"
-            android:icon="@android:drawable/picture_frame"
+            android:icon="@drawable/tv_show_black_50"
             android:title="TV Shows"
             android:checked="false"/>
         <item
             android:id="@+id/optMessages"
-            android:icon="@android:drawable/picture_frame"
+            android:icon="@drawable/message_black_50"
             android:title="Messages"
             android:checked="false"/>
     </group>

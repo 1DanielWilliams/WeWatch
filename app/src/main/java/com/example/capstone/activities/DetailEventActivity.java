@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.models.Event;
-import com.example.capstone.models.GroupChat;
+import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.User;
 import com.example.capstone.models.VideoContent;
@@ -33,10 +33,10 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DetailEventActivity extends AppCompatActivity {
 
@@ -52,7 +52,7 @@ public class DetailEventActivity extends AppCompatActivity {
     private TextView tvNumInterestedDetail;
     private ImageButton iBtnOtherDates;
     private ImageButton iBtnGroupChatDetail;
-    FirebaseDatabase database;
+    private FirebaseDatabase database;
 
     private ImageButton iBtnInterested;
     private TextView tvInterested;
@@ -107,7 +107,13 @@ public class DetailEventActivity extends AppCompatActivity {
                 ParseUser user = ParseUser.getCurrentUser();
                 String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
 
-                // Checks if the user has already been added to the group chat
+
+
+                DatabaseReference groupDetailsRef = database.getReference("group_details");
+                DatabaseReference usersRef = database.getReference("users");
+                DatabaseReference groupMessagesRef= database.getReference("group_messages");
+
+                //Checks if the user has already been added to the group chat
                 List<String> userGroupChatIDs = user.getList("groupChatID");
                 AtomicBoolean inGroupChat = new AtomicBoolean(false);
                 if (userGroupChatIDs != null) {
@@ -117,8 +123,7 @@ public class DetailEventActivity extends AppCompatActivity {
                 }
 
                 if (isInterested.get() && !inGroupChat.get()) {
-                    // Creates a unique id for the event currently displayed and stores it with the authenticated user
-
+                    // Takes the unique id for the event currently displayed and stores it with the authenticated user
                     List<String> groupChatIDs = user.getList("groupChatID");
                     if (groupChatIDs != null) {
                         groupChatIDs = user.getList("groupChatID");
@@ -129,61 +134,46 @@ public class DetailEventActivity extends AppCompatActivity {
                     user.put("groupChatID", groupChatIDs);
                     user.saveInBackground();
 
-
-                    DatabaseReference ref = database.getReference("group_chats");
-                    // todo: will be useful for finding gc to update messages with
-                    ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            final boolean[] groupChatExist = {false};
-
-                            task.getResult().getChildren().forEach(dataSnapshot -> {
-                                GroupChat groupChat = dataSnapshot.getValue(GroupChat.class);
-                                if (groupChatID.equals(groupChat.getId())) {
-                                    //it already exist in the data base
-                                    groupChatExist[0] = true;
-                                }
-                            });
-
-                            if (groupChatExist[0]) {
-                                Log.i("DetailEventActivity", "onComplete: add user to existing group chat" );
-
-                            } else {
-                                List<User> users = new ArrayList<>();
-                                User firstUser = new User(user.getObjectId(), user.getUsername(), user.getString("screenName"));
-                                users.add(firstUser);
-
-                                List<Message> messages = new ArrayList<>();
-                                messages.add(new Message("Hi", firstUser));
-                                ref.push().setValue(new GroupChat(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, users, messages));
+                    // Determines if a groupchat exist
+                    AtomicBoolean groupChatExist = new AtomicBoolean(false);
+                    AtomicReference<String> groupDetailKey = new AtomicReference<>();
+                    groupDetailsRef.get().addOnCompleteListener(task -> {
+                        for (DataSnapshot child : task.getResult().getChildren()) {
+                            if (groupChatID.equals(child.child("id").getValue())) {
+                                groupChatExist.set(true);
+                                groupDetailKey.set(child.getKey());
+                                Log.i("DetailEventActivity", "onClick: " + groupDetailKey.get());
+                                break;
                             }
                         }
-                    });
-                } else if(isInterested.get() && inGroupChat.get()) {
-                    Toast.makeText(DetailEventActivity.this, "Already in the groupchat", Toast.LENGTH_SHORT).show();
 
+
+                        if (groupChatExist.get()) {
+                            DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
+                            appendUser.push().setValue(user.getObjectId());
+                            //todo: send to groupchat page
+
+                        } else {
+                            Message firstMessage = new Message("Hi!", user.getObjectId());
+                            DatabaseReference push = groupDetailsRef.push();
+                            push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
+                                DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
+                                detailMembers.push().setValue(user.getObjectId());
+                                Log.i("detailEventActiviy", "onClick: " + push.getKey());
+                            });
+                            groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
+                            //todo: send to gorupchat page
+                        }
+                    });
+
+                } else if (isInterested.get() && inGroupChat.get()) {
+                    Toast.makeText(DetailEventActivity.this, "Already in the groupchat", Toast.LENGTH_SHORT).show();
+                    //todo: send to gc page
 
                 } else {
                     Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
+
                 }
-
-
-
-
-
-                //check if the group chat exist already by querying the "groupchat" path for an id that == the group chat id
-
-                    //use this instance of the group chat
-                    //check if current user has been added to the group chat
-                // if not, create the group chat
-
-
-
-//                DatabaseReference myRef = database.getReference("hello"); //think you can put your own path in that
-//                Conversation conversation = new Conversation();
-//                conversation.isGroupChat = true;
-//                conversation.preview = "deez Nutz";
-//                myRef.setValue(conversation);
             }
         });
 

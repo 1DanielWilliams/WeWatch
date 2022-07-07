@@ -4,25 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.capstone.R;
-import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.logOrSignActivity;
 import com.example.capstone.methods.LogInUser;
 import com.example.capstone.methods.OnETChange;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
-public class LogInActivity2 extends AppCompatActivity {
+public class PasswordLogInActivity extends AppCompatActivity {
 
     private Button btnCancelLogin;
     private Button btnLogin;
@@ -45,8 +37,8 @@ public class LogInActivity2 extends AppCompatActivity {
         OnETChange.buttonToBlack(etLoginPassword, btnLogin);
 
         btnCancelLogin.setOnClickListener(v -> {
-            Intent i = new Intent(LogInActivity2.this, logOrSignActivity.class);
-            NavUtils.navigateUpTo(LogInActivity2.this, i);
+            Intent i = new Intent(PasswordLogInActivity.this, logOrSignActivity.class);
+            NavUtils.navigateUpTo(PasswordLogInActivity.this, i);
         });
 
         // authenticates user and logs them in

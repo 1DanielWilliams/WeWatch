@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.example.capstone.R;
 import com.example.capstone.methods.OnETChange;
 
-public class LogInActivity1 extends AppCompatActivity {
+public class UsernameLogInActivity extends AppCompatActivity {
     
     private final String TAG = "LogInActivity1";
 
@@ -47,7 +47,7 @@ public class LogInActivity1 extends AppCompatActivity {
         btnCancelLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(LogInActivity1.this);
+                NavUtils.navigateUpFromSameTask(UsernameLogInActivity.this);
             }
         });
     }
@@ -58,11 +58,11 @@ public class LogInActivity1 extends AppCompatActivity {
         String logIn = etLoginUser.getText().toString();
 
         if (!logIn.equals("")) {
-            Intent i = new Intent(LogInActivity1.this, LogInActivity2.class);
+            Intent i = new Intent(UsernameLogInActivity.this, PasswordLogInActivity.class);
             i.putExtra("logIn", logIn);
             startActivity(i);
         } else {
-            Toast.makeText(LogInActivity1.this, "Enter a username or email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UsernameLogInActivity.this, "Enter a username or email", Toast.LENGTH_SHORT).show();
         }
     }
 }

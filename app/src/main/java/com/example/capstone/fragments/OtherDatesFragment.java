@@ -23,6 +23,8 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class OtherDatesFragment extends DialogFragment {
@@ -76,6 +78,7 @@ public class OtherDatesFragment extends DialogFragment {
         ImageButton iBtnUpFromDates = view.findViewById(R.id.iBtnUpFromDates);
         iBtnUpFromDates.setOnClickListener(v -> this.dismiss());
 
+
         allDates = event.getDates();
         allAuthors = event.getUsers();
         allInterestedUsers = event.getInterestedUsers();
@@ -97,6 +100,7 @@ public class OtherDatesFragment extends DialogFragment {
                 //notify adapter changed
             }
         });
+
 
     }
 }

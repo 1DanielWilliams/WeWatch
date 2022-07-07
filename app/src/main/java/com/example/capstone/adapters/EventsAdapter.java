@@ -12,11 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.activities.DetailEventActivity;
+import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.models.Event;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
@@ -89,6 +92,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 Intent i = new Intent(context, DetailEventActivity.class);
                 i.putExtra("event", events.get(position));
                 context.startActivity(i);
+            });
+
+            btnDate.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
+                OtherDatesFragment otherDatesFragment = OtherDatesFragment.newInstance(events.get(position));
+                otherDatesFragment.show(fm, "other_dates");
             });
 
 
