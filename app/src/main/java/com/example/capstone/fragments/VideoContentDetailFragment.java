@@ -27,6 +27,7 @@ import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
+import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -65,6 +66,7 @@ public class VideoContentDetailFragment extends DialogFragment {
 
     private VideoContent videoContent;
     private ParseUser user;
+    private AtomicReference<List<VideoContent>> wishToWatch;
 
     public VideoContentDetailFragment() {
         // Required empty public constructor
@@ -134,7 +136,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         btnPostEvent.setOnClickListener(v -> postEvent() );
 
         //check if the user was already added it to their watch later
-        AtomicReference<List<VideoContent>> wishToWatch = new AtomicReference<>();
+        wishToWatch = new AtomicReference<>();
         wishToWatch.set(user.getList("wishToWatch"));
         if (wishToWatch.get() == null) {
             wishToWatch.set(new ArrayList<>());
@@ -168,6 +170,9 @@ public class VideoContentDetailFragment extends DialogFragment {
     }
 
     private void postEvent() {
+
+        RemoveFromWishToWatch.removeContent(wishToWatch.get(), user, videoContent);
+
         // Query to determine if the video is currently listed on the feed tab
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.whereEqualTo("title", event.getTitle());

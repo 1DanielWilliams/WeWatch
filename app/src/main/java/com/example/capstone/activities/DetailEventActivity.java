@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.OtherDatesFragment;
+import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
@@ -89,7 +90,13 @@ public class DetailEventActivity extends AppCompatActivity {
 
         assignDataToViews();
 
-        iBtnInterested.setOnClickListener(v -> onInterestedClick());
+        iBtnInterested.setOnClickListener(v -> {
+            try {
+                onInterestedClick();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
 
         iBtnDelete.setOnClickListener(v -> {
             // should check if there are any other times, then delete whole event if there arent
@@ -110,7 +117,6 @@ public class DetailEventActivity extends AppCompatActivity {
 
 
                 DatabaseReference groupDetailsRef = database.getReference("group_details");
-                DatabaseReference usersRef = database.getReference("users");
                 DatabaseReference groupMessagesRef= database.getReference("group_messages");
 
                 //Checks if the user has already been added to the group chat
@@ -189,9 +195,16 @@ public class DetailEventActivity extends AppCompatActivity {
 
     }
 
-    private void onInterestedClick() {
+    private void onInterestedClick() throws ParseException {
         if (!isInterested.get()) {
             isInterested.set(true);
+
+            ParseUser user = ParseUser.getCurrentUser();
+            VideoContent videoContent = event.getVideContent().fetchIfNeeded();
+            List<VideoContent> wishToWatch = user.getList("wishToWatch");
+
+            RemoveFromWishToWatch.removeContent(wishToWatch, user, videoContent);
+
             event.setNumInterested(event.getNumInterested() + 1);
             interestedUsers.get(event.getEarliestUserIndex()).add(ParseUser.getCurrentUser());
             event.setInterestedUsers(interestedUsers);
