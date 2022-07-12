@@ -17,6 +17,7 @@ import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
+import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
@@ -85,6 +86,21 @@ public class FeedActivity extends AppCompatActivity {
                         List<String> IDs = parseUser.getList("groupChatID");
                         IDs.remove(IDs.indexOf(groupChatID));
                         parseUser.put("groupChatID", IDs);
+                        List<VideoContent> watchedContent = parseUser.getList("watchedContent");
+                        if (watchedContent == null) {
+                            watchedContent = new ArrayList<>();
+                        }
+
+                        try {
+                            VideoContent content = event.getVideContent().fetch();
+                            if (!watchedContent.contains(content)) {
+                                watchedContent.add(content);
+                                parseUser.put("watchedContent", watchedContent);
+                            }
+                        } catch (com.parse.ParseException ex) {
+                            ex.printStackTrace();
+                        }
+
                         parseUser.saveInBackground();
                     }));
 
@@ -131,6 +147,7 @@ public class FeedActivity extends AppCompatActivity {
 
                     event.saveInBackground();
 
+                    // todo similar to top
                     //removes groupID from the parse users
                     String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
                     ParseQuery<ParseUser> parseUserQuery = ParseUser.getQuery();
@@ -141,6 +158,22 @@ public class FeedActivity extends AppCompatActivity {
                         List<String> IDs = parseUser.getList("groupChatID");
                         IDs.remove(IDs.indexOf(groupChatID));
                         parseUser.put("groupChatID", IDs);
+
+                        List<VideoContent> watchedContent = parseUser.getList("watchedContent");
+                        if (watchedContent == null) {
+                            watchedContent = new ArrayList<>();
+                        }
+
+                        try {
+                            VideoContent content = event.getVideContent().fetch();
+                            if (!watchedContent.contains(content)) {
+                                watchedContent.add(content);
+                                parseUser.put("watchedContent", watchedContent);
+                            }
+                        } catch (com.parse.ParseException ex) {
+                            ex.printStackTrace();
+                        }
+
                         parseUser.saveInBackground();
                     }));
 

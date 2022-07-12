@@ -105,6 +105,8 @@ public class NavigationMethods {
             Intent i;
             if (item.getItemId() == R.id.option_profile) {
                 i = new Intent(context, ProfileActivity.class);
+                String userID = ParseUser.getCurrentUser().getObjectId();
+                i.putExtra("id", userID);
                 context.startActivity(i);
                 return true;
             } else if (item.getItemId() == R.id.option_logout) {
@@ -112,19 +114,9 @@ public class NavigationMethods {
                 i = new Intent(context, logOrSignActivity.class);
                 context.startActivity(i);
                 return true;
-            } else {
-                Log.i("FeedActivity", "onMenuItemClick: hit default " + item.getItemId());
-                return false;
             }
+            return false;
 
-        });
-
-        // TODO: do i need this?
-        popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
-            @Override
-            public void onDismiss(PopupMenu menu) {
-
-            }
         });
 
         popup.show();

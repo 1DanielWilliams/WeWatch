@@ -43,7 +43,7 @@
     <!--    TOOLBAR-->
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/tvScreenNameProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -64,11 +64,11 @@
         android:text="watched"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton2"
+        app:layout_constraintEnd_toStartOf="@+id/iBtnLogoutMenu"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/iBtnLogoutMenu"
         android:layout_width="27dp"
         android:layout_height="57dp"
         android:layout_marginTop="76dp"
@@ -89,11 +89,11 @@
         android:text="friends"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/textView21"
+        app:layout_constraintStart_toEndOf="@+id/tvNumFriendsProfile"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <TextView
-        android:id="@+id/textView21"
+        android:id="@+id/tvNumFriendsProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -101,15 +101,15 @@
         android:text="20"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/textView19"
+        app:layout_constraintStart_toEndOf="@+id/tvScreenNameProfile"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <TextView
-        android:id="@+id/textView24"
+        android:id="@+id/tvNumWatchedProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="5dp"
         android:text="10"
         android:textColor="@android:color/black"
         android:textSize="16sp"
@@ -117,68 +117,40 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <TextView
-        android:id="@+id/textView20"
+        android:id="@+id/tvUsernameProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:text="\@daniel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+        app:layout_constraintTop_toBottomOf="@+id/tvScreenNameProfile" />
 
     <View
-        android:id="@+id/view"
-        android:layout_width="130dp"
+        android:id="@+id/vWatchedLine"
+        android:layout_width="204dp"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="16dp"
         android:background="@android:color/black"
-        android:backgroundTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/btnWatchedContent" />
 
     <View
-        android:id="@+id/view2"
-        android:layout_width="152dp"
-        android:layout_height="1dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
-
-    <View
-        android:id="@+id/view3"
-        android:layout_width="129dp"
+        android:id="@+id/vWishToSeeLine"
+        android:layout_width="206dp"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="16dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/btnWishToSee" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="120dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="96dp"
-        android:backgroundTint="@android:color/transparent"
-        android:padding="0dp"
-        android:stateListAnimator="@null"
-        android:text="Interested in"
-        android:textAllCaps="false"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        app:iconPadding="0dp"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
-    <Button
-        android:id="@+id/button5"
+        android:id="@+id/btnWishToSee"
         android:layout_width="95dp"
         android:layout_height="33dp"
         android:layout_marginTop="96dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="48dp"
         android:backgroundTint="@android:color/transparent"
         android:padding="0dp"
         android:stateListAnimator="@null"
@@ -188,13 +160,13 @@
         android:textSize="16sp"
         app:iconPadding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+        app:layout_constraintTop_toBottomOf="@+id/tvUsernameProfile" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnWatchedContent"
         android:layout_width="95dp"
         android:layout_height="33dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="96dp"
         android:backgroundTint="@android:color/transparent"
         android:padding="0dp"
@@ -206,13 +178,16 @@
         android:textStyle="bold"
         app:iconPadding="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+        app:layout_constraintTop_toBottomOf="@+id/tvUsernameProfile" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="409dp"
-        android:layout_height="411dp"
+        android:id="@+id/rvWatchedContent"
+        android:layout_width="match_parent"
+        android:layout_height="555dp"
+        android:layout_marginTop="1dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
+        app:layout_constraintTop_toBottomOf="@+id/vWatchedLine" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

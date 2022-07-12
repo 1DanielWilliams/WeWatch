@@ -56,7 +56,7 @@
         app:strokeWidth="2dp" />
 
     <View
-        android:id="@+id/view"
+        android:id="@+id/vWatchedLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"

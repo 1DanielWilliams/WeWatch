@@ -31,7 +31,6 @@ public class VideoContent extends ParseObject {
     public static final String KEY_POSTER_URL = "posterUrl";
     public static final String KEY_BACKDROP_URL = "backdropUrl";
     public static final String KEY_TMDB_ID = "tmdbID";
-//    public List<String> platforms;
 
     public VideoContent() {}
 
