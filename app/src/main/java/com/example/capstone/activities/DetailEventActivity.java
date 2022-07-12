@@ -151,7 +151,9 @@ public class DetailEventActivity extends AppCompatActivity {
                         if (groupChatExist.get()) {
                             DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
                             appendUser.push().setValue(user.getObjectId());
-                            //todo: send to groupchat page
+                            Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
+                            i.putExtra("group_id", groupChatID);
+                            startActivity(i);
 
                         } else {
                             Message firstMessage = new Message("Hi!", user.getObjectId());
@@ -162,17 +164,19 @@ public class DetailEventActivity extends AppCompatActivity {
                                 Log.i("detailEventActiviy", "onClick: " + push.getKey());
                             });
                             groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
-                            //todo: send to gorupchat page
+                            Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
+                            i.putExtra("group_id", groupChatID);
+                            startActivity(i);
                         }
                     });
 
                 } else if (isInterested.get() && inGroupChat.get()) {
-                    Toast.makeText(DetailEventActivity.this, "Already in the groupchat", Toast.LENGTH_SHORT).show();
-                    //todo: send to gc page
+                    Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
+                    i.putExtra("group_id", groupChatID);
+                    startActivity(i);
 
                 } else {
                     Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
-
                 }
             }
         });

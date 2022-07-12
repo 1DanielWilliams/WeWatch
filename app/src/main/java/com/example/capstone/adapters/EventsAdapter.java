@@ -20,7 +20,9 @@ import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.activities.DetailEventActivity;
 import com.example.capstone.fragments.OtherDatesFragment;
+import com.example.capstone.methods.DisplayPlatforms;
 import com.example.capstone.models.Event;
+import com.example.capstone.models.VideoContent;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -67,10 +69,17 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         TextView tvTypeOfContent;
         TextView tvNumInterested;
         TextView tvOtherDates;
-
         ImageView ivBackdropEvent;
         Button btnDate;
         Button btnLive;
+        ImageView ivFirstPlatformEvent;
+        ImageView ivSecondPlatformEvent;
+        ImageView ivThirdPlatformEvent;
+        ImageView ivFourthPlatformEvent;
+        TextView tvNumPlatformsLeft;
+        TextView tvAvailableOnEvent;
+
+
 
         public ViewHolder (@NonNull View itemView) {
             super(itemView);
@@ -84,7 +93,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             btnDate = itemView.findViewById(R.id.btnDate);
             btnLive = itemView.findViewById(R.id.btnLive);
             tvOtherDates = itemView.findViewById(R.id.tvOtherDates);
-
+            ivFirstPlatformEvent = itemView.findViewById(R.id.ivFirstPlatformEvent);
+            ivSecondPlatformEvent = itemView.findViewById(R.id.ivSecondPlatformEvent);
+            ivThirdPlatformEvent = itemView.findViewById(R.id.ivThirdPlatformEvent);
+            ivFourthPlatformEvent = itemView.findViewById(R.id.ivFourthPlatformEvent);
+            tvNumPlatformsLeft = itemView.findViewById(R.id.tvNumPlatformsLeft);
+            tvAvailableOnEvent = itemView.findViewById(R.id.tvAvailableOnEvent);
 
 
             itemView.setOnClickListener(v -> {
@@ -111,6 +125,37 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             tvTypeOfContent.setText(event.getTypeOfContent());
             tvTitleEvent.setText(event.getTitle());
             tvNumInterested.setText(String.valueOf(event.getInterestedUsers().get(event.getEarliestUserIndex()).size()) + " attending");
+
+            VideoContent videoContent = event.getVideContent().fetchIfNeeded();
+            List<String> platforms = videoContent.getPlatforms();
+            int platformSize = platforms.size();
+            if (platformSize > 0) {
+                int numFeatured = 1;
+                for (String platform : platforms) {
+                    if (numFeatured == 1) {
+                        DisplayPlatforms.displayIcon(ivFirstPlatformEvent, platform);
+                    } else if (numFeatured == 2) {
+                        DisplayPlatforms.displayIcon(ivSecondPlatformEvent, platform);
+                    } else if (numFeatured == 3) {
+                        DisplayPlatforms.displayIcon(ivThirdPlatformEvent, platform);
+                    } else if (numFeatured == 4) {
+                        DisplayPlatforms.displayIcon(ivFourthPlatformEvent, platform);
+                    }
+                    numFeatured++;
+                }
+                int numPlatformsLeft = platforms.size() - numFeatured;
+                if (numPlatformsLeft < 1) {
+                    tvNumPlatformsLeft.setText("");
+                } else {
+                    tvNumPlatformsLeft.setText("+ " + numPlatformsLeft);
+                }
+            } else {
+                tvAvailableOnEvent.setText("");
+                tvNumPlatformsLeft.setText("");
+            }
+
+
+
 
             // todo: needs placeholder
             Glide.with(context).load(event.getBackdropUrl()).into(ivBackdropEvent);

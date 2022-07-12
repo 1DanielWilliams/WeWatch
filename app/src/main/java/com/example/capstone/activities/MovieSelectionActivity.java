@@ -17,6 +17,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
 import com.example.capstone.adapters.MoviesAdapter;
+import com.example.capstone.enums.Platforms;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
@@ -27,13 +28,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import okhttp3.Headers;
 
 public class MovieSelectionActivity extends AppCompatActivity {
 
-    private final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
+    public static final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
     private final String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_KEY + "&language=en-US";
+
 
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
@@ -43,6 +47,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
     private MoviesAdapter adapter;
     private List<VideoContent> allMovies;
     private AsyncHttpClient client;
+
 
 
 
@@ -81,10 +86,44 @@ public class MovieSelectionActivity extends AppCompatActivity {
                     JSONArray results = jsonObject.getJSONArray("results");
 
                     allMovies.addAll(VideoContent.fromJsonArray(results, "Movie"));
-                    adapter.notifyDataSetChanged();
+                    int size = allMovies.size();
+
+                    for (int i = 0; i < size; i++) {
+                        VideoContent movie = allMovies.get(i);
+                        int id = movie.getTmdbID();
+                        String watchProvidersUrl = "https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
+                        int finalI = i;
+                        client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                JSONObject object = json.jsonObject;
+                                List<String> platforms = new ArrayList<>();
+                                try {
+                                    JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
+
+                                    for (int i = 0; i < results.length(); i++) {
+                                        JSONObject platform = results.getJSONObject(i);
+                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
+                                        platforms.add(platform.get("provider_name").toString());
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                movie.setPlatforms(platforms);
+                                adapter.notifyItemInserted(finalI);
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("MovieSelectionAdctiit", "onFailure: ", throwable);
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);
                 }
+
 
             }
 
@@ -93,7 +132,6 @@ public class MovieSelectionActivity extends AppCompatActivity {
                 Log.e("MovieSelectionActivity", "onFailure: ", throwable);
             }
         });
-        // Do something to add to the rv
     }
 
 

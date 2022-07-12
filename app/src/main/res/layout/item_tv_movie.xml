@@ -40,26 +40,28 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/ivFirst"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="39dp"
         android:layout_marginEnd="4dp"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toStartOf="@+id/textView32"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/netflix"
-        tools:srcCompat="@drawable/netflix" />
+        app:srcCompat="@null"
+        tools:srcCompat="@null" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/ivSecond"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="39dp"
         android:layout_marginEnd="4dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageView10"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/ivFirst"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hulu"
-        tools:srcCompat="@drawable/hulu" />
+        app:srcCompat="@null"
+        tools:srcCompat="@null" />
 
     <TextView
         android:id="@+id/tvTitleVideoContent"

@@ -3,6 +3,7 @@ package com.example.capstone.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,8 +49,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +73,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
 
         upArrowProfile.setOnClickListener(v -> {
-            Intent i = new Intent(this, ConversationActivity.class);
-            startActivity(i);
+            NavUtils.navigateUpFromSameTask(this);
+//            Intent i = new Intent(this, ConversationActivity.class);
+//            startActivity(i);
         });
 
         // Formats the group chats name
@@ -109,10 +109,12 @@ public class ConversationDetailActivity extends AppCompatActivity {
                             long date = (long) messageChild.child("date_time").getValue();
                             Message message = new Message(messageContent, senderID, date);
                             allMessages.add(0, message);
+//                            adapter.notifyItemInserted(0);
                         }
                     }
                 }
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override

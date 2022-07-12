@@ -70,7 +70,6 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(rvTVshows);
 
         client = new AsyncHttpClient();
-
         client.get(POPULAR_URL, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -78,14 +77,44 @@ public class TVShowSelectionActivity extends AppCompatActivity {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
+                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
 
                     allTVShows.addAll(VideoContent.fromJsonArray(results, "TV Show"));
-//                    Log.i("MovieSelectionActivity", "onSuccess: " + allTVShows.size());
-                    adapter.notifyDataSetChanged();
+                    int size = allTVShows.size();
+                    for (int i = 0; i < size; i++) {
+                        VideoContent tvShow = allTVShows.get(i);
+                        int id = tvShow.getTmdbID();
+                        String watchProvidersUrl = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
+                        client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                JSONObject object = json.jsonObject;
+                                List<String> platforms = new ArrayList<>();
+                                try {
+                                    JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
+                                    for (int i = 0; i < results.length(); i++) {
+                                        JSONObject platform = results.getJSONObject(i);
+                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
+                                        platforms.add(platform.get("provider_name").toString());
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                tvShow.setPlatforms(platforms);
+
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("TVShowselectionActivity", "onFailure: ", throwable);
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);
                 }
+                adapter.notifyDataSetChanged();
             }
 
             @Override

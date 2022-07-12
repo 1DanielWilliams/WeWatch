@@ -2,12 +2,18 @@ package com.example.capstone.adapters;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capstone.R;
@@ -15,6 +21,7 @@ import com.example.capstone.models.Message;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +47,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Message message = messages.get(position);
         holder.bind(message);
+        holder.tvMessageContent.setTag(message.getSenderID());
     }
 
     @Override
@@ -52,6 +60,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         private TextView tvScreenNameMessage;
         private TextView tvDateTIme;
         private TextView tvUsernameMessage;
+        private ConstraintLayout cvItemMessage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,18 +69,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             tvScreenNameMessage = itemView.findViewById(R.id.tvScreenNameMessage);
             tvDateTIme = itemView.findViewById(R.id.tvDateTIme);
             tvUsernameMessage = itemView.findViewById(R.id.tvUsernameMessage);
-            //change where the layout is depending on who sent it
+            cvItemMessage = itemView.findViewById(R.id.cvItemMessage);
 
             }
 
         public void bind(Message message) {
             // bind data to views
-
+            int position = getBindingAdapterPosition();
             tvMessageContent.setText(message.getMessage_content());
-            String[] date = new Date(message.getDate_time()).toString().split(" ");
-            String[] fullTime = date[3].split(":");
+            Date date = new Date(message.getDate_time());
+            String[] dateStr = date.toString().split(" ");
+            String[] fullTime = dateStr[3].split(":");
             String time = fullTime[0] + ":" + fullTime[1];
-            tvDateTIme.setText(date[0] + " " + date[1] + " " + date[2] + " " + time);
+            tvDateTIme.setText(dateStr[0] + " " + dateStr[1] + " " + dateStr[2] + " " + time);
             ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
             query.whereEqualTo("objectId", message.getSenderID());
             query.findInBackground((users, e) -> {
@@ -81,10 +91,31 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
             // Changes how the text message appears depending on who sent it
             if (Objects.equals(ParseUser.getCurrentUser().getObjectId(), message.getSenderID())) {
-
                 tvMessageContent.setBackgroundResource(R.drawable.bg_send_message);
-
+                ConstraintSet constraintSet = new ConstraintSet();
+                constraintSet.clone(cvItemMessage);
+                constraintSet.clear(tvMessageContent.getId());
+                constraintSet.applyTo(cvItemMessage);
+                cvItemMessage.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.END));
             }
+
+            // check if the message two above is of the same id, if not remove the bottom padding
+
+            // removes message details if message before it is the same person
+            if (position != messages.size() - 1) {
+                Message lastMessage = messages.get(position + 1);
+                Date lastDate = new Date(message.getDate_time());
+                if (Objects.equals(lastMessage.getSenderID(), message.getSenderID()) && lastDate.toInstant().plus(Duration.ofHours(1)).isAfter(date.toInstant())) {
+                    tvScreenNameMessage.setVisibility(View.GONE);
+                    tvDateTIme.setVisibility(View.GONE);
+                    tvUsernameMessage.setVisibility(View.GONE);
+                    int right_px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics());
+                    int bottom_px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
+
+                    cvItemMessage.setPadding(0, 0, right_px, bottom_px);
+                }
+            }
+
 
         }
     }

@@ -11,16 +11,22 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
+import com.example.capstone.activities.MovieSelectionActivity;
+import com.example.capstone.activities.TVShowSelectionActivity;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -36,10 +42,17 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.Headers;
 
 public class VideoContentDetailFragment extends DialogFragment {
 
@@ -95,8 +108,12 @@ public class VideoContentDetailFragment extends DialogFragment {
         tvOverview.setText(videoContent.getOverview());
 
         ImageView ivPoster = view.findViewById(R.id.ivPoster);
+        int width_px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 375, getContext().getResources().getDisplayMetrics());
+        int height_px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550, getContext().getResources().getDisplayMetrics());
+
+
         Glide.with(view).load(posterUrl)
-                .override(1000, 1400)
+                .override(width_px, height_px)
                 .into(ivPoster);
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));
 
@@ -120,10 +137,11 @@ public class VideoContentDetailFragment extends DialogFragment {
                 return;
             }
 
+            //new event
             if (events.size() == 0) {
                 event.saveInBackground(e1 -> {
                     if (e1 != null) {
-                        Log.e("fragment", "done: trouble finding event", e);
+                        Log.e("fragment", "done: trouble finding event", e1);
                         return;
                     }
                     Intent i = new Intent(getContext(), FeedActivity.class);
@@ -178,12 +196,11 @@ public class VideoContentDetailFragment extends DialogFragment {
 
         queriedEvent.setInterestedUsers(interestedUsers);
 
-        // Changes the
+        // Updates the earliest date if needed
         if (event.getEarliestDate().before(queriedEvent.getEarliestDate())) {
             queriedEvent.setEarliestDate(event.getEarliestDate());
             queriedEvent.setEarliestUserIndex(userIndex);
         }
-
 
         //add to the dates array at proper index
         List<String> dates = queriedEvent.getDates();
@@ -246,11 +263,22 @@ public class VideoContentDetailFragment extends DialogFragment {
             } else {
                 strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " AM";
             }
-
-            date.setHours(timePicker.getHour());
-            date.setMinutes(timePicker.getMinute());
-
-            event = createEvent(date);
+            String[] s = strDateTime.split(":");
+            String[] newDateArr = s[0].split(" ");
+            newDateArr[2] = String.valueOf(timePicker.getHour());
+            String militaryDateTimeStr = newDateArr[0] + " " + newDateArr[1] + " " + newDateArr[2] + ":" + s[1];
+            try {
+                Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(militaryDateTimeStr + " 2022");
+                Date currDate = new Date(System.currentTimeMillis());
+                Log.i("VideoContentDetailFragment", "onDateSelected: " + newDate.toString() + " curr: " + currDate.toString());
+                if (newDate.before(currDate)) {
+                    Toast.makeText(getActivity(), "Cannot select a time in the past", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                event = createEvent(newDate);
+            } catch (java.text.ParseException e) {
+                e.printStackTrace();
+            }
             List<String> dates = new ArrayList<>();
             dates.add(strDateTime);
             event.setDates(dates);

@@ -1,5 +1,10 @@
 package com.example.capstone.models;
 
+import android.util.Log;
+
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.capstone.activities.MovieSelectionActivity;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -10,6 +15,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.Headers;
 
 @ParseClassName("VideoContent")
 public class VideoContent extends ParseObject {
@@ -23,6 +30,8 @@ public class VideoContent extends ParseObject {
     public static final String KEY_NUM_INTERESTED_IN = "numInterestedIn";
     public static final String KEY_POSTER_URL = "posterUrl";
     public static final String KEY_BACKDROP_URL = "backdropUrl";
+    public static final String KEY_TMDB_ID = "tmdbID";
+//    public List<String> platforms;
 
     public VideoContent() {}
 
@@ -38,7 +47,11 @@ public class VideoContent extends ParseObject {
     public void setOverview(String overview) {put(KEY_OVERVIEW, overview); }
     public String getOverview() {return getString(KEY_OVERVIEW); }
 
-    //TODO: get streamable platforms
+    public void setTmdbID(int tmdbID) { put(KEY_TMDB_ID, tmdbID); }
+    public int getTmdbID() {return getInt(KEY_TMDB_ID); }
+
+    public void setPlatforms(List<String> platforms) { put(KEY_PLATFORMS, platforms); }
+    public List<String> getPlatforms() {return getList(KEY_PLATFORMS); }
 
     public void setNumPosted(int numPosted) {put(KEY_NUM_POSTED, numPosted); }
     public int getNumPosted() {return getInt(KEY_NUM_POSTED); }
@@ -58,15 +71,73 @@ public class VideoContent extends ParseObject {
         } else if (Objects.equals(typeOfContent, "TV Show")){
             setTitle(jsonObject.getString("name"));
         }
+        int id = jsonObject.getInt("id");
+        setTmdbID(id);
         setVoteAverage(jsonObject.getDouble("vote_average"));
         setOverview(jsonObject.getString("overview"));
         setTypeOfContent(typeOfContent);
-        // assumes this is a new VideoContent being pushed to back4App
         setNumPosted(1);
         setNumInterestedIn(1);
 
         setPosterUrl(String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("poster_path")));
         setBackdropUrl(String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("backdrop_path")));
+
+        //Adds to the platform array
+        AsyncHttpClient client = new AsyncHttpClient();
+//        if(Objects.equals(typeOfContent, "Movie")) {
+//            String watchProvidersUrl = "https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
+//            client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int statusCode, Headers headers, JSON json) {
+//                    JSONObject object = json.jsonObject;
+//                    List<String> platforms = new ArrayList<>();
+//                    try {
+//                        JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
+//                        for (int i = 0; i < results.length(); i++) {
+//                            JSONObject platform = results.getJSONObject(i);
+//                            Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
+//                            platforms.add(platform.get("provider_name").toString());
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    setPlatforms(platforms);
+//                }
+//
+//                @Override
+//                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+//
+//                }
+//            });
+//        } else if (Objects.equals(typeOfContent, "TV Show")) {
+//            String watchProvidersUrl = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
+//            client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int statusCode, Headers headers, JSON json) {
+//                    JSONObject object = json.jsonObject;
+//                    List<String> platforms = new ArrayList<>();
+//                    try {
+//                        JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
+//                        for (int i = 0; i < results.length(); i++) {
+//                            JSONObject platform = results.getJSONObject(i);
+//                            Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
+//                            platforms.add(platform.get("provider_name").toString());
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    setPlatforms(platforms);
+//                }
+//
+//                @Override
+//                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+//
+//                }
+//            });
+//        }
+
     }
 
     public static List<VideoContent> fromJsonArray(JSONArray videContentJsonArray, String typeOfContent) throws JSONException {

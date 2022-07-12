@@ -1,54 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content">-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_gravity="start">
 
-    <TextView
-        android:id="@+id/tvMessageContent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cvItemMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/bg_receive_message"
-        android:maxWidth="250dp"
-        android:padding="16dp"
-        android:text="Hello"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDateTIme" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvScreenNameMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Daniel"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tvMessageContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_receive_message"
+            android:maxWidth="250dp"
+            android:padding="16dp"
+            android:text="Hello"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDateTIme" />
 
-    <TextView
-        android:id="@+id/tvDateTIme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Jul 9 12:09"
-        android:textSize="11sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvScreenNameMessage" />
+        <TextView
+            android:id="@+id/tvScreenNameMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daniel"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvUsernameMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="20dp"
-        android:text="\@daniel"
-        android:textSize="10sp"
-        app:layout_constraintStart_toEndOf="@+id/tvScreenNameMessage"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tvDateTIme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jul 9 12:09"
+            android:textSize="11sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvScreenNameMessage" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvUsernameMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:text="\@daniel"
+            android:textSize="10sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/tvScreenNameMessage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->

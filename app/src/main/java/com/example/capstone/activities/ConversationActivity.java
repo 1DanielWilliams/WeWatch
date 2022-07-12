@@ -1,5 +1,6 @@
 package com.example.capstone.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,8 +18,11 @@ import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -49,7 +53,12 @@ public class ConversationActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         rvMessages = findViewById(R.id.rvMessages);
 
-        user = ParseUser.getCurrentUser();
+        try {
+            user = ParseUser.getCurrentUser().fetch();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         database = FirebaseDatabase.getInstance();
         groupDetailsRef = database.getReference("group_details");
         allGroupDetails = new ArrayList<>();
@@ -65,31 +74,37 @@ public class ConversationActivity extends AppCompatActivity {
 
         List<String> groupChatIDs = user.getList("groupChatID");
         if (groupChatIDs != null) {
-            groupDetailsRef.get().addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.e("ConversationActivity", "Error getting data ", task.getException());
-                    return;
-                }
-                // Finds the groupChats relevant to the user and adds it to the adapter
-                for (DataSnapshot child : task.getResult().getChildren()) {
-                    // the authenticated user is in this group
-                    String id = child.child("id").getValue().toString();
-                    if (groupChatIDs.contains(id)) {
-                        Message message = child.child("message").getValue(Message.class);
-                        GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message);
-                        allGroupDetails.add(groupDetail);
+            groupDetailsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    allGroupDetails.clear();
+                    adapter.notifyDataSetChanged();
+                    // Finds the groupChats relevant to the user and adds it to the adapter
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        // the authenticated user is in this group
+                        String id = child.child("id").getValue().toString();
+                        if (groupChatIDs.contains(id)) {
+                            Message message = child.child("message").getValue(Message.class);
+                            GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message);
+                            allGroupDetails.add(groupDetail);
+                        }
                     }
+                    // Sorts the list by the message date
+                    allGroupDetails.sort((firstGd, secondGd) -> {
+                        if (firstGd == null || secondGd == null) {
+                            return 0;
+                        }
+                        Date firstDate = new Date(firstGd.getMessage().getDate_time());
+                        Date secondDate = new Date(secondGd.getMessage().getDate_time());
+                        return secondDate.compareTo(firstDate);
+                    });
+                    adapter.notifyDataSetChanged();
                 }
-                // Sorts the list by the message date
-                allGroupDetails.sort((firstGd, secondGd) -> {
-                    if (firstGd == null || secondGd == null) {
-                        return 0;
-                    }
-                    Date firstDate = new Date(firstGd.getMessage().getDate_time());
-                    Date secondDate = new Date(secondGd.getMessage().getDate_time());
-                    return secondDate.compareTo(firstDate);
-                });
-                adapter.notifyDataSetChanged();
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
             });
 
         } else {
