@@ -51,6 +51,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import okhttp3.Headers;
 
@@ -61,6 +64,7 @@ public class VideoContentDetailFragment extends DialogFragment {
     private Event event;
 
     private VideoContent videoContent;
+    private ParseUser user;
 
     public VideoContentDetailFragment() {
         // Required empty public constructor
@@ -99,6 +103,13 @@ public class VideoContentDetailFragment extends DialogFragment {
         Button btnSelectDate = view.findViewById(R.id.btnSelectDate);
         Button btnPostEvent = view.findViewById(R.id.btnPostEvent);
         TextView tvDateBtn= view.findViewById(R.id.tvDateBtn);
+        Button btnWatchLater = view.findViewById(R.id.btnWatchLater);
+
+        try {
+            user = ParseUser.getCurrentUser().fetch();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         String title = videoContent.getTitle();
         String posterUrl = videoContent.getPosterUrl();
@@ -121,6 +132,38 @@ public class VideoContentDetailFragment extends DialogFragment {
         btnSelectDate.setOnClickListener(v -> onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent) );
 
         btnPostEvent.setOnClickListener(v -> postEvent() );
+
+        //check if the user was already added it to their watch later
+        AtomicReference<List<VideoContent>> wishToWatch = new AtomicReference<>();
+        wishToWatch.set(user.getList("wishToWatch"));
+        if (wishToWatch.get() == null) {
+            wishToWatch.set(new ArrayList<>());
+        }
+
+        // determines if the user has already added this content to their wishToWatch
+        AtomicBoolean inWishToWatch = new AtomicBoolean(false);
+        wishToWatch.get().forEach(wishVideoContent -> {
+            try {
+                VideoContent wishToWatchContent = wishVideoContent.fetchIfNeeded();
+                if (Objects.equals(wishToWatchContent.getTitle(), videoContent.getTitle())) {
+                    inWishToWatch.set(true);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+
+        if (!inWishToWatch.get()) {
+            btnWatchLater.setVisibility(View.VISIBLE);
+        }
+
+        btnWatchLater.setOnClickListener(v -> {
+            wishToWatch.get().add(videoContent);
+            user.put("wishToWatch", wishToWatch.get());
+            user.saveInBackground();
+            btnWatchLater.setVisibility(View.GONE);
+        });
+
 
     }
 
