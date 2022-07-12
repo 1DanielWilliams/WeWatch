@@ -72,11 +72,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);
 
-        upArrowProfile.setOnClickListener(v -> {
-            NavUtils.navigateUpFromSameTask(this);
-//            Intent i = new Intent(this, ConversationActivity.class);
-//            startActivity(i);
-        });
+        upArrowProfile.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(this) );
 
         // Formats the group chats name
         String groupChatId = getIntent().getStringExtra("group_id");

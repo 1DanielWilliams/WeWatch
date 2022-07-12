@@ -29,13 +29,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView32"
+        android:id="@+id/tvExtraPlatformsContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
         android:layout_marginEnd="16dp"
         android:text="+ 2"
         android:textColor="@android:color/white"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,9 +45,9 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="39dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="41dp"
         android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/textView32"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@null"
         tools:srcCompat="@null" />
@@ -77,13 +78,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/tvAvailableOnContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:layout_marginEnd="20dp"
         android:text="Available on:"
         android:textColor="@android:color/white"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

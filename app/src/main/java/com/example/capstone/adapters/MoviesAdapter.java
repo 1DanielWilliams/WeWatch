@@ -70,6 +70,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         ImageView tvBackdropVideoContent;
         ImageView ivFirst;
         ImageView ivSecond;
+        TextView tvAvailableOnContent;
+        TextView tvExtraPlatformsContent;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +81,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             tvBackdropVideoContent = itemView.findViewById(R.id.tvBackdropVideoContent);
             ivFirst = itemView.findViewById(R.id.ivFirst);
             ivSecond = itemView.findViewById(R.id.ivSecond);
+            tvAvailableOnContent = itemView.findViewById(R.id.tvAvailableOnContent);
+            tvExtraPlatformsContent = itemView.findViewById(R.id.tvExtraPlatformsContent);
             itemView.setOnClickListener(v -> onViewClicked() );
 
         }
@@ -88,66 +92,36 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             float voteAverage = movie.getVoteAverage().floatValue() / 2.0f;
             rbVoterAverageVideoContent.setRating(voteAverage);
             List<String> platforms = movie.getPlatforms();
-//            AsyncHttpClient client = new AsyncHttpClient();
-//            List<String> platforms = new ArrayList<>();
-//            int id = movie.getTmdbID();
-//            String watchProvidersUrl = "https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
-//            client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
-//                @Override
-//                public void onSuccess(int statusCode, Headers headers, JSON json) {
-//                    JSONObject object = json.jsonObject;
-//                    try {
-//                        JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
-//                        for (int i = 0; i < results.length(); i++) {
-//                            JSONObject platform = results.getJSONObject(i);
-//                            Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
-//                            platforms.add(platform.get("provider_name").toString());
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    movie.setPlatforms(platforms);
-//
-//                    int numFeatured = 1;
-//                    for (String platform : platforms) {
-//                        if (numFeatured == 1) {
-//                            DisplayPlatforms.displayIcon(ivFirst, platform);
-//                        } else if (numFeatured == 2) {
-//                            DisplayPlatforms.displayIcon(ivSecond, platform);
-//
-//                        } else if (numFeatured == 3) {
-////                    DisplayPlatforms.displayIcon(ivFirst, platform); w third iv
-//                        } else {
-//                            break;
-//                        }
-//                        numFeatured++;
-//                    }
-//
-//                }
-//
-//                @Override
-//                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-//
-//                }
-//            });
+
             if (platforms == null) {
                 Log.i("Movies", "bind: " + getBindingAdapterPosition());
             }
-            int numFeatured = 1;
-            for (String platform : platforms) {
-                if (numFeatured == 1) {
-                    DisplayPlatforms.displayIcon(ivFirst, platform);
-                } else if (numFeatured == 2) {
-                    DisplayPlatforms.displayIcon(ivSecond, platform);
+            int platformSize = platforms.size();
+            if (platformSize == 0) {
+                tvAvailableOnContent.setVisibility(View.GONE);
+                tvExtraPlatformsContent.setVisibility(View.GONE);
+            } else {
+                int numFeatured = 1;
+                for (String platform : platforms) {
+                    if (numFeatured == 1) {
+                        DisplayPlatforms.displayIcon(ivFirst, platform);
+                    } else if (numFeatured == 2) {
+                        DisplayPlatforms.displayIcon(ivSecond, platform);
 
-                } else if (numFeatured == 3) {
-//                    DisplayPlatforms.displayIcon(ivFirst, platform); w third iv
-                } else {
-                    break;
+                    } else {
+                        break;
+                    }
+                    numFeatured++;
                 }
-                numFeatured++;
+                int extraPlatforms = platformSize - numFeatured;
+                if (extraPlatforms < 1) {
+                    tvExtraPlatformsContent.setVisibility(View.GONE);
+                } else {
+                    tvExtraPlatformsContent.setText("+ " + String.valueOf(extraPlatforms));
+                }
             }
+
+
 
 
             // todo: have placeholder if it goes wrong
