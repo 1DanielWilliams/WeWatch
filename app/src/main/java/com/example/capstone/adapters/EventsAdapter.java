@@ -140,6 +140,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                         DisplayPlatforms.displayIcon(ivThirdPlatformEvent, platform);
                     } else if (numFeatured == 4) {
                         DisplayPlatforms.displayIcon(ivFourthPlatformEvent, platform);
+                    } else {
+                        break;
                     }
                     numFeatured++;
                 }

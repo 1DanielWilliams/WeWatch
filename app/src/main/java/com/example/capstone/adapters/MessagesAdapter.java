@@ -17,14 +17,30 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capstone.R;
+import com.example.capstone.methods.GroupChatMethods;
+import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
+import com.example.capstone.models.UserPublicColumns;
+import com.facebook.stetho.common.StringUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
     private Context context;
@@ -70,6 +86,70 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             tvDateTIme = itemView.findViewById(R.id.tvDateTIme);
             tvUsernameMessage = itemView.findViewById(R.id.tvUsernameMessage);
             cvItemMessage = itemView.findViewById(R.id.cvItemMessage);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference groupDetailsRef = database.getReference("group_details"); //todo
+                    int position = getBindingAdapterPosition();
+                    Message message = messages.get(position);
+
+                    ParseUser user = ParseUser.getCurrentUser();
+                    String toUserId = message.getSenderID();
+                    String currId = user.getObjectId();
+                    // some type of logic to put one in front of the other
+
+                    String dmID =  user.getObjectId() + " " + toUserId;
+                    char[] dmIDArray = dmID.toCharArray();
+                    Arrays.sort(dmIDArray);
+                    dmID = String.valueOf(dmIDArray);
+                    if (!Objects.equals(message.getSenderID(), ParseUser.getCurrentUser().getObjectId())) {
+                        //check if the dm already exist
+                        String finalDmID = dmID;
+                        groupDetailsRef.get().addOnCompleteListener(task -> {
+                            boolean chatExist = false;
+                            for (DataSnapshot child : task.getResult().getChildren()) {
+                                if (finalDmID.equals(child.child("id").getValue())) {
+                                    chatExist = true;
+                                }
+                            }
+
+                            if (!chatExist) {
+                                Message firstMessage = new Message("Hi!", user.getObjectId());
+                                DatabaseReference push = groupDetailsRef.push();
+                                push.setValue(new GroupDetail(message.getSenderID(), finalDmID, firstMessage)).addOnCompleteListener(task1 -> {
+                                    DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
+                                    detailMembers.push().setValue(user.getObjectId());
+                                    detailMembers.push().setValue(toUserId);
+                                });
+
+                                //todo is not saving the dm id
+
+//                                ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+                                ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
+                                List<String> participantsIds = new ArrayList<>();
+                                participantsIds.add(toUserId);
+                                participantsIds.add(currId);
+                                publicColumnsQuery.whereContainedIn(UserPublicColumns.KEY_USER_ID, participantsIds);
+                                Log.i("MessageAdapter", "onLongClick: HELLO");
+                                publicColumnsQuery.findInBackground((userPublicColumns, e) -> userPublicColumns.forEach(userPublicColumn -> {
+                                    List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
+                                    groupChatIDs.add(finalDmID);
+                                    userPublicColumn.setGroupChatIds(groupChatIDs);
+                                    userPublicColumn.saveInBackground();
+                                }));
+                            }
+                            GroupChatMethods.toConversationDetail(context, finalDmID, false, toUserId);
+
+                        });
+
+
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
             }
 

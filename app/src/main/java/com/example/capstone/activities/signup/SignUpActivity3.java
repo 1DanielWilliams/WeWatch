@@ -13,8 +13,12 @@ import android.widget.ImageButton;
 
 import com.example.capstone.R;
 import com.example.capstone.methods.LogInUser;
+import com.example.capstone.models.UserPublicColumns;
+import com.parse.ParseACL;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
 
 public class SignUpActivity3 extends AppCompatActivity {
 
@@ -94,6 +98,9 @@ public class SignUpActivity3 extends AppCompatActivity {
                 username = screeNameLower + String.valueOf(size + 1);
             }
             user.setUsername(username);
+            UserPublicColumns userPublicColumns = new UserPublicColumns();
+            userPublicColumns.setUserId(user.getObjectId());
+            userPublicColumns.setGroupChatIds(new ArrayList<>());
 
             // Signs a user up with this unique username
             user.signUpInBackground(e1 -> {

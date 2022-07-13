@@ -19,18 +19,22 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.OtherDatesFragment;
+import com.example.capstone.methods.GroupChatMethods;
 import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.User;
+import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -114,77 +118,74 @@ public class DetailEventActivity extends AppCompatActivity {
                 ParseUser user = ParseUser.getCurrentUser();
                 String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
 
-
-
                 DatabaseReference groupDetailsRef = database.getReference("group_details");
                 DatabaseReference groupMessagesRef= database.getReference("group_messages");
 
                 //Checks if the user has already been added to the group chat
-                List<String> userGroupChatIDs = user.getList("groupChatID");
+                ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
+                publicColumnsQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, user.getObjectId());
                 AtomicBoolean inGroupChat = new AtomicBoolean(false);
-                if (userGroupChatIDs != null) {
-                    userGroupChatIDs.forEach(s -> {
-                        if (Objects.equals(s, groupChatID)) { inGroupChat.set(true); }
-                    });
-                }
-
-                if (isInterested.get() && !inGroupChat.get()) {
-                    // Takes the unique id for the event currently displayed and stores it with the authenticated user
-                    List<String> groupChatIDs = user.getList("groupChatID");
-                    if (groupChatIDs != null) {
-                        groupChatIDs = user.getList("groupChatID");
-                    } else {
-                        groupChatIDs = new ArrayList<>();
-                    }
-                    groupChatIDs.add(groupChatID);
-                    user.put("groupChatID", groupChatIDs);
-                    user.saveInBackground();
-
-                    // Determines if a groupchat exist
-                    AtomicBoolean groupChatExist = new AtomicBoolean(false);
-                    AtomicReference<String> groupDetailKey = new AtomicReference<>();
-                    groupDetailsRef.get().addOnCompleteListener(task -> {
-                        for (DataSnapshot child : task.getResult().getChildren()) {
-                            if (groupChatID.equals(child.child("id").getValue())) {
-                                groupChatExist.set(true);
-                                groupDetailKey.set(child.getKey());
-                                Log.i("DetailEventActivity", "onClick: " + groupDetailKey.get());
-                                break;
+                publicColumnsQuery.findInBackground(new FindCallback<UserPublicColumns>() {
+                    @Override
+                    public void done(List<UserPublicColumns> userPublicColumns, ParseException e) {
+                        UserPublicColumns userPublicColumn = userPublicColumns.get(0);
+                        List<String> userGroupChatIDs = userPublicColumn.getGroupChatIds();
+                        userGroupChatIDs.forEach(s -> {
+                            if (Objects.equals(s, groupChatID)) {
+                                inGroupChat.set(true);
                             }
-                        }
+                        });
 
 
-                        if (groupChatExist.get()) {
-                            DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
-                            appendUser.push().setValue(user.getObjectId());
-                            Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
-                            i.putExtra("group_id", groupChatID);
-                            startActivity(i);
+                        if (isInterested.get() && !inGroupChat.get()) {
+                            // Takes the unique id for the event currently displayed and stores it with the authenticated user
+//                            List<String> groupChatIDs = user.getList("groupChatID");
+//                            if (groupChatIDs != null) {
+//                                groupChatIDs = user.getList("groupChatID");
+//                            } else {
+//                                groupChatIDs = new ArrayList<>();
+//                            }
+                            userGroupChatIDs.add(groupChatID);
+                            userPublicColumn.setGroupChatIds(userGroupChatIDs);
+                            userPublicColumn.saveInBackground();
+
+                            // Determines if a groupchat exist
+                            AtomicBoolean groupChatExist = new AtomicBoolean(false);
+                            AtomicReference<String> groupDetailKey = new AtomicReference<>();
+                            groupDetailsRef.get().addOnCompleteListener(task -> {
+                                for (DataSnapshot child : task.getResult().getChildren()) {
+                                    if (groupChatID.equals(child.child("id").getValue())) {
+                                        groupChatExist.set(true);
+                                        groupDetailKey.set(child.getKey());
+                                        break;
+                                    }
+                                }
+
+                                if (groupChatExist.get()) {
+                                    DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
+                                    appendUser.push().setValue(user.getObjectId());
+                                } else {
+                                    Message firstMessage = new Message("Hi!", user.getObjectId());
+                                    DatabaseReference push = groupDetailsRef.push();
+                                    push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
+                                        DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
+                                        detailMembers.push().setValue(user.getObjectId());
+                                    });
+                                    groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
+                                }
+                                GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
+                            });
+
+                        } else if (isInterested.get() && inGroupChat.get()) {
+                            GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
 
                         } else {
-                            Message firstMessage = new Message("Hi!", user.getObjectId());
-                            DatabaseReference push = groupDetailsRef.push();
-                            push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
-                                DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
-                                detailMembers.push().setValue(user.getObjectId());
-                                Log.i("detailEventActiviy", "onClick: " + push.getKey());
-                            });
-                            groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
-                            Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
-                            i.putExtra("group_id", groupChatID);
-                            startActivity(i);
+                            Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
                         }
-                    });
-
-                } else if (isInterested.get() && inGroupChat.get()) {
-                    Intent i = new Intent(DetailEventActivity.this, ConversationDetailActivity.class);
-                    i.putExtra("group_id", groupChatID);
-                    startActivity(i);
-
-                } else {
-                    Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
-                }
+                    }
+                });
             }
+
         });
 
         iBtnOtherDates.setOnClickListener(v -> {
@@ -202,7 +203,9 @@ public class DetailEventActivity extends AppCompatActivity {
             ParseUser user = ParseUser.getCurrentUser();
             VideoContent videoContent = event.getVideContent().fetchIfNeeded();
             List<VideoContent> wishToWatch = user.getList("wishToWatch");
-
+            if (wishToWatch == null) {
+                wishToWatch = new ArrayList<>();
+            }
             RemoveFromWishToWatch.removeContent(wishToWatch, user, videoContent);
 
             event.setNumInterested(event.getNumInterested() + 1);

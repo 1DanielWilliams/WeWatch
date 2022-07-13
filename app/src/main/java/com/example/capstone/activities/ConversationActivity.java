@@ -16,18 +16,22 @@ import com.example.capstone.adapters.ConversationsAdapter;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
+import com.example.capstone.models.UserPublicColumns;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ConversationActivity extends AppCompatActivity {
 
@@ -72,46 +76,57 @@ public class ConversationActivity extends AppCompatActivity {
         rvMessages.setAdapter(adapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
 
-        List<String> groupChatIDs = user.getList("groupChatID");
-        if (groupChatIDs != null) {
-            groupDetailsRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    allGroupDetails.clear();
-                    adapter.notifyDataSetChanged();
-                    // Finds the groupChats relevant to the user and adds it to the adapter
-                    for (DataSnapshot child : snapshot.getChildren()) {
-                        // the authenticated user is in this group
-                        String id = child.child("id").getValue().toString();
-                        if (groupChatIDs.contains(id)) {
-                            Message message = child.child("message").getValue(Message.class);
-                            GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message);
-                            allGroupDetails.add(groupDetail);
+//        List<String> groupChatIDs = user.getList("groupChatID");
+        ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
+        publicColumnsQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, user.getObjectId());
+        publicColumnsQuery.findInBackground(new FindCallback<UserPublicColumns>() {
+            @Override
+            public void done(List<UserPublicColumns> userPublicColumns, ParseException e) {
+                UserPublicColumns userPublicColumn = userPublicColumns.get(0);
+                List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
+                if (groupChatIDs.size() != 0) {
+                    groupDetailsRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            allGroupDetails.clear();
+                            adapter.notifyDataSetChanged();
+                            // Finds the groupChats relevant to the user and adds it to the adapter
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                // the authenticated user is in this group
+                                String id = child.child("id").getValue().toString();
+                                if (groupChatIDs.contains(id)) {
+                                    Message message = child.child("message").getValue(Message.class);
+                                    List<String> userIds = new ArrayList<>();
+                                    child.child("members").getChildren().forEach(dataSnapshot -> userIds.add(dataSnapshot.getValue().toString()));
+                                    GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message, userIds);
+                                    allGroupDetails.add(groupDetail);
+                                }
+                            }
+
+                            // Sorts the list by the message date
+                            allGroupDetails.sort((firstGd, secondGd) -> {
+                                if (firstGd == null || secondGd == null) {
+                                    return 0;
+                                }
+                                Date firstDate = new Date(firstGd.getMessage().getDate_time());
+                                Date secondDate = new Date(secondGd.getMessage().getDate_time());
+                                return secondDate.compareTo(firstDate);
+                            });
+                            adapter.notifyDataSetChanged();
                         }
-                    }
-                    // Sorts the list by the message date
-                    allGroupDetails.sort((firstGd, secondGd) -> {
-                        if (firstGd == null || secondGd == null) {
-                            return 0;
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
-                        Date firstDate = new Date(firstGd.getMessage().getDate_time());
-                        Date secondDate = new Date(secondGd.getMessage().getDate_time());
-                        return secondDate.compareTo(firstDate);
                     });
-                    adapter.notifyDataSetChanged();
+
+                } else {
+                    //display something to show that you have no groupchats
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-        } else {
-            //display something to show that you have no groupchats
-        }
-
-
+            }
+        });
 
     }
 

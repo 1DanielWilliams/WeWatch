@@ -27,6 +27,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -75,18 +78,25 @@ public class ConversationDetailActivity extends AppCompatActivity {
         upArrowProfile.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(this) );
 
         // Formats the group chats name
-        String groupChatId = getIntent().getStringExtra("group_id");
-        String[] groupName = groupChatId.split("PM");
-        if (groupName.length == 1) {
-            groupName = groupChatId.split("AM");
-        }
-        String name =groupName[1];
-        if (name.length() > 25) {
-            name = name.substring(0, 25) + "... @" + groupName[0];
+        String groupChatId = getIntent().getStringExtra("chat_id");
+        if (getIntent().getBooleanExtra("is_group_chat", false)) {
+            String[] groupName = groupChatId.split("PM");
+            if (groupName.length == 1) {
+                groupName = groupChatId.split("AM");
+            }
+            String name = groupName[1];
+            if (name.length() > 25) {
+                name = name.substring(0, 25) + "... @" + groupName[0];
+            } else {
+                name += "@" + groupName[0];
+            }
+            gcNameConversationDetail.setText(name);
         } else {
-            name += "@" + groupName[0];
+            ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+            String toUserId = getIntent().getStringExtra("to_user_id");
+            parseQuery.whereEqualTo("objectId", toUserId);
+            parseQuery.findInBackground((users, e) -> gcNameConversationDetail.setText(users.get(0).getUsername()) ); //todo problem here
         }
-        gcNameConversationDetail.setText(name);
 
 
         // populates the adapter and listens for changes to the database
@@ -105,7 +115,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
                             long date = (long) messageChild.child("date_time").getValue();
                             Message message = new Message(messageContent, senderID, date);
                             allMessages.add(0, message);
-//                            adapter.notifyItemInserted(0);
                         }
                     }
                 }
