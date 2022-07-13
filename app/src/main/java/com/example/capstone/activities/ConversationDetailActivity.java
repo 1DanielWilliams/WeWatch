@@ -1,6 +1,7 @@
 package com.example.capstone.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
@@ -22,6 +23,7 @@ import com.example.capstone.adapters.MessagesAdapter;
 import com.example.capstone.models.Message;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +49,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
     private RecyclerView rvMessages;
     private MessagesAdapter adapter;
     private List<Message> allMessages;
-    private DatabaseReference groupMessagesRef;
+    private DatabaseReference groupChatRef;
     private DatabaseReference groupDetailsRef;
 
 
@@ -66,7 +68,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         allMessages = new ArrayList<>();
         adapter = new MessagesAdapter(this, allMessages);
-        groupMessagesRef = database.getReference("group_messages");
+        String groupChatId = getIntent().getStringExtra("chat_id");
+        groupChatRef = database.getReference("group_messages/" + groupChatId);
         groupDetailsRef = database.getReference("group_details");
 
         rvMessages.setAdapter(adapter);
@@ -78,7 +81,6 @@ public class ConversationDetailActivity extends AppCompatActivity {
         upArrowProfile.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(this) );
 
         // Formats the group chats name
-        String groupChatId = getIntent().getStringExtra("chat_id");
         if (getIntent().getBooleanExtra("is_group_chat", false)) {
             String[] groupName = groupChatId.split("PM");
             if (groupName.length == 1) {
@@ -100,31 +102,80 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
 
         // populates the adapter and listens for changes to the database
-        groupMessagesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                allMessages.clear();
-                adapter.notifyDataSetChanged();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    //if the message is apart of the group
-                    if (Objects.equals(groupChatId, child.getKey())) {
-                        for (DataSnapshot messageChild : child.getChildren()) {
+//        groupChatRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                allMessages.clear();
+//                adapter.notifyDataSetChanged();
+//                for (DataSnapshot child : snapshot.getChildren()) {
+//                    //if the message is apart of the group
+//                    if (Objects.equals(groupChatId, child.getKey())) {
+//                        for (DataSnapshot messageChild : child.getChildren()) {
+//
+//                            String messageContent = messageChild.child("message_content").getValue().toString();
+//                            String senderID = messageChild.child("senderID").getValue().toString();
+//                            long date = (long) messageChild.child("date_time").getValue();
+//                            Message message = new Message(messageContent, senderID, date);
+//                            allMessages.add(0, message);
+//                        }
+//                    }
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("ConversationDetailActivity", "onCancelled: ", error.toException());
+//            }
+//        });
 
-                            String messageContent = messageChild.child("message_content").getValue().toString();
-                            String senderID = messageChild.child("senderID").getValue().toString();
-                            long date = (long) messageChild.child("date_time").getValue();
-                            Message message = new Message(messageContent, senderID, date);
-                            allMessages.add(0, message);
-                        }
-                    }
-                }
-                adapter.notifyDataSetChanged();
+//        groupChatRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                for (DataSnapshot child : task.getResult().getChildren()) {
+////                    String messageContent = child.child("message_content").getValue().toString();
+////                    String senderID = child.child("senderID").getValue().toString();
+////                    long date = (long) child.child("date_time").getValue();
+////                    Message message = new Message(messageContent, senderID, date);
+//
+//                    allMessages.add(0, child.getValue(Message.class));
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
+
+
+        groupChatRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                snapshot = snapshot.getChildren().iterator().next();
+//                String messageContent = snapshot.child("message_content").getValue().toString();
+//                String senderID = snapshot.child("senderID").getValue().toString();
+//                long date = (long) snapshot.child("date_time").getValue();
+//                Message message = new Message(messageContent, senderID, date);
+
+                allMessages.add(0, snapshot.getValue(Message.class));
+                adapter.notifyItemInserted(0);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ConversationDetailActivity", "onCancelled: ", error.toException());
+
             }
         });
 
@@ -137,7 +188,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
 
             //create a message thing and copy
             Message message = new Message(messageContent, ParseUser.getCurrentUser().getObjectId());
-            groupMessagesRef.child(groupChatId).push().setValue(message); //saves message to data base
+            database.getReference("group_messages").child(groupChatId).push().setValue(message); //saves message to data base
 
             //update current group chat with new message
             groupDetailsRef.get().addOnCompleteListener(task -> {

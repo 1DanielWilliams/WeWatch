@@ -101,6 +101,7 @@ public class SignUpActivity3 extends AppCompatActivity {
             UserPublicColumns userPublicColumns = new UserPublicColumns();
             userPublicColumns.setUserId(user.getObjectId());
             userPublicColumns.setGroupChatIds(new ArrayList<>());
+            userPublicColumns.setWatchedContent(new ArrayList<>());
 
             // Signs a user up with this unique username
             user.signUpInBackground(e1 -> {

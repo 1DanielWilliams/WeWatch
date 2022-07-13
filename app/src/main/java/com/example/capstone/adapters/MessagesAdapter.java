@@ -162,6 +162,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             String[] fullTime = dateStr[3].split(":");
             String time = fullTime[0] + ":" + fullTime[1];
             tvDateTIme.setText(dateStr[0] + " " + dateStr[1] + " " + dateStr[2] + " " + time);
+
             ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
             query.whereEqualTo("objectId", message.getSenderID());
             query.findInBackground((users, e) -> {

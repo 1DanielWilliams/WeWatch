@@ -15,8 +15,10 @@ import android.widget.TextView;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
+import com.example.capstone.methods.DeletingEventsMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
+import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.FindCallback;
@@ -72,38 +74,15 @@ public class FeedActivity extends AppCompatActivity {
                 return;
             }
 
+            //todo change to Event event : events
             for (int i = 0; i < events.size(); i++) {
                 Event event = events.get(i);
                 List<String> dates = event.getDates();
                 if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() == 1) {
+
                     //removes groupID from the parse users
                     String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                    ParseQuery<ParseUser> parseUserQuery = ParseUser.getQuery();
-                    List<String> groupChatIDs = new ArrayList<>();
-                    groupChatIDs.add(groupChatID);
-                    parseUserQuery.whereContainedIn("groupChatID", groupChatIDs);
-                    parseUserQuery.findInBackground((users, e1) -> users.forEach(parseUser -> {
-                        List<String> IDs = parseUser.getList("groupChatID");
-                        IDs.remove(IDs.indexOf(groupChatID));
-                        parseUser.put("groupChatID", IDs);
-                        List<VideoContent> watchedContent = parseUser.getList("watchedContent");
-                        if (watchedContent == null) {
-                            watchedContent = new ArrayList<>();
-                        }
-
-                        try {
-                            VideoContent content = event.getVideContent().fetch();
-                            if (!watchedContent.contains(content)) {
-                                watchedContent.add(content);
-                                parseUser.put("watchedContent", watchedContent);
-                            }
-                        } catch (com.parse.ParseException ex) {
-                            ex.printStackTrace();
-                        }
-
-                        parseUser.saveInBackground();
-                    }));
-
+                    DeletingEventsMethods.removeChatId(groupChatID, event);
 
                     events.remove(i);
                     event.deleteInBackground();
@@ -111,11 +90,11 @@ public class FeedActivity extends AppCompatActivity {
                     Log.i("feedActivity", "onCreate: " + event.getEarliestDate().toString());
 
                 } else if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() > 1) {
-                    //find the next earliest date and update the earliestuserIndex + earliest date
+                    //find the next earliest date and update the earliestUserIndex + earliest date
                     int dateSize = dates.size();
                     List<Date> dateList = new ArrayList<>();
                     for (int j = 0; j < dateSize; j ++) {
-                        String dateStr = dates.get(i);
+                        String dateStr = dates.get(j);
                         try {
                             Date date = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dateStr + " 2022");
                             dateList.add(date);
@@ -146,36 +125,9 @@ public class FeedActivity extends AppCompatActivity {
                     event.setEarliestUserIndex(earliestUserIndex);
 
                     event.saveInBackground();
-
-                    // todo similar to top
-                    //removes groupID from the parse users
+                    //removes the group from the user
                     String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                    ParseQuery<ParseUser> parseUserQuery = ParseUser.getQuery();
-                    List<String> groupChatIDs = new ArrayList<>();
-                    groupChatIDs.add(groupChatID);
-                    parseUserQuery.whereContainedIn("groupChatID", groupChatIDs);
-                    parseUserQuery.findInBackground((users, e1) -> users.forEach(parseUser -> {
-                        List<String> IDs = parseUser.getList("groupChatID");
-                        IDs.remove(IDs.indexOf(groupChatID));
-                        parseUser.put("groupChatID", IDs);
-
-                        List<VideoContent> watchedContent = parseUser.getList("watchedContent");
-                        if (watchedContent == null) {
-                            watchedContent = new ArrayList<>();
-                        }
-
-                        try {
-                            VideoContent content = event.getVideContent().fetch();
-                            if (!watchedContent.contains(content)) {
-                                watchedContent.add(content);
-                                parseUser.put("watchedContent", watchedContent);
-                            }
-                        } catch (com.parse.ParseException ex) {
-                            ex.printStackTrace();
-                        }
-
-                        parseUser.saveInBackground();
-                    }));
+                    DeletingEventsMethods.removeChatId(groupChatID, event);
 
                 }
             }
