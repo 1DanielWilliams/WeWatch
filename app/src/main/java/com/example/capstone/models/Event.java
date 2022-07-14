@@ -24,9 +24,13 @@ public class Event extends ParseObject {
     public static final String KEY_EARLIEST_DATE = "earliestDate";
     public static final String KEY_EARLIEST_USER_INDEX = "earliestUserIndex";
     public static final String KEY_UNIVERSITY = "university";
+    public static final String KEY_TO_DELETE = "toDelete";
 
 
     public Event() {}
+
+    public void setToDelete(boolean toDelete) { put(KEY_TO_DELETE, toDelete);}
+    public boolean getToDelete() {return getBoolean(KEY_TO_DELETE); }
 
     public void setTitle(String title) { put(KEY_TITLE, title); }
     public String getTitle() {return  getString(KEY_TITLE); }
@@ -52,8 +56,8 @@ public class Event extends ParseObject {
     public void setBackdropUrl(String backdropUrl) { put(KEY_BACKDROP_URL, backdropUrl); }
     public String getBackdropUrl() {return  getString(KEY_BACKDROP_URL); }
 
-    public void setDates(List<String> dates) {put(KEY_DATES, dates);}
-    public List<String> getDates() {return getList(KEY_DATES); }
+    public void setDates(List<DateIndex> dates) {put(KEY_DATES, dates);}
+    public List<DateIndex> getDates() {return getList(KEY_DATES); }
 
     public void setTypeOfContent(String typeOfContent) { put(KEY_TYPE_OF_CONTENT, typeOfContent); }
     public String getTypeOfContent() {return  getString(KEY_TYPE_OF_CONTENT); }

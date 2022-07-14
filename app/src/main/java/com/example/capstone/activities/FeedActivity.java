@@ -17,13 +17,14 @@ import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
 import com.example.capstone.methods.DeletingEventsMethods;
 import com.example.capstone.methods.NavigationMethods;
+import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
-import com.example.capstone.models.UserPublicColumns;
-import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
-import com.parse.FindCallback;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.livequery.ParseLiveQueryClient;
+import com.parse.livequery.SubscriptionHandling;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class FeedActivity extends AppCompatActivity {
     private RecyclerView rvEvents;
@@ -42,6 +42,7 @@ public class FeedActivity extends AppCompatActivity {
     private NavigationView navDrawerFeed;
     private Toolbar toolbar;
     private TextView toolbarTitle;
+    private ParseLiveQueryClient parseLiveQueryClient;
 
 
     @Override
@@ -52,6 +53,7 @@ public class FeedActivity extends AppCompatActivity {
         toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(ParseUser.getCurrentUser().getString("university"));
 
+        parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
         rvEvents = findViewById(R.id.rvEvents);
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
 
@@ -64,6 +66,7 @@ public class FeedActivity extends AppCompatActivity {
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rvEvents);
 
+        // todo: refactor
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.addAscendingOrder("earliestDate");
         query.whereEqualTo("university", ParseUser.getCurrentUser().getString("university"));
@@ -74,55 +77,53 @@ public class FeedActivity extends AppCompatActivity {
                 return;
             }
 
-            //todo change to Event event : events
-            for (int i = 0; i < events.size(); i++) {
-                Event event = events.get(i);
-                List<String> dates = event.getDates();
+            List<Event> deletedEvents = new ArrayList<>();
+            for (Event event : events ) {
+                List<DateIndex> dates = event.getDates();
                 if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() == 1) {
 
                     //removes groupID from the parse users
-                    String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                    DeletingEventsMethods.removeChatId(groupChatID, event);
+                    DateIndex dateIndex = null;
+                    try {
+                        dateIndex = event.getDates().get(0).fetchIfNeeded();
+                        String groupChatID = (dateIndex.getDate() + event.getTitle() + event.getTypeOfContent()).replace(".", "");
+                        DeletingEventsMethods.removeChatId(groupChatID, event);
+                        deletedEvents.add(event);
+                        event.deleteInBackground();
+                    } catch (com.parse.ParseException ex) {
+                        ex.printStackTrace();
+                    }
 
-                    events.remove(i);
-                    event.deleteInBackground();
-                    i--;
-                    Log.i("feedActivity", "onCreate: " + event.getEarliestDate().toString());
 
                 } else if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() > 1) {
-                    //find the next earliest date and update the earliestUserIndex + earliest date
-                    int dateSize = dates.size();
-                    List<Date> dateList = new ArrayList<>();
-                    for (int j = 0; j < dateSize; j ++) {
-                        String dateStr = dates.get(j);
-                        try {
-                            Date date = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dateStr + " 2022");
-                            dateList.add(date);
-                        } catch (ParseException ex) {
-                            ex.printStackTrace();
-                        }
+                    DateIndex dateIndex;
+                    try {
+                        dateIndex = dates.get(0).fetchIfNeeded();
+                        int indexToRemove = dateIndex.getUserIndex();
+
+                        List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                        interestedUsers.remove(indexToRemove);
+                        event.setInterestedUsers(interestedUsers);
+
+                        List<ParseUser> authors = event.getUsers();
+                        authors.remove(indexToRemove);
+                        event.setUsers(authors);
+                    } catch (com.parse.ParseException ex) {
+                        ex.printStackTrace();
                     }
-                    //removes old entry of date from event
-                    Date minDate = Collections.min(dateList);
-                    int indexToRemove = dateList.indexOf(minDate);
-                    dateList.remove(indexToRemove);
 
-                    List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
-                    interestedUsers.remove(indexToRemove);
-                    event.setInterestedUsers(interestedUsers);
 
-                    dates.remove(indexToRemove);
+                    dates.remove(0);
                     event.setDates(dates);
 
-                    List<ParseUser> authors = event.getUsers();
-                    authors.remove(indexToRemove);
-                    event.setUsers(authors);
-
-                    //finds the new earliest date and updates earliestUserIndex
-                    minDate = Collections.min(dateList);
-                    int earliestUserIndex = dateList.indexOf(minDate);
-                    event.setEarliestDate(minDate);
-                    event.setEarliestUserIndex(earliestUserIndex);
+                    //gets the new earliest date and updates earliestUserIndex
+                    try {
+                        DateIndex newDateIndex = dates.get(0).fetchIfNeeded();
+                        event.setEarliestDate(new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(newDateIndex.getDate() + " 2022"));
+                    } catch (ParseException | com.parse.ParseException ex) {
+                        ex.printStackTrace();
+                    }
+                    event.setEarliestUserIndex(dates.get(0).getUserIndex());
 
                     event.saveInBackground();
                     //removes the group from the user
@@ -132,8 +133,22 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
             allEvents.addAll(events);
+            allEvents.removeAll(deletedEvents);
             adapter.notifyDataSetChanged();
         });
+
+        //listener for live updates
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(query);
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback() {
+            @Override
+            public void onEvent(ParseQuery query, ParseObject object) {
+
+                FeedActivity.this.runOnUiThread(() -> {
+
+                });
+            }
+        });
+
 
         drawerLayout = findViewById(R.id.drawerLayout);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
@@ -143,4 +158,5 @@ public class FeedActivity extends AppCompatActivity {
 
 
     }
+
 }

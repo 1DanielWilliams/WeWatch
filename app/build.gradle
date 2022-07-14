@@ -71,4 +71,7 @@ dependencies {
 
     // Declare the dependency for the Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics'
+
+    implementation "com.github.parse-community.Parse-SDK-Android:parse:4.0.0"
+    implementation 'com.github.parse-community:ParseLiveQuery-Android:1.2.2'
 }

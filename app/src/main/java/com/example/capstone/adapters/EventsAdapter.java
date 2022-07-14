@@ -21,6 +21,7 @@ import com.example.capstone.R;
 import com.example.capstone.activities.DetailEventActivity;
 import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.methods.DisplayPlatforms;
+import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.button.MaterialButton;
@@ -178,7 +179,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     tvOtherDates.setText(String.valueOf(numOtherDates) + " other date");
                 }
 
-                btnDate.setText(event.getDates().get(event.getEarliestUserIndex()));
+                DateIndex dateIndex = event.getDates().get(0).fetchIfNeeded();
+                btnDate.setText(dateIndex.getDate());
             }
         }
     }

@@ -97,63 +97,13 @@ public class ConversationDetailActivity extends AppCompatActivity {
             ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
             String toUserId = getIntent().getStringExtra("to_user_id");
             parseQuery.whereEqualTo("objectId", toUserId);
-            parseQuery.findInBackground((users, e) -> gcNameConversationDetail.setText(users.get(0).getUsername()) ); //todo problem here
+            parseQuery.findInBackground((users, e) -> gcNameConversationDetail.setText(users.get(0).getUsername()) );
         }
-
-
-        // populates the adapter and listens for changes to the database
-//        groupChatRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                allMessages.clear();
-//                adapter.notifyDataSetChanged();
-//                for (DataSnapshot child : snapshot.getChildren()) {
-//                    //if the message is apart of the group
-//                    if (Objects.equals(groupChatId, child.getKey())) {
-//                        for (DataSnapshot messageChild : child.getChildren()) {
-//
-//                            String messageContent = messageChild.child("message_content").getValue().toString();
-//                            String senderID = messageChild.child("senderID").getValue().toString();
-//                            long date = (long) messageChild.child("date_time").getValue();
-//                            Message message = new Message(messageContent, senderID, date);
-//                            allMessages.add(0, message);
-//                        }
-//                    }
-//                }
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.e("ConversationDetailActivity", "onCancelled: ", error.toException());
-//            }
-//        });
-
-//        groupChatRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                for (DataSnapshot child : task.getResult().getChildren()) {
-////                    String messageContent = child.child("message_content").getValue().toString();
-////                    String senderID = child.child("senderID").getValue().toString();
-////                    long date = (long) child.child("date_time").getValue();
-////                    Message message = new Message(messageContent, senderID, date);
-//
-//                    allMessages.add(0, child.getValue(Message.class));
-//                }
-//                adapter.notifyDataSetChanged();
-//            }
-//        });
 
 
         groupChatRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                snapshot = snapshot.getChildren().iterator().next();
-//                String messageContent = snapshot.child("message_content").getValue().toString();
-//                String senderID = snapshot.child("senderID").getValue().toString();
-//                long date = (long) snapshot.child("date_time").getValue();
-//                Message message = new Message(messageContent, senderID, date);
-
                 allMessages.add(0, snapshot.getValue(Message.class));
                 adapter.notifyItemInserted(0);
             }

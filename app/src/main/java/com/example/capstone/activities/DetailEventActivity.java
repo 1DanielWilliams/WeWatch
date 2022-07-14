@@ -250,7 +250,7 @@ public class DetailEventActivity extends AppCompatActivity {
         iBtnGroupChatDetail = findViewById(R.id.iBtnGroupChatDetail);
         database = FirebaseDatabase.getInstance();
 
-        tvDateDetail.setText(event.getDates().get(event.getEarliestUserIndex()));
+        tvDateDetail.setText(event.getDates().get(0).getDate());
         tvTitleDetail.setText(event.getTitle());
 
         // todo: put error/placeholder image

@@ -28,6 +28,7 @@ import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
 import com.example.capstone.methods.RemoveFromWishToWatch;
+import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -201,7 +202,11 @@ public class VideoContentDetailFragment extends DialogFragment {
 
                 Event queriedEvent = events.get(0);
 
-                addToExistingEvent(queriedEvent);
+                try {
+                    addToExistingEvent(queriedEvent);
+                } catch (java.text.ParseException | ParseException ex) {
+                    ex.printStackTrace();
+                }
 
                 queriedEvent.saveInBackground(e12 -> {
                     if (e12 != null) {
@@ -219,7 +224,7 @@ public class VideoContentDetailFragment extends DialogFragment {
     }
 
     // Adds the new user + time + interested User array to the existing event
-    private void addToExistingEvent(Event queriedEvent) {
+    private void addToExistingEvent(Event queriedEvent) throws java.text.ParseException, ParseException {
         //increment the numPosted section of the VideoContent
         try {
             VideoContent videoContent = queriedEvent.getVideContent().fetch();
@@ -250,9 +255,32 @@ public class VideoContentDetailFragment extends DialogFragment {
             queriedEvent.setEarliestUserIndex(userIndex);
         }
 
-        //add to the dates array at proper index
-        List<String> dates = queriedEvent.getDates();
-        dates.add(event.getDates().get(0));
+        //add to the sorted dates array
+        List<DateIndex> dates = queriedEvent.getDates();
+        String newDateStr = event.getDates().get(0).getDate();
+        int dateSize = dates.size();
+        Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(newDateStr + " 2022"); //todo replace 2022
+        boolean isInserted = false;
+        for (int indexDates = 0; indexDates < dateSize; indexDates ++) {
+            Log.i("VIDEOCONTENTDETAILFRAGMENT", "addToExistingEvent: " + indexDates);
+            //turn date into a Date
+            //compare event date to first date
+                //if before it, insert before and break;
+            DateIndex dateIndex = dates.get(indexDates).fetchIfNeeded();
+            Date queriedDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dateIndex.getDate() + " 2022"); //todo replace 2022
+
+            if (newDate.before(queriedDate)) {
+                Log.i("VIDEOCONTENTDETAILFRAGMENT", "addToExistingEvent: if statmenet");
+                DateIndex newDateIndex = new DateIndex(newDateStr, userIndex);
+                dates.add(indexDates, newDateIndex);
+                isInserted = true;
+                break;
+            }
+        }
+        if (!isInserted) {
+            Log.i("VIDEOCONTENTDETAILFRAGMENT", "addToExistingEvent: other if");
+            dates.add(new DateIndex(newDateStr, userIndex));
+        }
         queriedEvent.setDates(dates);
     }
 
@@ -327,8 +355,8 @@ public class VideoContentDetailFragment extends DialogFragment {
             } catch (java.text.ParseException e) {
                 e.printStackTrace();
             }
-            List<String> dates = new ArrayList<>();
-            dates.add(strDateTime);
+            List<DateIndex> dates = new ArrayList<>();
+            dates.add(new DateIndex(strDateTime, 0));
             event.setDates(dates);
 
             tvDate.setVisibility(View.VISIBLE);
