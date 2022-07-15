@@ -17,7 +17,6 @@ import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
 import com.example.capstone.methods.DeletingEventsMethods;
 import com.example.capstone.methods.NavigationMethods;
-import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseObject;
@@ -66,7 +65,6 @@ public class FeedActivity extends AppCompatActivity {
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rvEvents);
 
-        // todo: refactor
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.addAscendingOrder("earliestDate");
         query.whereEqualTo("university", ParseUser.getCurrentUser().getString("university"));
@@ -79,38 +77,30 @@ public class FeedActivity extends AppCompatActivity {
 
             List<Event> deletedEvents = new ArrayList<>();
             for (Event event : events ) {
-                List<DateIndex> dates = event.getDates();
+                List<String> dates = event.getDates();
                 if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() == 1) {
 
                     //removes groupID from the parse users
-                    DateIndex dateIndex = null;
-                    try {
-                        dateIndex = event.getDates().get(0).fetchIfNeeded();
-                        String groupChatID = (dateIndex.getDate() + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                        DeletingEventsMethods.removeChatId(groupChatID, event);
-                        deletedEvents.add(event);
-                        event.deleteInBackground();
-                    } catch (com.parse.ParseException ex) {
-                        ex.printStackTrace();
-                    }
-
+                    String groupChatID = (dates.get(0) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
+                    DeletingEventsMethods.removeChatId(groupChatID, event);
+                    deletedEvents.add(event);
+                    event.deleteInBackground();
 
                 } else if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() > 1) {
-                    DateIndex dateIndex;
-                    try {
-                        dateIndex = dates.get(0).fetchIfNeeded();
-                        int indexToRemove = dateIndex.getUserIndex();
+                    //for each date in dates
+                    int indexToRemove = 0;
 
-                        List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
-                        interestedUsers.remove(indexToRemove);
-                        event.setInterestedUsers(interestedUsers);
+                    List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                    interestedUsers.remove(indexToRemove);
+                    event.setInterestedUsers(interestedUsers);
 
-                        List<ParseUser> authors = event.getUsers();
-                        authors.remove(indexToRemove);
-                        event.setUsers(authors);
-                    } catch (com.parse.ParseException ex) {
-                        ex.printStackTrace();
-                    }
+                    List<ParseUser> authors = event.getUsers();
+                    authors.remove(indexToRemove);
+                    event.setUsers(authors);
+
+                    //removes the group from the user
+                    String groupChatID = (dates.get(0) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
+                    DeletingEventsMethods.removeChatId(groupChatID, event);
 
 
                     dates.remove(0);
@@ -118,17 +108,13 @@ public class FeedActivity extends AppCompatActivity {
 
                     //gets the new earliest date and updates earliestUserIndex
                     try {
-                        DateIndex newDateIndex = dates.get(0).fetchIfNeeded();
-                        event.setEarliestDate(new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(newDateIndex.getDate() + " 2022"));
-                    } catch (ParseException | com.parse.ParseException ex) {
+                        event.setEarliestDate(new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(0) + " 2022"));
+                    } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
-                    event.setEarliestUserIndex(dates.get(0).getUserIndex());
 
+                    event.setEarliestUserIndex(0);
                     event.saveInBackground();
-                    //removes the group from the user
-                    String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                    DeletingEventsMethods.removeChatId(groupChatID, event);
 
                 }
             }
@@ -137,17 +123,7 @@ public class FeedActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         });
 
-        //listener for live updates
-        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(query);
-        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback() {
-            @Override
-            public void onEvent(ParseQuery query, ParseObject object) {
 
-                FeedActivity.this.runOnUiThread(() -> {
-
-                });
-            }
-        });
 
 
         drawerLayout = findViewById(R.id.drawerLayout);

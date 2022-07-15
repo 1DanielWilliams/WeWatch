@@ -56,8 +56,8 @@ public class Event extends ParseObject {
     public void setBackdropUrl(String backdropUrl) { put(KEY_BACKDROP_URL, backdropUrl); }
     public String getBackdropUrl() {return  getString(KEY_BACKDROP_URL); }
 
-    public void setDates(List<DateIndex> dates) {put(KEY_DATES, dates);}
-    public List<DateIndex> getDates() {return getList(KEY_DATES); }
+    public void setDates(List<String> dates) {put(KEY_DATES, dates);}
+    public List<String> getDates() {return getList(KEY_DATES); }
 
     public void setTypeOfContent(String typeOfContent) { put(KEY_TYPE_OF_CONTENT, typeOfContent); }
     public String getTypeOfContent() {return  getString(KEY_TYPE_OF_CONTENT); }

@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.DatesAdapter;
-import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseUser;
@@ -34,7 +33,7 @@ public class OtherDatesFragment extends DialogFragment {
     private Event event;
     private RecyclerView rvDates;
     private DatesAdapter adapter;
-    private List<DateIndex> allDates;
+    private List<String> allDates;
     private List<ParseUser> allAuthors;
     private List<List<ParseUser>> allInterestedUsers;
     private FloatingActionButton fab;
@@ -45,7 +44,6 @@ public class OtherDatesFragment extends DialogFragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
     public static OtherDatesFragment newInstance(Event event) {
         OtherDatesFragment fragment = new OtherDatesFragment();
         Bundle args = new Bundle();

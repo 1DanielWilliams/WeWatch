@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capstone.R;
-import com.example.capstone.models.DateIndex;
 import com.example.capstone.models.Event;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -23,12 +22,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> {
     private Context context;
-    private List<DateIndex> dates;
+    private List<String> dates;
     private List<ParseUser> authors;
     private List<List<ParseUser>> interestedUsers;
     private List<AtomicBoolean> isInterested;
 
-    public DatesAdapter(Context context, List<DateIndex> dates, List<ParseUser> authors, List<List<ParseUser>> interestedUsers) {
+    public DatesAdapter(Context context, List<String> dates, List<ParseUser> authors, List<List<ParseUser>> interestedUsers) {
         this.context = context;
         this.dates = dates;
         this.authors = authors;
@@ -63,7 +62,7 @@ public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String date = dates.get(position).getDate();
+        String date = dates.get(position);
         String username = null;
         String screenName = null;
         try {

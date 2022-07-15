@@ -18,7 +18,10 @@ import android.widget.TextView;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.WatchedContentAdapter;
+import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -98,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        AtomicReference<List<VideoContent>> watchedContent = new AtomicReference<>();
         AtomicReference<List<VideoContent>> wishToWatch = new AtomicReference<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("objectId", userID);
@@ -107,6 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.e("ProfileActivity", "done: ", e);
                 return;
             }
+
             ParseUser user = users.get(0);
             tvScreenNameProfile.setText(user.getString("screenName"));
             tvUsernameProfile.setText("@" + user.getUsername());
@@ -117,14 +120,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
             tvNumFriendsProfile.setText(String.valueOf(friends.size()));
 
-            watchedContent.set(user.getList("watchedContent"));
-            if (watchedContent.get() == null) {
-                watchedContent.set(new ArrayList<>());
-                user.saveInBackground();
-            }
-            tvNumWatchedProfile.setText(String.valueOf(watchedContent.get().size()));
-            allWatchedContent.addAll(watchedContent.get());
-            adapter.notifyDataSetChanged();
+
+
 
             wishToWatch.set(user.getList("wishToWatch"));
             if (wishToWatch.get() == null) {
@@ -132,6 +129,21 @@ public class ProfileActivity extends AppCompatActivity {
                 user.saveInBackground();
             }
 
+        });
+
+        AtomicReference<List<VideoContent>> watchedContent = new AtomicReference<>();
+        ParseQuery<UserPublicColumns> userPublicColumnsParseQuery = ParseQuery.getQuery(UserPublicColumns.class);
+        userPublicColumnsParseQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, userID);
+        userPublicColumnsParseQuery.findInBackground((userPublicColumns, e) -> {
+            UserPublicColumns userPublicColumn = userPublicColumns.get(0);
+            watchedContent.set(userPublicColumn.getWatchedContent());
+            if (watchedContent.get() == null) {
+                watchedContent.set(new ArrayList<>());
+                userPublicColumn.saveInBackground();
+            }
+            tvNumWatchedProfile.setText(String.valueOf(watchedContent.get().size()));
+            allWatchedContent.addAll(watchedContent.get());
+            adapter.notifyDataSetChanged();
         });
 
 

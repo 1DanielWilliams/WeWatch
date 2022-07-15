@@ -24,9 +24,10 @@ public class RemoveFromWishToWatch {
                 e.printStackTrace();
             }
         }
-
-        wishToWatch.remove(indexToRemove);
-        user.put("wishToWatch", wishToWatch);
-        user.saveInBackground();
+        if (indexToRemove != -1) {
+            wishToWatch.remove(indexToRemove);
+            user.put("wishToWatch", wishToWatch);
+            user.saveInBackground();
+        }
     }
 }
