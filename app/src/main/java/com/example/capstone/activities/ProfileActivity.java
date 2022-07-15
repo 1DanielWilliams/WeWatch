@@ -81,7 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         String userID = getIntent().getStringExtra("id");
 
-        if (Objects.equals(userID, ParseUser.getCurrentUser().getObjectId())) {
+        if (Objects.equals(userID, ParseUser.getCurrentUser().getObjectId())) { //todo doesnt work
             iBtnLogoutMenu.setVisibility(View.VISIBLE);
         }
         iBtnLogoutMenu.setOnClickListener(v -> {
@@ -130,8 +130,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
         });
-
         AtomicReference<List<VideoContent>> watchedContent = new AtomicReference<>();
+
         ParseQuery<UserPublicColumns> userPublicColumnsParseQuery = ParseQuery.getQuery(UserPublicColumns.class);
         userPublicColumnsParseQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, userID);
         userPublicColumnsParseQuery.findInBackground((userPublicColumns, e) -> {

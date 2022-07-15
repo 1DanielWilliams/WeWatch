@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capstone.R;
 import com.example.capstone.methods.GroupChatMethods;
+import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.UserPublicColumns;
@@ -124,9 +125,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                                     detailMembers.push().setValue(toUserId);
                                 });
 
-                                //todo is not saving the dm id
-
-//                                ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
                                 ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
                                 List<String> participantsIds = new ArrayList<>();
                                 participantsIds.add(toUserId);
@@ -141,17 +139,24 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                                 }));
                             }
                             GroupChatMethods.toConversationDetail(context, finalDmID, false, toUserId);
-
                         });
-
-
                         return true;
                     }
                     return false;
                 }
             });
 
-            }
+            tvScreenNameMessage.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                NavigationMethods.navToProfile(context, messages.get(position).getSenderID());
+            });
+
+            tvUsernameMessage.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                NavigationMethods.navToProfile(context, messages.get(position).getSenderID());
+            });
+
+        }
 
         public void bind(Message message) {
             // bind data to views

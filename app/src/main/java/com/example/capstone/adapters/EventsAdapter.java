@@ -21,6 +21,7 @@ import com.example.capstone.R;
 import com.example.capstone.activities.DetailEventActivity;
 import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.methods.DisplayPlatforms;
+import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.button.MaterialButton;
@@ -116,11 +117,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 otherDatesFragment.show(fm, "other_dates");
             });
 
+            tvUsername.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                NavigationMethods.navToProfile(context, events.get(position).getUsers().get(0).getObjectId());
+            });
+
+            tvScreenName.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                NavigationMethods.navToProfile(context, events.get(position).getUsers().get(0).getObjectId());
+            });
 
         }
 
         public void bind(Event event) throws ParseException {
-            ParseUser user = event.getUsers().get(event.getEarliestUserIndex()).fetch();
+            ParseUser user = event.getUsers().get(event.getEarliestUserIndex()).fetch(); // todo is this the right index
             tvScreenName.setText(user.getString("screenName"));
             tvUsername.setText("@" + user.getUsername());
             tvTypeOfContent.setText(event.getTypeOfContent());

@@ -105,8 +105,8 @@ public class NavigationMethods {
             Intent i;
             if (item.getItemId() == R.id.option_profile) {
                 i = new Intent(context, ProfileActivity.class);
-                String userID = ParseUser.getCurrentUser().getObjectId();
-                i.putExtra("id", userID);
+                String userId = ParseUser.getCurrentUser().getObjectId();
+                i.putExtra("id", userId);
                 context.startActivity(i);
                 return true;
             } else if (item.getItemId() == R.id.option_logout) {
@@ -120,6 +120,12 @@ public class NavigationMethods {
         });
 
         popup.show();
+    }
+
+    public static void navToProfile(Context context, String userId) {
+        Intent i = new Intent(context, ProfileActivity.class);
+        i.putExtra("id", userId);
+        context.startActivity(i);
     }
 
 

@@ -87,7 +87,7 @@ public class FeedActivity extends AppCompatActivity {
                     event.deleteInBackground();
 
                 } else if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() > 1) {
-                    //for each date in dates
+
                     int indexToRemove = 0;
 
                     List<List<ParseUser>> interestedUsers = event.getInterestedUsers();

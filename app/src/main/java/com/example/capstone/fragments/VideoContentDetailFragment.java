@@ -1,5 +1,7 @@
 package com.example.capstone.fragments;
 
+import static com.example.capstone.methods.BinarySearch.earliestDate;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,6 +29,7 @@ import com.example.capstone.R;
 import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
+import com.example.capstone.methods.BinarySearch;
 import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
@@ -235,28 +238,45 @@ public class VideoContentDetailFragment extends DialogFragment {
         //add to the sorted dates array
         List<String> dates = queriedEvent.getDates();
         String newDateStr = event.getDates().get(0);
-        int dateSize = dates.size();
         Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(newDateStr + " 2022"); //todo replace 2022
         boolean isInserted = false;
-        int userIndex = -1;
-        for (int indexDates = 0; indexDates < dateSize; indexDates ++) {
-            //turn date into a Date
-            //compare event date to first date
-                //if before it, insert before and break;
-            Date queriedDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(indexDates) + " 2022"); //todo replace 2022
 
-            if (newDate.before(queriedDate)) {
-                dates.add(indexDates, newDateStr);
-                isInserted = true;
-                userIndex = indexDates;
-                break;
-            }
-        }
-        if (!isInserted) {
-            dates.add(newDateStr);
-            userIndex = dates.size() - 1;
 
-        }
+        int userIndex =  BinarySearch.earliestDate(dates, newDate);
+        dates.add(userIndex, newDateStr);
+//        int dateSize = dates.size();
+//        int beg = 0;
+//        int end = dateSize -1;
+//        int result = -1;
+//        int mid = -1;
+//        while (beg <= end) {
+//            mid = (beg + end) / 2;
+//            Date queriedDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(mid) + " 2022"); //todo replace 2022
+//            if (queriedDate.before(newDate)) {
+//                beg = mid + 1;
+//                result = mid;
+//            } else {
+//                end = mid - 1;
+//            }
+//        }
+//        for (int indexDates = 0; indexDates < dateSize; indexDates ++) {
+//            //turn date into a Date
+//            //compare event date to first date
+//                //if before it, insert before and break;
+//            Date queriedDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(indexDates) + " 2022"); //todo replace 2022
+//
+//            if (newDate.before(queriedDate)) {
+//                dates.add(indexDates, newDateStr);
+//                isInserted = true;
+//                userIndex = indexDates;
+//                break;
+//            }
+//        }
+//        if (!isInserted) {
+//            dates.add(newDateStr);
+//            userIndex = dates.size() - 1;
+//
+//        }
 
 
         queriedEvent.setDates(dates);
