@@ -148,7 +148,7 @@ public class ConversationDetailActivity extends AppCompatActivity {
                     //if a user is typing and it isnt yourself
                     if (typingDetail.isTyping() && !Objects.equals(currUser.getObjectId(), typingDetail.getTypingUserID())) {
                         //add a message that means something is typing
-                        Message typingMessage = new Message(typingDetail.getTypingUsername() + " is typing...", typingDetail.getTypingUserID(), System.currentTimeMillis());
+                        Message typingMessage = new Message(typingDetail.getTypingUserID(), typingDetail.getTypingUserID(), System.currentTimeMillis());
                         isTypingMessage.set(typingMessage);
                         allMessages.add(0, typingMessage);
                         adapter.notifyItemInserted(0);

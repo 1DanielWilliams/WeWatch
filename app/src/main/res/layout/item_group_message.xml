@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content">-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="start">
@@ -26,6 +22,7 @@
             android:padding="16dp"
             android:text="Hello"
             android:textColor="@android:color/black"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDateTIme" />
 
@@ -62,6 +59,19 @@
             app:layout_constraintStart_toEndOf="@+id/tvScreenNameMessage"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lavTypingIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvMessageContent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_url="https://assets5.lottiefiles.com/packages/lf20_SCdC0F.json" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->

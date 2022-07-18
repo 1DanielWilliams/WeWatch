@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.capstone.R;
 import com.example.capstone.methods.GroupChatMethods;
 import com.example.capstone.methods.NavigationMethods;
@@ -78,6 +79,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         private TextView tvDateTIme;
         private TextView tvUsernameMessage;
         private ConstraintLayout cvItemMessage;
+        private LottieAnimationView lavTypingIndicator;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +89,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             tvDateTIme = itemView.findViewById(R.id.tvDateTIme);
             tvUsernameMessage = itemView.findViewById(R.id.tvUsernameMessage);
             cvItemMessage = itemView.findViewById(R.id.cvItemMessage);
+            lavTypingIndicator = itemView.findViewById(R.id.lavTypingIndicator);
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -200,6 +203,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
                     cvItemMessage.setPadding(0, 0, right_px, bottom_px);
                 }
+            }
+
+            if (Objects.equals(message.getSenderID(), message.getMessage_content())) {
+                lavTypingIndicator.setVisibility(View.VISIBLE);
+                tvMessageContent.setVisibility(View.GONE);
             }
 
 
