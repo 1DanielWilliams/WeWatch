@@ -24,13 +24,17 @@ public class Event extends ParseObject {
     public static final String KEY_EARLIEST_DATE = "earliestDate";
     public static final String KEY_EARLIEST_USER_INDEX = "earliestUserIndex";
     public static final String KEY_UNIVERSITY = "university";
-    public static final String KEY_TO_DELETE = "toDelete";
+    public static final String KEY_IS_NEW_DATE = "isNewDate";
+    public static final String KEY_IS_REMOVED_DATE = "isRemovedDate";
 
 
     public Event() {}
 
-    public void setToDelete(boolean toDelete) { put(KEY_TO_DELETE, toDelete);}
-    public boolean getToDelete() {return getBoolean(KEY_TO_DELETE); }
+    public void setIsRemovedDate(boolean isRemovedDate) { put(KEY_IS_REMOVED_DATE, isRemovedDate);}
+    public boolean getIsRemovedDate() {return getBoolean(KEY_IS_REMOVED_DATE); }
+
+    public void setIsNewDate(boolean isNewDate) { put(KEY_IS_NEW_DATE, isNewDate);}
+    public boolean getIsNewDate() {return getBoolean(KEY_IS_NEW_DATE); }
 
     public void setTitle(String title) { put(KEY_TITLE, title); }
     public String getTitle() {return  getString(KEY_TITLE); }

@@ -1,5 +1,6 @@
 package com.example.capstone.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -10,8 +11,12 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
@@ -31,6 +36,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FeedActivity extends AppCompatActivity {
     private RecyclerView rvEvents;
@@ -60,7 +68,8 @@ public class FeedActivity extends AppCompatActivity {
         adapter = new EventsAdapter(this, allEvents);
 
         rvEvents.setAdapter(adapter);
-        rvEvents.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvEvents.setLayoutManager(linearLayoutManager);
 
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rvEvents);
@@ -124,6 +133,34 @@ public class FeedActivity extends AppCompatActivity {
         });
 
 
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(query);
+        subscriptionHandling.handleSubscribe(q -> {
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Event>() {
+                @Override
+                public void onEvent(ParseQuery<Event> queried, Event updatedEvent) {
+                    FeedActivity.this.runOnUiThread(() -> adapter.itemUpdated(updatedEvent) );
+                }
+            });
+
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, (queried, createdEvent) -> {
+                FeedActivity.this.runOnUiThread(() -> {
+                    Toast.makeText(FeedActivity.this, createdEvent.getTitle() + " Created!", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                        rvEvents.smoothScrollToPosition(adapter.itemCreated(createdEvent));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+            });
+
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.DELETE, (query1, deletedEvent) -> {
+                Toast.makeText(FeedActivity.this, deletedEvent.getTitle() + " expired", Toast.LENGTH_SHORT).show();
+            });
+
+        });
 
 
         drawerLayout = findViewById(R.id.drawerLayout);

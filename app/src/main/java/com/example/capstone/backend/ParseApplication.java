@@ -21,10 +21,17 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(UserPublicColumns.class);
 
+//        Parse.initialize(new Parse.Configuration.Builder(this)
+//                .applicationId(getString(R.string.back4app_app_id))
+//                .server(getString(R.string.back4app_server_url))
+//                .clientKey(getString(R.string.back4app_client_key))
+//
+//                .build());
+//        NZ3TYJBJWIJHf6Qrf9WhbYffYtrekmsxqAS2UMpw
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.back4app_app_id))
-                .server(getString(R.string.back4app_server_url))
                 .clientKey(getString(R.string.back4app_client_key))
+                .server("https://wewatch.b4a.io")
                 .build());
     }
 }

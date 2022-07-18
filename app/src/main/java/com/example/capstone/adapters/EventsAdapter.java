@@ -2,14 +2,17 @@ package com.example.capstone.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -19,24 +22,39 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.activities.DetailEventActivity;
+import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.fragments.OtherDatesFragment;
+import com.example.capstone.methods.BinarySearch;
 import com.example.capstone.methods.DisplayPlatforms;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.livequery.ParseLiveQueryClient;
+import com.parse.livequery.SubscriptionHandling;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private Context context;
     private List<Event> events;
+    ParseLiveQueryClient parseLiveQueryClient;
 
     public EventsAdapter(Context context, List<Event> events) {
         this.context = context;
         this.events = events;
+        parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
     }
 
 
@@ -62,6 +80,55 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         return events.size();
     }
 
+    public int itemCreated(Event createdEvent) {
+        //take events list and binary search it to add this thing there
+        int indexToAdd = BinarySearch.indexOfEvents(events, createdEvent.getEarliestDate());
+        events.add(indexToAdd, createdEvent);
+        notifyItemInserted(indexToAdd);
+
+        return indexToAdd;
+    }
+
+    public Pair<Integer, Event> findEventIndex(Event modifiedEvent) {
+        int eventPosition = -1;
+        int eventSize = events.size();
+        Event oldEvent = null;
+
+        //finds the event in the list of events
+        for (int eventIndex = 0; eventIndex < eventSize; eventIndex++) {
+            Log.i("EventsAdapter", "findEventIndex: " + events.get(eventIndex).getObjectId() + " Static: " + modifiedEvent.getObjectId());
+            if (Objects.equals(events.get(eventIndex).getObjectId(), modifiedEvent.getObjectId())) {
+                eventPosition = eventIndex;
+                oldEvent = events.get(eventIndex);
+                break;
+            }
+        }
+
+        return new Pair<>(eventPosition, oldEvent);
+    }
+
+    public void itemUpdated(Event updatedEvent) {
+        Pair<Integer, Event> eventData = findEventIndex(updatedEvent);
+
+        List<String> updatedEventDates = updatedEvent.getDates();
+        int oldEventDatesSize = eventData.second.getDates().size();
+        int updatedEventDateSize = updatedEventDates.size();
+
+        if (updatedEventDateSize > oldEventDatesSize) {
+            //check if the earliest date has changed
+            Toast.makeText(context, "New Data added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();
+            //set a flag that means that a new date was added
+            updatedEvent.setIsNewDate(true);
+
+        } else if (updatedEventDateSize < oldEventDatesSize){
+            //a date was removed
+            updatedEvent.setIsRemovedDate(true);
+        }
+
+        events.set(eventData.first, updatedEvent);
+        notifyItemChanged(eventData.first);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         //declare different views of post up here
 
@@ -72,7 +139,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         TextView tvNumInterested;
         TextView tvOtherDates;
         ImageView ivBackdropEvent;
-        Button btnDate;
+        MaterialButton btnDate;
         Button btnLive;
         ImageView ivFirstPlatformEvent;
         ImageView ivSecondPlatformEvent;
@@ -80,7 +147,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         ImageView ivFourthPlatformEvent;
         TextView tvNumPlatformsLeft;
         TextView tvAvailableOnEvent;
-
+        TextView tvNewDate;
+        TextView tvRemovedDate;
 
 
         public ViewHolder (@NonNull View itemView) {
@@ -101,7 +169,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             ivFourthPlatformEvent = itemView.findViewById(R.id.ivFourthPlatformEvent);
             tvNumPlatformsLeft = itemView.findViewById(R.id.tvNumPlatformsLeft);
             tvAvailableOnEvent = itemView.findViewById(R.id.tvAvailableOnEvent);
-
+            tvNewDate = itemView.findViewById(R.id.tvNewDate);
+            tvRemovedDate = itemView.findViewById(R.id.tvRemovedDate);
 
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
@@ -126,6 +195,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 int position = getBindingAdapterPosition();
                 NavigationMethods.navToProfile(context, events.get(position).getUsers().get(0).getObjectId());
             });
+
 
         }
 
@@ -168,8 +238,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             }
 
 
-
-
             // todo: needs placeholder
             Glide.with(context).load(event.getBackdropUrl()).into(ivBackdropEvent);
             ivBackdropEvent.setColorFilter(Color.argb(60, 0 , 0 , 0));
@@ -191,6 +259,26 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
                 btnDate.setText(event.getDates().get(0));
             }
+
+            Date currDate = new Date(System.currentTimeMillis());
+            // if the event has a new date
+            if(event.getIsNewDate() && currDate.toInstant().isBefore(event.getUpdatedAt().toInstant().plus(Duration.ofSeconds(20)))) {
+                tvNewDate.setVisibility(View.VISIBLE);
+                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 255, 255, 255)));
+                event.setIsNewDate(false);
+            } else if (!event.getIsNewDate()){
+                tvNewDate.setVisibility(View.GONE);
+                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 0, 0, 0)));
+            } // if the event has a new date
+            else if(event.getIsRemovedDate() && currDate.toInstant().isBefore(event.getUpdatedAt().toInstant().plus(Duration.ofSeconds(20)))) {
+                tvRemovedDate.setVisibility(View.VISIBLE);
+                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 214, 41, 41)));
+                event.setIsRemovedDate(false);
+            } else if (!event.getIsRemovedDate()){
+                tvRemovedDate.setVisibility(View.GONE);
+                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 0, 0, 0)));
+            }
+
         }
     }
 }
