@@ -85,9 +85,10 @@ public class FeedActivity extends AppCompatActivity {
             }
 
             List<Event> deletedEvents = new ArrayList<>();
+            Date currDate = new Date(System.currentTimeMillis());
             for (Event event : events ) {
                 List<String> dates = event.getDates();
-                if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() == 1) {
+                if (event.getEarliestDate().before(currDate) && dates.size() == 1) {
 
                     //removes groupID from the parse users
                     String groupChatID = (dates.get(0) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
@@ -95,36 +96,48 @@ public class FeedActivity extends AppCompatActivity {
                     deletedEvents.add(event);
                     event.deleteInBackground();
 
-                } else if (event.getEarliestDate().before(new Date(System.currentTimeMillis())) && dates.size() > 1) {
+                } else if (event.getEarliestDate().before(currDate) && dates.size() > 1) {
+                    // serial search through each date in dates
+                        // checks if the date is invalid if so does this, on else break
+                    for (String dateStr : dates) {
+                        try {
+                            Date date = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dateStr + " 2022"); //todo replace 2022
+                            if (date.before(currDate)) {
+                                int indexToRemove = 0;
 
-                    int indexToRemove = 0;
+                                List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                                interestedUsers.remove(indexToRemove);
+                                event.setInterestedUsers(interestedUsers);
 
-                    List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
-                    interestedUsers.remove(indexToRemove);
-                    event.setInterestedUsers(interestedUsers);
+                                List<ParseUser> authors = event.getUsers();
+                                authors.remove(indexToRemove);
+                                event.setUsers(authors);
 
-                    List<ParseUser> authors = event.getUsers();
-                    authors.remove(indexToRemove);
-                    event.setUsers(authors);
-
-                    //removes the group from the user
-                    String groupChatID = (dates.get(0) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
-                    DeletingEventsMethods.removeChatId(groupChatID, event);
+                                //removes the group from the user
+                                String groupChatID = (dates.get(0) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
+                                DeletingEventsMethods.removeChatId(groupChatID, event);
 
 
-                    dates.remove(0);
-                    event.setDates(dates);
+                                dates.remove(0);
+                                event.setDates(dates);
 
-                    //gets the new earliest date and updates earliestUserIndex
-                    try {
-                        event.setEarliestDate(new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(0) + " 2022"));
-                    } catch (ParseException ex) {
-                        ex.printStackTrace();
+                                //gets the new earliest date and updates earliestUserIndex
+                                try {
+                                    event.setEarliestDate(new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dates.get(0) + " 2022"));
+                                } catch (ParseException ex) {
+                                    ex.printStackTrace();
+                                }
+
+                                event.setEarliestUserIndex(0);
+                                event.saveInBackground();
+                            } else {
+                                break;
+                            }
+                        } catch (ParseException ex) {
+                            ex.printStackTrace();
+                        }
+
                     }
-
-                    event.setEarliestUserIndex(0);
-                    event.saveInBackground();
-
                 }
             }
             allEvents.addAll(events);

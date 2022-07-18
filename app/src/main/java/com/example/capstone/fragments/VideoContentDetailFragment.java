@@ -54,6 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -238,9 +239,14 @@ public class VideoContentDetailFragment extends DialogFragment {
         //add to the sorted dates array
         List<String> dates = queriedEvent.getDates();
         String newDateStr = event.getDates().get(0);
-        Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(newDateStr + " 2022"); //todo replace 2022
+        Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy", Locale.US).parse(newDateStr + " 2022"); //todo replace 2022
 
         int userIndex =  BinarySearch.earliestDateInEvent(dates, newDate);
+
+        if (userIndex == BinarySearch.DATE_EXIST) {
+            Toast.makeText(getActivity(), "Date already Exist", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         dates.add(userIndex, newDateStr);
 
@@ -328,7 +334,7 @@ public class VideoContentDetailFragment extends DialogFragment {
             newDateArr[2] = String.valueOf(timePicker.getHour());
             String militaryDateTimeStr = newDateArr[0] + " " + newDateArr[1] + " " + newDateArr[2] + ":" + s[1];
             try {
-                Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(militaryDateTimeStr + " 2022");
+                Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(militaryDateTimeStr + " 2022");
                 Date currDate = new Date(System.currentTimeMillis());
                 Log.i("VideoContentDetailFragment", "onDateSelected: " + newDate.toString() + " curr: " + currDate.toString());
                 if (newDate.before(currDate)) {
