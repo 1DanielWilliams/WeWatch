@@ -116,7 +116,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         if (updatedEventDateSize > oldEventDatesSize) {
             //check if the earliest date has changed
-            Toast.makeText(context, "New Data added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "New Date added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();
             //set a flag that means that a new date was added
             updatedEvent.setIsNewDate(true);
 

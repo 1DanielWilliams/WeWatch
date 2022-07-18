@@ -137,14 +137,16 @@ public class VideoContentDetailFragment extends DialogFragment {
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));
 
 
-//        btnSelectDate.setOnClickListener(v -> onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent) );
         btnSelectDate.setOnClickListener(v -> {
             event = new Event();
             PostEventMethods.onSelectDate(getActivity(), event, videoContent, tvDateBtn, btnSelectDate, btnPostEvent);
         });
 
 
-        btnPostEvent.setOnClickListener(v -> postEvent() );
+        btnPostEvent.setOnClickListener(v -> {
+            PostEventMethods.postEvent(getActivity(), event, wishToWatch, user, videoContent);
+            this.dismiss();
+        });
 
         //check if the user was already added it to their watch later
         wishToWatch = new AtomicReference<>();
@@ -167,106 +169,6 @@ public class VideoContentDetailFragment extends DialogFragment {
             btnWatchLater.setVisibility(View.GONE);
         });
 
-
-    }
-
-    private void postEvent() {
-
-        RemoveFromWishToWatch.removeContent(wishToWatch.get(), user, videoContent);
-
-        // Query to determine if the video is currently listed on the feed tab
-        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
-        query.whereEqualTo("title", event.getTitle());
-        query.whereEqualTo("typeOfContent", event.getTypeOfContent());
-        query.whereEqualTo("university", ParseUser.getCurrentUser().getString("university"));
-        query.findInBackground((events, e) -> {
-
-            if (e != null) {
-                Log.e("fragment", "done: trouble finding event", e);
-                return;
-            }
-
-            //new event
-            if (events.size() == 0) {
-                event.saveInBackground(e1 -> {
-                    if (e1 != null) {
-                        Log.e("fragment", "done: trouble finding event", e1);
-                        return;
-                    }
-                    Intent i = new Intent(getContext(), FeedActivity.class);
-                    startActivity(i);
-                    this.dismiss();
-                });
-            } else {
-                Event queriedEvent = events.get(0);
-
-                try {
-                    addToExistingEvent(queriedEvent);
-                } catch (java.text.ParseException | ParseException ex) {
-                    ex.printStackTrace();
-                }
-
-                queriedEvent.saveInBackground(e12 -> {
-                    if (e12 != null) {
-                        Log.e("VideoContentDetailFragment", "done: ERROR saving queried event", e12);
-                        return;
-                    }
-                    Intent i = new Intent(getContext(), FeedActivity.class);
-                    startActivity(i);
-                    this.dismiss();
-                });
-            }
-        });
-
-
-    }
-
-    // Adds the new user + time + interested User array to the existing event
-    private void addToExistingEvent(Event queriedEvent) throws java.text.ParseException, ParseException {
-        //increment the numPosted section of the VideoContent
-        try {
-            VideoContent videoContent = queriedEvent.getVideContent().fetch();
-            videoContent.setNumPosted(videoContent.getNumPosted() + 1);
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
-
-        //add to the sorted dates array
-        List<String> dates = queriedEvent.getDates();
-        String newDateStr = event.getDates().get(0);
-        Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy", Locale.US).parse(newDateStr + " " + LocalDate.now().getYear());
-
-        int userIndex =  BinarySearch.earliestDateInEvent(dates, newDate);
-
-        if (userIndex == BinarySearch.DATE_EXIST) {
-            Toast.makeText(getActivity(), "Date already Exist", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        dates.add(userIndex, newDateStr);
-
-
-        queriedEvent.setDates(dates);
-
-        //then add to the authors array
-        List<ParseUser> authors = queriedEvent.getUsers();
-        authors.add(userIndex, event.getUsers().get(0));
-        queriedEvent.setUsers(authors);
-
-
-        //add to the interested users array
-        List<List<ParseUser>> interestedUsers = queriedEvent.getInterestedUsers();
-        List<ParseUser> interestedUser = new ArrayList<>();
-        interestedUser.add(event.getInterestedUsers().get(0).get(0));
-        interestedUsers.add(userIndex, interestedUser);
-
-        queriedEvent.setInterestedUsers(interestedUsers);
-
-        // Updates the earliest date if needed
-        if (event.getEarliestDate().before(queriedEvent.getEarliestDate())) {
-            queriedEvent.setEarliestDate(event.getEarliestDate());
-            queriedEvent.setEarliestUserIndex(0);
-        }
     }
 
 }
