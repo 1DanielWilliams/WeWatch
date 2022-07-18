@@ -92,7 +92,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 @Override
                 public boolean onLongClick(View v) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference groupDetailsRef = database.getReference("group_details"); //todo
+                    DatabaseReference groupDetailsRef = database.getReference("group_details");
                     int position = getBindingAdapterPosition();
                     Message message = messages.get(position);
 

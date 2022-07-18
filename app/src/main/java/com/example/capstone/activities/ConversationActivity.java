@@ -76,7 +76,6 @@ public class ConversationActivity extends AppCompatActivity {
         rvMessages.setAdapter(adapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
 
-//        List<String> groupChatIDs = user.getList("groupChatID");
         ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
         publicColumnsQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, user.getObjectId());
         publicColumnsQuery.findInBackground(new FindCallback<UserPublicColumns>() {

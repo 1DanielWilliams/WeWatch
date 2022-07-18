@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Message {
 
+    public static String USER_TYPING = "typing";
     private long date_time;
     private String message_content;
     private String senderID;

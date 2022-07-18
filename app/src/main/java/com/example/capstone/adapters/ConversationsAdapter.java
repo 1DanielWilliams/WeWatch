@@ -96,6 +96,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                 query.findInBackground((users, e) -> tvGcName.setText(users.get(0).getString("screenName")));
             }
 
+            //if typing == true: display typingn other wise display message
             tvMessagePreview.setText(groupDetail.getMessage().getMessage_content());
             Date msgDate = new Date(groupDetail.getMessage().getDate_time());
             String[] msgDateStr = msgDate.toString().split(" ");

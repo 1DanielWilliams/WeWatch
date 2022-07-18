@@ -24,6 +24,7 @@ import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
+import com.example.capstone.models.TypingDetail;
 import com.example.capstone.models.User;
 import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
@@ -103,8 +104,6 @@ public class DetailEventActivity extends AppCompatActivity {
         });
 
         iBtnDelete.setOnClickListener(v -> {
-            // should check if there are any other times, then delete whole event if there arent
-            // if there are other times, delete that index
             event.deleteInBackground(e -> {
                 Intent i = new Intent(DetailEventActivity.this, FeedActivity.class);
                 startActivity(i);
@@ -138,13 +137,7 @@ public class DetailEventActivity extends AppCompatActivity {
 
 
                         if (isInterested.get() && !inGroupChat.get()) {
-                            // Takes the unique id for the event currently displayed and stores it with the authenticated user
-//                            List<String> groupChatIDs = user.getList("groupChatID");
-//                            if (groupChatIDs != null) {
-//                                groupChatIDs = user.getList("groupChatID");
-//                            } else {
-//                                groupChatIDs = new ArrayList<>();
-//                            }
+
                             userGroupChatIDs.add(groupChatID);
                             userPublicColumn.setGroupChatIds(userGroupChatIDs);
                             userPublicColumn.saveInBackground();
@@ -164,12 +157,16 @@ public class DetailEventActivity extends AppCompatActivity {
                                 if (groupChatExist.get()) {
                                     DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
                                     appendUser.push().setValue(user.getObjectId());
+
                                 } else {
                                     Message firstMessage = new Message("Hi!", user.getObjectId());
                                     DatabaseReference push = groupDetailsRef.push();
                                     push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
                                         DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
                                         detailMembers.push().setValue(user.getObjectId());
+
+                                        DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
+                                        groupDetailRef.setValue(new TypingDetail(false, "", "", ""));
                                     });
                                     groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
                                 }
