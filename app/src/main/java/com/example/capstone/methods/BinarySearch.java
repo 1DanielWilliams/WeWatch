@@ -2,32 +2,50 @@ package com.example.capstone.methods;
 
 import android.util.Log;
 
+import com.example.capstone.models.Event;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class BinarySearch {
-    public static int earliestDate(List<String> dates, Date newDate) throws ParseException {
+    public static int earliestDateInEvent(List<String> dates, Date newDate) throws ParseException {
         int dateSize = dates.size();
-        int beg = 0;
-        int end = dateSize -1;
-        int result = -1;
-        int mid = -1;
-        while (beg <= end) {
-            mid = (beg + end) / 2;
-            Date queriedDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(mid) + " 2022"); //todo replace 2022
-            if (queriedDate.after(newDate)) {
-                beg = mid + 1;
-                result = mid;
-            } else {
-                end = mid - 1;
-            }
-        }
 
-        if (result == -1) {
-            return dateSize;
+        int low = 0;
+        int high = dateSize - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            Date midVal = new SimpleDateFormat("MMM dd HH:mm aa yyyy").parse(dates.get(mid) + " 2022"); //todo replace 2022
+
+            if (midVal.before(newDate)) {
+                low = mid + 1;
+            } else if (midVal.after(newDate)) {
+                high = mid - 1;
+            }
+
         }
-        return result - 1;
+        return low;
+    }
+
+    public static int indexOfEvents(List<Event> events, Date newDate) {
+        int eventsSize = events.size();
+
+        int low = 0;
+        int high = eventsSize - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            Date midVal = events.get(mid).getEarliestDate();
+            if (midVal.before(newDate)) {
+                low = mid + 1;
+            } else if (midVal.after(newDate)) {
+                high = mid - 1;
+            }
+
+        }
+        return low;
     }
 }
