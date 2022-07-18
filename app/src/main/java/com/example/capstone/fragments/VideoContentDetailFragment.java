@@ -51,6 +51,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -239,7 +240,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         //add to the sorted dates array
         List<String> dates = queriedEvent.getDates();
         String newDateStr = event.getDates().get(0);
-        Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy", Locale.US).parse(newDateStr + " 2022"); //todo replace 2022
+        Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy", Locale.US).parse(newDateStr + " " + LocalDate.now().getYear());
 
         int userIndex =  BinarySearch.earliestDateInEvent(dates, newDate);
 

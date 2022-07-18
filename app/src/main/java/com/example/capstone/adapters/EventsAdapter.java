@@ -200,7 +200,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         }
 
         public void bind(Event event) throws ParseException {
-            ParseUser user = event.getUsers().get(event.getEarliestUserIndex()).fetch(); // todo is this the right index
+            ParseUser user = event.getUsers().get(event.getEarliestUserIndex()).fetch();
+
             tvScreenName.setText(user.getString("screenName"));
             tvUsername.setText("@" + user.getUsername());
             tvTypeOfContent.setText(event.getTypeOfContent());

@@ -32,6 +32,7 @@ import com.parse.livequery.SubscriptionHandling;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -99,9 +100,10 @@ public class FeedActivity extends AppCompatActivity {
                 } else if (event.getEarliestDate().before(currDate) && dates.size() > 1) {
                     // serial search through each date in dates
                         // checks if the date is invalid if so does this, on else break
+                    int currYear = LocalDate.now().getYear();
                     for (String dateStr : dates) {
                         try {
-                            Date date = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dateStr + " 2022"); //todo replace 2022
+                            Date date = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dateStr + " " + currYear);
                             if (date.before(currDate)) {
                                 int indexToRemove = 0;
 
@@ -123,7 +125,7 @@ public class FeedActivity extends AppCompatActivity {
 
                                 //gets the new earliest date and updates earliestUserIndex
                                 try {
-                                    event.setEarliestDate(new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dates.get(0) + " 2022"));
+                                    event.setEarliestDate(new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dates.get(0) + " " + currYear));
                                 } catch (ParseException ex) {
                                     ex.printStackTrace();
                                 }
