@@ -30,6 +30,7 @@ import com.example.capstone.activities.FeedActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
 import com.example.capstone.methods.BinarySearch;
+import com.example.capstone.methods.PostEventMethods;
 import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
@@ -136,7 +137,12 @@ public class VideoContentDetailFragment extends DialogFragment {
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));
 
 
-        btnSelectDate.setOnClickListener(v -> onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent) );
+//        btnSelectDate.setOnClickListener(v -> onSelectDate(tvDateBtn, btnSelectDate, btnPostEvent) );
+        btnSelectDate.setOnClickListener(v -> {
+            event = new Event();
+            PostEventMethods.onSelectDate(getActivity(), event, videoContent, tvDateBtn, btnSelectDate, btnPostEvent);
+        });
+
 
         btnPostEvent.setOnClickListener(v -> postEvent() );
 
@@ -148,17 +154,7 @@ public class VideoContentDetailFragment extends DialogFragment {
         }
 
         // determines if the user has already added this content to their wishToWatch
-        AtomicBoolean inWishToWatch = new AtomicBoolean(false);
-        wishToWatch.get().forEach(wishVideoContent -> {
-            try {
-                VideoContent wishToWatchContent = wishVideoContent.fetchIfNeeded();
-                if (Objects.equals(wishToWatchContent.getTitle(), videoContent.getTitle())) {
-                    inWishToWatch.set(true);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        });
+        AtomicBoolean inWishToWatch = new AtomicBoolean(PostEventMethods.isInWishToWatch(wishToWatch, videoContent));
 
         if (!inWishToWatch.get()) {
             btnWatchLater.setVisibility(View.VISIBLE);
@@ -201,9 +197,7 @@ public class VideoContentDetailFragment extends DialogFragment {
                     startActivity(i);
                     this.dismiss();
                 });
-            } else { // if the event already exist and thus the movie currently is in VideoContent (will not always be the case: in the future when events are removed from the db. In this cause i will have to then query the VideoContent aswell)
-                // TODO: ASSUMES THIS NEW POST FOR THE MOVIE IS A DIFFERENT DATE
-
+            } else {
                 Event queriedEvent = events.get(0);
 
                 try {
@@ -273,117 +267,6 @@ public class VideoContentDetailFragment extends DialogFragment {
             queriedEvent.setEarliestDate(event.getEarliestDate());
             queriedEvent.setEarliestUserIndex(0);
         }
-    }
-
-    private String formatMinutes(int minutes) {
-        String strMinutes = "";
-        if (minutes < 10) {
-            strMinutes += "0";
-        }
-
-        strMinutes += String.valueOf(minutes);
-        return strMinutes;
-    }
-
-    private void onSelectDate(TextView tvDate, Button btnSelectDate, Button btnPostEvent) {
-        CalendarConstraints.Builder constraints = new CalendarConstraints.Builder()
-                .setValidator(DateValidatorPointForward.now());
-
-        MaterialDatePicker<Long> datePicker =  MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select date")
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .setCalendarConstraints(constraints.build())
-                .build();
-        datePicker.show(requireActivity().getSupportFragmentManager(), "datePicker");
-
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            onDateSelected(datePicker, btnSelectDate, btnPostEvent, tvDate);
-        });
-    }
-
-    private void onDateSelected(MaterialDatePicker<Long> datePicker, Button btnSelectDate, Button btnPostEvent, TextView tvDate) {
-        Date date =  new Date(datePicker.getSelection());
-        final String[] strDate = {date.toString()};
-        String[] strArrayDate = strDate[0].split(" ");
-        String dateNum = String.valueOf(Integer.parseInt(strArrayDate[2]) + 1);
-        strDate[0] = strArrayDate[1] + " " + dateNum;
-
-        MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_12H)
-                .setTitleText("Select time")
-                .setHour(12)
-                .setMinute(0)
-                .build();
-        timePicker.show(requireActivity().getSupportFragmentManager(), "timePicker");
-
-        timePicker.addOnPositiveButtonClickListener(v1 -> {
-
-            int hour = timePicker.getHour();
-            Log.i("fragment", "onViewCreated: " + hour);
-            String strDateTime;
-            if (hour > 12) {
-                hour -= 12;
-                strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " PM";
-            } else if (hour == 12){
-                strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " PM";
-
-            } else {
-                strDateTime =  strDate[0] + " " + String.valueOf(hour) +":" + formatMinutes(timePicker.getMinute()) + " AM";
-            }
-            String[] s = strDateTime.split(":");
-            String[] newDateArr = s[0].split(" ");
-            newDateArr[2] = String.valueOf(timePicker.getHour());
-            String militaryDateTimeStr = newDateArr[0] + " " + newDateArr[1] + " " + newDateArr[2] + ":" + s[1];
-            try {
-                Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(militaryDateTimeStr + " 2022");
-                Date currDate = new Date(System.currentTimeMillis());
-                Log.i("VideoContentDetailFragment", "onDateSelected: " + newDate.toString() + " curr: " + currDate.toString());
-                if (newDate.before(currDate)) {
-                    Toast.makeText(getActivity(), "Cannot select a time in the past", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                event = createEvent(newDate);
-            } catch (java.text.ParseException e) {
-                e.printStackTrace();
-            }
-            List<String> dates = new ArrayList<>();
-            dates.add(strDateTime);
-            event.setDates(dates);
-
-            tvDate.setVisibility(View.VISIBLE);
-            tvDate.setText(strDateTime);
-            // Then switch button to new one
-            btnSelectDate.setVisibility(View.GONE);
-            btnPostEvent.setVisibility(View.VISIBLE);
-        });
-    }
-
-    private Event createEvent(Date date) {
-        Event event = new Event();
-        event.setTitle(videoContent.getTitle());
-
-        List<ParseUser> users = new ArrayList<>();
-        users.add(ParseUser.getCurrentUser());
-        event.setUsers(users);
-
-        event.setNumInterested(1);
-        event.setTypeOfContent(videoContent.getTypeOfContent());
-        event.setVideoContent(videoContent);
-        event.setPosterUrl(videoContent.getPosterUrl());
-        event.setBackdropUrl(videoContent.getBackdropUrl());
-        event.setIsLive(false);
-
-        List<List<ParseUser>> interestedUsers = new ArrayList<>();
-        List<ParseUser> interestedUser = new ArrayList<>();
-        interestedUser.add(ParseUser.getCurrentUser());
-        interestedUsers.add(interestedUser);
-        event.setInterestedUsers(interestedUsers);
-
-        event.setEarliestDate(date);
-        event.setEarliestUserIndex(0);
-        event.setUniversity(ParseUser.getCurrentUser().getString("university"));
-
-        return event;
     }
 
 }

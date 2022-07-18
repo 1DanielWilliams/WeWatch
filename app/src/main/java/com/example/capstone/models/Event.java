@@ -75,6 +75,29 @@ public class Event extends ParseObject {
     public void setUniversity(String university) {put(KEY_UNIVERSITY, university);}
     public String getUniversity() {return getString(KEY_UNIVERSITY); }
 
-//    public List<Integer> availablePlatforms; //can use an array of constants to represent the key
+    public void createEvent(Date date, VideoContent videoContent) {
+        setTitle(videoContent.getTitle());
 
+        List<ParseUser> users = new ArrayList<>();
+        users.add(ParseUser.getCurrentUser());
+        setUsers(users);
+
+        setNumInterested(1);
+        setTypeOfContent(videoContent.getTypeOfContent());
+        setVideoContent(videoContent);
+        setPosterUrl(videoContent.getPosterUrl());
+        setBackdropUrl(videoContent.getBackdropUrl());
+        setIsLive(false);
+
+        List<List<ParseUser>> interestedUsers = new ArrayList<>();
+        List<ParseUser> interestedUser = new ArrayList<>();
+        interestedUser.add(ParseUser.getCurrentUser());
+        interestedUsers.add(interestedUser);
+        setInterestedUsers(interestedUsers);
+
+        setEarliestDate(date);
+        setEarliestUserIndex(0);
+        setUniversity(ParseUser.getCurrentUser().getString("university"));
+
+    }
 }
