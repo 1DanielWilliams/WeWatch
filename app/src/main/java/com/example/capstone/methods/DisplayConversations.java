@@ -1,14 +1,18 @@
 package com.example.capstone.methods;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.capstone.adapters.ConversationsAdapter;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
+import com.example.capstone.models.TypingDetail;
 import com.example.capstone.models.UserPublicColumns;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +51,8 @@ public class DisplayConversations {
                                 List<String> userIds = new ArrayList<>();
                                 child.child("members").getChildren().forEach(dataSnapshot -> userIds.add(dataSnapshot.getValue().toString()));
                                 GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message, userIds);
+                                TypingDetail typingDetail = child.child("typing_detail").getValue(TypingDetail.class);
+                                groupDetail.setTyping_detail(typingDetail);
                                 allGroupDetails.add(groupDetail);
                             }
                         }

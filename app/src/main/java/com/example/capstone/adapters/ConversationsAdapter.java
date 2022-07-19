@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.capstone.R;
 import com.example.capstone.activities.ConversationDetailActivity;
 import com.example.capstone.methods.GroupChatMethods;
@@ -52,10 +53,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         return groupDetails.size();
     }
 
+
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvGcName;
         private TextView tvMessagePreview;
         private TextView tvTimeDateConversation;
+        private LottieAnimationView lavTypingIndicatorConversation;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +66,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             tvGcName = itemView.findViewById(R.id.tvGcName);
             tvMessagePreview = itemView.findViewById(R.id.tvMessagePreview);
             tvTimeDateConversation = itemView.findViewById(R.id.tvTimeDateConversation);
+            lavTypingIndicatorConversation = itemView.findViewById(R.id.lavTypingIndicatorConversation);
 
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
@@ -70,7 +74,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                 if (groupDetail.getName().contains("@")) {
                     GroupChatMethods.toConversationDetail(context, groupDetails.get(position).getId(), true, "");
                 } else {
-                    int toUserIdPosition = toUserIdPosition(groupDetail.getUsers(), ParseUser.getCurrentUser());
+                    int toUserIdPosition = toUserIdPosition(groupDetail.getUsers());
                     GroupChatMethods.toConversationDetail(context, groupDetails.get(position).getId(), false, groupDetail.getUsers().get(toUserIdPosition));
                 }
             });
@@ -90,7 +94,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                 }
                 tvGcName.setText(name);
             } else {
-                int toUserIdPosition = toUserIdPosition(groupDetail.getUsers(), ParseUser.getCurrentUser());
+                int toUserIdPosition = toUserIdPosition(groupDetail.getUsers());
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.whereEqualTo("objectId", groupDetail.getUsers().get(toUserIdPosition));
                 query.findInBackground((users, e) -> tvGcName.setText(users.get(0).getString("screenName")));
@@ -102,14 +106,25 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
             String[] msgDateStr = msgDate.toString().split(" ");
 
             tvTimeDateConversation.setText(msgDateStr[1] + " " + msgDateStr[2] + " " + msgDateStr[3]);
+
+            if (groupDetail.getTyping_detail().isTyping()) {
+                tvMessagePreview.setVisibility(View.GONE);
+                lavTypingIndicatorConversation.setVisibility(View.VISIBLE);
+            } else {
+                tvMessagePreview.setVisibility(View.VISIBLE);
+                lavTypingIndicatorConversation.setVisibility(View.GONE);
+
+            }
         }
 
-        public int toUserIdPosition(List<String> groupUsers, ParseUser currUser) {
+        public int toUserIdPosition(List<String> groupUsers) {
             if (groupUsers.indexOf(ParseUser.getCurrentUser().getObjectId()) == 0) {
                 return 1;
             } else {
                 return 0;
             }
         }
+
+
     }
 }

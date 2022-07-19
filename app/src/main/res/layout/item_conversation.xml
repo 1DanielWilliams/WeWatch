@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lavTypingIndicatorConversation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvGcName"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_url="https://assets5.lottiefiles.com/packages/lf20_SCdC0F.json" />
+
     <TextView
         android:id="@+id/tvGcName"
         android:layout_width="239dp"
@@ -26,6 +39,7 @@
         android:layout_marginEnd="16dp"
         android:text="hi how are you"
         android:textSize="14sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,11 +74,11 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="55dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMessagePreview" />
+        app:layout_constraintTop_toBottomOf="@+id/tvGcName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

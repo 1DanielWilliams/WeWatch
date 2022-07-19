@@ -7,6 +7,7 @@ public class GroupDetail {
     private String id;
     private Message message; //recent message
     private List<String> users;
+    private TypingDetail typing_detail;
 
     // Empty constructor for firebase
     public GroupDetail() {}
@@ -22,6 +23,14 @@ public class GroupDetail {
         this.id = id;
         this.message = message;
         this.users = users;
+    }
+
+    public TypingDetail getTyping_detail() {
+        return typing_detail;
+    }
+
+    public void setTyping_detail(TypingDetail typing_detail) {
+        this.typing_detail = typing_detail;
     }
 
     public List<String> getUsers() {
