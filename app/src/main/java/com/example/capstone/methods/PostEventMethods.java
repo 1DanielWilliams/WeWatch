@@ -61,7 +61,7 @@ public class PostEventMethods {
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .setCalendarConstraints(constraints.build())
                 .build();
-        datePicker.show(((FragmentActivity) context).getSupportFragmentManager(), "datePicker"); // todo does this work?
+        datePicker.show(((FragmentActivity) context).getSupportFragmentManager(), "datePicker");
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
             onDateSelected(context, event, videoContent, datePicker, btnSelectDate, btnPostEvent, tvDate);
@@ -101,7 +101,7 @@ public class PostEventMethods {
             String militaryDateTimeStr = newDateArr[0] + " " + newDateArr[1] + " " + newDateArr[2] + ":" + s[1];
 
             try {
-                Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy", Locale.US).parse(militaryDateTimeStr + " 2022");
+                Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy", Locale.US).parse(militaryDateTimeStr + " " + LocalDate.now().getYear());
                 Date currDate = new Date(System.currentTimeMillis());
                 Log.i("VideoContentDetailFragment", "onDateSelected: " + newDate.toString() + " curr: " + currDate.toString());
                 if (newDate.before(currDate)) {

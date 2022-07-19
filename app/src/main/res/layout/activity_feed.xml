@@ -7,7 +7,9 @@
     android:id="@+id/drawerLayout"
     tools:openDrawer="start">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -25,12 +27,19 @@
             app:titleTextColor="@android:color/black"
             tools:layout_editor_absoluteX="53dp">
 
-            <ImageButton
+<!--            <ImageButton-->
+<!--                android:id="@+id/menuSearchFeed"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="end"-->
+<!--                android:backgroundTint="@android:color/transparent"-->
+<!--                android:src="@android:drawable/ic_menu_search" />-->
+
+            <SearchView
+                android:id="@+id/searchFeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_search" />
+                android:layout_gravity="end"/>
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -40,6 +49,7 @@
                 android:text="Feed"
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                android:visibility="visible"
                 android:textStyle="bold"
                 tools:layout_editor_absoluteX="100dp"
                 tools:layout_editor_absoluteY="28dp" />
@@ -61,7 +71,8 @@
             android:layout_height="760dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navDrawerFeed"

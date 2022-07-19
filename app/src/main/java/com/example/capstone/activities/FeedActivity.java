@@ -2,19 +2,26 @@ package com.example.capstone.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.ToolbarWidgetWrapper;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +31,7 @@ import com.example.capstone.methods.DeletingEventsMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -34,9 +42,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,6 +58,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FeedActivity extends AppCompatActivity {
     private RecyclerView rvEvents;
     private EventsAdapter adapter;
+    private List<Event> queriedEvents;
     private List<Event> allEvents;
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
@@ -51,6 +66,8 @@ public class FeedActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView toolbarTitle;
     private ParseLiveQueryClient parseLiveQueryClient;
+    private SearchView searchFeed;
+    private NavigableMap<String, Event> allEventsMap;
 
 
     @Override
@@ -58,6 +75,8 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+
+        searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(ParseUser.getCurrentUser().getString("university"));
 
@@ -65,8 +84,10 @@ public class FeedActivity extends AppCompatActivity {
         rvEvents = findViewById(R.id.rvEvents);
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
 
+        allEventsMap = new TreeMap<>();
+        queriedEvents = new ArrayList<>();
         allEvents = new ArrayList<>();
-        adapter = new EventsAdapter(this, allEvents);
+        adapter = new EventsAdapter(this, queriedEvents);
 
         rvEvents.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -140,10 +161,12 @@ public class FeedActivity extends AppCompatActivity {
                         }
 
                     }
+                } else { // not deleting the event
+                    allEventsMap.put(event.getTitle().toLowerCase(Locale.ROOT), event);
                 }
             }
-            allEvents.addAll(events);
-            allEvents.removeAll(deletedEvents);
+            queriedEvents.addAll(events);
+            queriedEvents.removeAll(deletedEvents);
             adapter.notifyDataSetChanged();
         });
 
@@ -163,6 +186,7 @@ public class FeedActivity extends AppCompatActivity {
 
                     try {
                         TimeUnit.SECONDS.sleep(1);
+                        // todo, do not automatically scroll: add button to scroll to event
                         rvEvents.smoothScrollToPosition(adapter.itemCreated(createdEvent));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -184,7 +208,42 @@ public class FeedActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(FeedActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
+        searchFeed.setOnSearchClickListener(v -> {
+            allEvents.addAll(queriedEvents);
+            queriedEvents.clear();
+            adapter.notifyDataSetChanged();
+            toolbarTitle.setVisibility(View.GONE);
+        });
+
+        searchFeed.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                queriedEvents.clear();
+                //query for everything once
+                if (newText.length() > 0) {
+                    Collection<Event> events = getByPrefix(allEventsMap, newText.toLowerCase(Locale.ROOT)).values();
+                    queriedEvents.addAll(events);
+                }
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+        searchFeed.setOnCloseListener(() -> {
+            toolbarTitle.setVisibility(View.VISIBLE);
+            queriedEvents.addAll(allEvents);
+            adapter.notifyDataSetChanged();
+            return false;
+        });
 
     }
 
+    public SortedMap<String, Event> getByPrefix(NavigableMap<String, Event> myMap, String prefix ) {
+        return myMap.subMap( prefix, prefix + Character.MAX_VALUE );
+    }
 }

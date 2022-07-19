@@ -129,7 +129,6 @@ public class ConversationDetailMethods {
                         rvMessages.smoothScrollToPosition(0);
                         wasTyping.set(true);
                     } else if (!typingDetail.isTyping() && !Objects.equals(currUser.getObjectId(), typingDetail.getTypingUserID()) && wasTyping.get()){
-                        Log.i("ConversationDetialActivity", "onChildChanged: " + typingDetail.getTypingUsername() + " is no longer typing");
                         int index = allMessages.indexOf(isTypingMessage.get());
                         allMessages.remove(index);
                         adapter.notifyItemRemoved(index);

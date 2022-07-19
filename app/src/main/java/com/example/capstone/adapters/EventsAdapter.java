@@ -50,6 +50,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private Context context;
     private List<Event> events;
     ParseLiveQueryClient parseLiveQueryClient;
+    private final ColorStateList WHITE = ColorStateList.valueOf(Color.argb(255, 255, 255, 255));
+    private final ColorStateList BLACK = ColorStateList.valueOf(Color.argb(255, 0, 0, 0));
+    private final ColorStateList RED = ColorStateList.valueOf(Color.argb(255, 214, 41, 41));
+
+
 
     public EventsAdapter(Context context, List<Event> events) {
         this.context = context;
@@ -262,22 +267,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             }
 
             Date currDate = new Date(System.currentTimeMillis());
-            // if the event has a new date
+            // if the event has a new date and the event has been updated within the last 20 seconds
             if(event.getIsNewDate() && currDate.toInstant().isBefore(event.getUpdatedAt().toInstant().plus(Duration.ofSeconds(20)))) {
                 tvNewDate.setVisibility(View.VISIBLE);
-                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 255, 255, 255)));
+                btnDate.setStrokeColor(WHITE);
                 event.setIsNewDate(false);
             } else if (!event.getIsNewDate()){
                 tvNewDate.setVisibility(View.GONE);
-                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 0, 0, 0)));
-            } // if the event has a new date
+                btnDate.setStrokeColor(BLACK);
+            } // if an event's date was removed and the event has been updated within the last 20 seconds
             else if(event.getIsRemovedDate() && currDate.toInstant().isBefore(event.getUpdatedAt().toInstant().plus(Duration.ofSeconds(20)))) {
                 tvRemovedDate.setVisibility(View.VISIBLE);
-                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 214, 41, 41)));
+                btnDate.setStrokeColor(RED);
                 event.setIsRemovedDate(false);
             } else if (!event.getIsRemovedDate()){
                 tvRemovedDate.setVisibility(View.GONE);
-                btnDate.setStrokeColor(ColorStateList.valueOf(Color.argb(255, 0, 0, 0)));
+                btnDate.setStrokeColor(BLACK);
             }
 
         }
