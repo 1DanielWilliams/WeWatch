@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.example.capstone.R;
 import com.example.capstone.activities.login.UsernameLogInActivity;
-import com.example.capstone.activities.signup.SignUpActivity1;
+import com.example.capstone.activities.signup.SignUpActivityCredentials;
 import com.parse.ParseUser;
 
 public class logOrSignActivity extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class logOrSignActivity extends AppCompatActivity {
         btnLogIn = findViewById(R.id.btnLogIn);
 
         btnCreateAccount.setOnClickListener(v -> {
-            Intent i = new Intent(logOrSignActivity.this, SignUpActivity1.class);
+            Intent i = new Intent(logOrSignActivity.this, SignUpActivityCredentials.class);
             startActivity(i);
         });
 

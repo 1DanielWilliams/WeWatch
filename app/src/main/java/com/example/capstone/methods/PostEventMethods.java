@@ -99,14 +99,16 @@ public class PostEventMethods {
             String[] newDateArr = s[0].split(" ");
             newDateArr[2] = String.valueOf(timePicker.getHour());
             String militaryDateTimeStr = newDateArr[0] + " " + newDateArr[1] + " " + newDateArr[2] + ":" + s[1];
+
             try {
-                Date newDate = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(militaryDateTimeStr + " 2022");
+                Date newDate = new SimpleDateFormat("MMM dd HH:mm aa yyyy", Locale.US).parse(militaryDateTimeStr + " 2022");
                 Date currDate = new Date(System.currentTimeMillis());
                 Log.i("VideoContentDetailFragment", "onDateSelected: " + newDate.toString() + " curr: " + currDate.toString());
                 if (newDate.before(currDate)) {
                     Toast.makeText(((FragmentActivity) context), "Cannot select a time in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Log.i("PostEvenMethods", "onDateSelected: " + newDate.toString() + " strDate: " + militaryDateTimeStr);
                 event.createEvent(newDate, videoContent);
             } catch (java.text.ParseException e) {
                 e.printStackTrace();

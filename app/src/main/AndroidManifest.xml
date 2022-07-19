@@ -53,13 +53,13 @@
             android:exported="false"
             android:parentActivityName=".activities.login.UsernameLogInActivity" />
         <activity
-            android:name=".activities.signup.SignUpActivity3"
+            android:name=".activities.signup.SignUpActivityConfirmation"
             android:exported="false"
-            android:parentActivityName=".activities.signup.SignUpActivity2" />
+            android:parentActivityName=".activities.signup.SignUpActivityOptions" />
         <activity
-            android:name=".activities.signup.SignUpActivity2"
+            android:name=".activities.signup.SignUpActivityOptions"
             android:exported="false"
-            android:parentActivityName=".activities.signup.SignUpActivity1" />
+            android:parentActivityName=".activities.signup.SignUpActivityCredentials" />
         <activity
             android:name=".activities.logOrSignActivity"
             android:exported="true">
@@ -70,7 +70,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.signup.SignUpActivity1"
+            android:name=".activities.signup.SignUpActivityCredentials"
             android:exported="false"
             android:parentActivityName=".activities.logOrSignActivity" />
         <activity

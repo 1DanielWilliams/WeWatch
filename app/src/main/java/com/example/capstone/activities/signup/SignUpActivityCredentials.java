@@ -18,7 +18,7 @@ import com.example.capstone.methods.OnETChange;
 
 import java.util.regex.Pattern;
 
-public class SignUpActivity1 extends AppCompatActivity {
+public class SignUpActivityCredentials extends AppCompatActivity {
 
     private final String TAG = "SignUpActivity1";
 
@@ -64,7 +64,7 @@ public class SignUpActivity1 extends AppCompatActivity {
         btnCancelSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(SignUpActivity1.this);
+                NavUtils.navigateUpFromSameTask(SignUpActivityCredentials.this);
             }
         });
 
@@ -98,7 +98,7 @@ public class SignUpActivity1 extends AppCompatActivity {
         }
 
 
-        Intent i = new Intent(SignUpActivity1.this, SignUpActivity2.class);
+        Intent i = new Intent(SignUpActivityCredentials.this, SignUpActivityOptions.class);
         i.putExtra("screenName", screenName);
         i.putExtra("password", password);
         i.putExtra("email", email);

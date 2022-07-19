@@ -14,13 +14,12 @@ import android.widget.ImageButton;
 import com.example.capstone.R;
 import com.example.capstone.methods.LogInUser;
 import com.example.capstone.models.UserPublicColumns;
-import com.parse.ParseACL;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
-public class SignUpActivity3 extends AppCompatActivity {
+public class SignUpActivityConfirmation extends AppCompatActivity {
 
     private final String TAG = "SignUpActivity3";
 
@@ -43,7 +42,7 @@ public class SignUpActivity3 extends AppCompatActivity {
 
         btnCreateAccount2 = findViewById(R.id.btnCreateAccount2);
         upArrowSign3 = findViewById(R.id.upArrowSign3);
-        upArrowSign3.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(SignUpActivity3.this));
+        upArrowSign3.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(SignUpActivityConfirmation.this));
 
 
         etFinalName = findViewById(R.id.etSignName);
@@ -110,7 +109,7 @@ public class SignUpActivity3 extends AppCompatActivity {
                     return;
                 }
 
-                LogInUser.loginUser(SignUpActivity3.this, username, password, etFinalPassword);
+                LogInUser.loginUser(SignUpActivityConfirmation.this, username, password, etFinalPassword);
             });
         });
     }
