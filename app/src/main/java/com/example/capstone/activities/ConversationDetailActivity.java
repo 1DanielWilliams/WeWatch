@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.MessagesAdapter;
+import com.example.capstone.methods.ConversationDetailMethods;
+import com.example.capstone.methods.OnETChange;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.TypingDetail;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -88,143 +90,13 @@ public class ConversationDetailActivity extends AppCompatActivity {
         upArrowProfile.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(this) );
 
         // Formats the group chats name
-        if (getIntent().getBooleanExtra("is_group_chat", false)) {
-            String[] groupName = groupChatId.split("PM");
-            if (groupName.length == 1) {
-                groupName = groupChatId.split("AM");
-            }
-            String name = groupName[1];
-            if (name.length() > 25) {
-                name = name.substring(0, 25) + "... @" + groupName[0];
-            } else {
-                name += "@" + groupName[0];
-            }
-            gcNameConversationDetail.setText(name);
-        } else {
-            ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
-            String toUserId = getIntent().getStringExtra("to_user_id");
-            parseQuery.whereEqualTo("objectId", toUserId);
-            parseQuery.findInBackground((users, e) -> gcNameConversationDetail.setText(users.get(0).getUsername()) );
-        }
+        ConversationDetailMethods.setChatName(groupChatId, gcNameConversationDetail, getIntent());
 
+        ConversationDetailMethods.populateMessages(groupChatRef, allMessages, adapter);
 
-        groupChatRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                allMessages.add(0, snapshot.getValue(Message.class));
-                adapter.notifyItemInserted(0);
-            }
+        ConversationDetailMethods.isTypingLogic(groupDetailsRef, groupChatId, database, currUser, allMessages, adapter, rvMessages, etMessageContent);
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-
-
-        AtomicReference<String> groupDetailKey = new AtomicReference<>();
-        groupDetailsRef.get().addOnCompleteListener(task -> {
-            for (DataSnapshot child : task.getResult().getChildren()) {
-                if (groupChatId.equals(child.child("id").getValue())) {
-                    groupDetailKey.set(child.getKey());
-                    break;
-                }
-            }
-
-            DatabaseReference groupDetailRef = database.getReference("group_details/" + groupDetailKey.get());
-
-            AtomicReference<Message> isTypingMessage = new AtomicReference<>();
-            AtomicBoolean wasTyping = new AtomicBoolean(false);
-            groupDetailRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    TypingDetail typingDetail = snapshot.getValue(TypingDetail.class);
-                    //if a user is typing and it isnt yourself
-                    if (typingDetail.isTyping() && !Objects.equals(currUser.getObjectId(), typingDetail.getTypingUserID())) {
-                        //add a message that means something is typing
-                        Message typingMessage = new Message(typingDetail.getTypingUserID(), typingDetail.getTypingUserID(), System.currentTimeMillis());
-                        isTypingMessage.set(typingMessage);
-                        allMessages.add(0, typingMessage);
-                        adapter.notifyItemInserted(0);
-                        rvMessages.smoothScrollToPosition(0);
-                        wasTyping.set(true);
-                    } else if (!typingDetail.isTyping() && !Objects.equals(currUser.getObjectId(), typingDetail.getTypingUserID()) && wasTyping.get()){
-                        Log.i("ConversationDetialActivity", "onChildChanged: " + typingDetail.getTypingUsername() + " is no longer typing");
-                        int index = allMessages.indexOf(isTypingMessage.get());
-                        allMessages.remove(index);
-                        adapter.notifyItemRemoved(index);
-                        wasTyping.set(false);
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {}
-            });
-
-            DatabaseReference typingDetailRef = database.getReference("group_details/" + groupDetailKey.get() + "/typing_detail");
-
-            etMessageContent.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    TypingDetail typingDetail = new TypingDetail(true, currUser.getObjectId(), currUser.getUsername(), currUser.getString("screenName"));
-                    typingDetailRef.setValue(typingDetail);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s.length() == 0) {
-                        TypingDetail typingDetail = new TypingDetail(false);
-                        typingDetailRef.setValue(typingDetail);
-                    }
-                }
-            });
-
-        });
-
-
-        btnSend.setOnClickListener(v -> {
-            String messageContent = etMessageContent.getText().toString();
-            if (messageContent.equals("")) {
-                Toast.makeText(ConversationDetailActivity.this, "A message cannot be empty", Toast.LENGTH_SHORT).show();
-            }
-            etMessageContent.setText("");
-
-            //create a message thing and copy
-            Message message = new Message(messageContent, currUser.getObjectId());
-            database.getReference("group_messages").child(groupChatId).push().setValue(message); //saves message to data base
-
-            //update current group chat with new message
-            groupDetailsRef.get().addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.e("ConversationDetailActivity", "Error getting data ", task.getException());
-                    return;
-                }
-                String groupChatKey = "";
-                for (DataSnapshot child : task.getResult().getChildren()) {
-                    if (groupChatId.equals(child.child("id").getValue().toString())) {
-                        groupChatKey = child.getKey();
-                    }
-                }
-                //updates the group chat with the newest message
-                database.getReference("group_details/" + groupChatKey + "/message").setValue(message);
-
-            });
-        });
+        btnSend.setOnClickListener(v -> ConversationDetailMethods.onMessageSend(this, etMessageContent, database, currUser, groupChatId, groupDetailsRef));
 
     }
 }

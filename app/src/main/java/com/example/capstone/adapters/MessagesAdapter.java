@@ -22,6 +22,7 @@ import com.example.capstone.methods.GroupChatMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
+import com.example.capstone.models.TypingDetail;
 import com.example.capstone.models.UserPublicColumns;
 import com.facebook.stetho.common.StringUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -102,7 +103,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                     ParseUser user = ParseUser.getCurrentUser();
                     String toUserId = message.getSenderID();
                     String currId = user.getObjectId();
-                    // some type of logic to put one in front of the other
+
 
                     String dmID =  user.getObjectId() + " " + toUserId;
                     char[] dmIDArray = dmID.toCharArray();
@@ -126,6 +127,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                                     DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
                                     detailMembers.push().setValue(user.getObjectId());
                                     detailMembers.push().setValue(toUserId);
+
+                                    DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
+                                    groupDetailRef.setValue(new TypingDetail(false));
                                 });
 
                                 ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
@@ -133,7 +137,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                                 participantsIds.add(toUserId);
                                 participantsIds.add(currId);
                                 publicColumnsQuery.whereContainedIn(UserPublicColumns.KEY_USER_ID, participantsIds);
-                                Log.i("MessageAdapter", "onLongClick: HELLO");
                                 publicColumnsQuery.findInBackground((userPublicColumns, e) -> userPublicColumns.forEach(userPublicColumn -> {
                                     List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
                                     groupChatIDs.add(finalDmID);
@@ -205,6 +208,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 }
             }
 
+            // indication that this user is typing
             if (Objects.equals(message.getSenderID(), message.getMessage_content())) {
                 lavTypingIndicator.setVisibility(View.VISIBLE);
                 tvMessageContent.setVisibility(View.GONE);

@@ -166,7 +166,7 @@ public class DetailEventActivity extends AppCompatActivity {
                                         detailMembers.push().setValue(user.getObjectId());
 
                                         DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
-                                        groupDetailRef.setValue(new TypingDetail(false, "", "", ""));
+                                        groupDetailRef.setValue(new TypingDetail(false));
                                     });
                                     groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
                                 }

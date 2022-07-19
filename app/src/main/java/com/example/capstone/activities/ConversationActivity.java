@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.capstone.R;
 import com.example.capstone.adapters.ConversationsAdapter;
+import com.example.capstone.methods.DisplayConversations;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
@@ -45,6 +48,7 @@ public class ConversationActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference groupDetailsRef;
     private ParseUser user;
+    private TextView tvJoinAGroupChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,7 @@ public class ConversationActivity extends AppCompatActivity {
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
         toolbar = findViewById(R.id.toolbar);
         rvMessages = findViewById(R.id.rvMessages);
+        tvJoinAGroupChat = findViewById(R.id.tvJoinAGroupChat);
 
         try {
             user = ParseUser.getCurrentUser().fetch();
@@ -75,57 +80,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         rvMessages.setAdapter(adapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
-
-        ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
-        publicColumnsQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, user.getObjectId());
-        publicColumnsQuery.findInBackground(new FindCallback<UserPublicColumns>() {
-            @Override
-            public void done(List<UserPublicColumns> userPublicColumns, ParseException e) {
-                UserPublicColumns userPublicColumn = userPublicColumns.get(0);
-                List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
-                if (groupChatIDs.size() != 0) {
-                    groupDetailsRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            allGroupDetails.clear();
-                            adapter.notifyDataSetChanged();
-                            // Finds the groupChats relevant to the user and adds it to the adapter
-                            for (DataSnapshot child : snapshot.getChildren()) {
-                                // the authenticated user is in this group
-                                String id = child.child("id").getValue().toString();
-                                if (groupChatIDs.contains(id)) {
-                                    Message message = child.child("message").getValue(Message.class);
-                                    List<String> userIds = new ArrayList<>();
-                                    child.child("members").getChildren().forEach(dataSnapshot -> userIds.add(dataSnapshot.getValue().toString()));
-                                    GroupDetail groupDetail = new GroupDetail(child.child("name").getValue().toString(), id, message, userIds);
-                                    allGroupDetails.add(groupDetail);
-                                }
-                            }
-
-                            // Sorts the list by the message date
-                            allGroupDetails.sort((firstGd, secondGd) -> {
-                                if (firstGd == null || secondGd == null) {
-                                    return 0;
-                                }
-                                Date firstDate = new Date(firstGd.getMessage().getDate_time());
-                                Date secondDate = new Date(secondGd.getMessage().getDate_time());
-                                return secondDate.compareTo(firstDate);
-                            });
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-
-                } else {
-                    //display something to show that you have no groupchats
-                }
-
-            }
-        });
+        DisplayConversations.fetchGroupDetails(user, groupDetailsRef, allGroupDetails, adapter, tvJoinAGroupChat);
 
     }
 

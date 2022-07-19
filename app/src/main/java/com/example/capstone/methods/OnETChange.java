@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.example.capstone.models.TypingDetail;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.parse.ParseUser;
+
 import java.util.regex.Pattern;
 
 public class OnETChange {
@@ -113,5 +118,29 @@ public class OnETChange {
             }
         });
 
+    }
+
+
+    public static void typingIndicator(FirebaseDatabase database, String groupDetailKey, EditText etMessageContent, ParseUser currUser) {
+        DatabaseReference typingDetailRef = database.getReference("group_details/" + groupDetailKey + "/typing_detail");
+
+        etMessageContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                TypingDetail typingDetail = new TypingDetail(true, currUser.getObjectId(), currUser.getUsername(), currUser.getString("screenName"));
+                typingDetailRef.setValue(typingDetail);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    TypingDetail typingDetail = new TypingDetail(false);
+                    typingDetailRef.setValue(typingDetail);
+                }
+            }
+        });
     }
 }

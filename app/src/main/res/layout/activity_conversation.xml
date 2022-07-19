@@ -54,6 +54,24 @@
                 android:rotation="0"
                 android:src="@android:drawable/ic_menu_sort_by_size" />
         </androidx.appcompat.widget.Toolbar>
+        <!--    TOOLBAR-->
+
+    <TextView
+        android:id="@+id/tvJoinAGroupChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="108dp"
+        android:elevation="100dp"
+        android:gravity="center"
+        android:text="Join a Group Chat!"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:visibility="gone"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
@@ -63,7 +81,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <!--    TOOLBAR-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
