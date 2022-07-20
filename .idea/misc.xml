@@ -26,9 +26,9 @@
         <entry key="app/src/main/res/layout/activity_signup1.xml" value="0.46494903564453127" />
         <entry key="app/src/main/res/layout/activity_signup2.xml" value="0.24260947122158377" />
         <entry key="app/src/main/res/layout/activity_signup3.xml" value="0.33270263671875" />
-        <entry key="app/src/main/res/layout/activity_tvshow_selection.xml" value="0.32909393310546875" />
+        <entry key="app/src/main/res/layout/activity_tvshow_selection.xml" value="0.11549295774647887" />
         <entry key="app/src/main/res/layout/fragment_other_dates.xml" value="0.44650475540843015" />
-        <entry key="app/src/main/res/layout/fragment_video_content_detail.xml" value="0.534466281072074" />
+        <entry key="app/src/main/res/layout/fragment_video_content_detail.xml" value="0.502127659574468" />
         <entry key="app/src/main/res/layout/fragment_videocontent_detail.xml" value="0.3875" />
         <entry key="app/src/main/res/layout/header_navigation_drawer.xml" value="0.6650137419747832" />
         <entry key="app/src/main/res/layout/item_conversation.xml" value="0.33806304931640624" />
@@ -43,7 +43,7 @@
         <entry key="app/src/main/res/layout/toolbar_basic.xml" value="0.28533095153994115" />
         <entry key="app/src/main/res/layout/toolbar_with_cancel.xml" value="0.13043478260869565" />
         <entry key="app/src/main/res/menu/navigation_drawer.xml" value="0.1" />
-        <entry key="app/src/main/res/menu/popup_menu.xml" value="0.3645833333333333" />
+        <entry key="app/src/main/res/menu/popup_menu.xml" value="0.8140263875325522" />
         <entry key="app/src/main/res/menu/profile_popup_menu.xml" value="0.46197916666666666" />
         <entry key="app/src/main/res/menu/search_feed.xml" value="0.2975630611372381" />
         <entry key="app/src/main/res/xml/searchable.xml" value="0.2975630611372381" />

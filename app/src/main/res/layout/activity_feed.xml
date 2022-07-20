@@ -27,13 +27,6 @@
             app:titleTextColor="@android:color/black"
             tools:layout_editor_absoluteX="53dp">
 
-<!--            <ImageButton-->
-<!--                android:id="@+id/menuSearchFeed"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="end"-->
-<!--                android:backgroundTint="@android:color/transparent"-->
-<!--                android:src="@android:drawable/ic_menu_search" />-->
 
             <SearchView
                 android:id="@+id/searchFeed"

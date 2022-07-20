@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class FeedActivity extends AppCompatActivity {
+    private boolean listen;
     private RecyclerView rvEvents;
     private EventsAdapter adapter;
     private List<Event> queriedEvents;
@@ -68,6 +69,7 @@ public class FeedActivity extends AppCompatActivity {
     private ParseLiveQueryClient parseLiveQueryClient;
     private SearchView searchFeed;
     private NavigableMap<String, Event> allEventsMap;
+    private  SubscriptionHandling<Event> subscriptionHandling;
 
 
     @Override
@@ -75,7 +77,7 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-
+        listen = true;
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(ParseUser.getCurrentUser().getString("university"));
@@ -165,34 +167,38 @@ public class FeedActivity extends AppCompatActivity {
                     allEventsMap.put(event.getTitle().toLowerCase(Locale.ROOT), event);
                 }
             }
+            allEvents.addAll(events);
             queriedEvents.addAll(events);
             queriedEvents.removeAll(deletedEvents);
             adapter.notifyDataSetChanged();
         });
 
 
-        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(query);
+        subscriptionHandling = parseLiveQueryClient.subscribe(query);
         subscriptionHandling.handleSubscribe(q -> {
             subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Event>() {
                 @Override
                 public void onEvent(ParseQuery<Event> queried, Event updatedEvent) {
-                    FeedActivity.this.runOnUiThread(() -> adapter.itemUpdated(updatedEvent) );
+                    if (listen) {
+                        FeedActivity.this.runOnUiThread(() -> adapter.itemUpdated(updatedEvent) );
+                    }
                 }
             });
 
             subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, (queried, createdEvent) -> {
-                FeedActivity.this.runOnUiThread(() -> {
-                    Toast.makeText(FeedActivity.this, createdEvent.getTitle() + " Created!", Toast.LENGTH_SHORT).show();
+                if (listen) {
+                    FeedActivity.this.runOnUiThread(() -> {
+                        Toast.makeText(FeedActivity.this, createdEvent.getTitle() + " Created!", Toast.LENGTH_SHORT).show();
 
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                        // todo, do not automatically scroll: add button to scroll to event
-                        rvEvents.smoothScrollToPosition(adapter.itemCreated(createdEvent));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                });
-
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                            // todo, do not automatically scroll: add button to scroll to event
+                            rvEvents.smoothScrollToPosition(adapter.itemCreated(createdEvent));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
             });
 
             subscriptionHandling.handleEvent(SubscriptionHandling.Event.DELETE, (query1, deletedEvent) -> {
@@ -208,8 +214,9 @@ public class FeedActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(FeedActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
+        searchFeed.setQueryHint("Start typing");
+
         searchFeed.setOnSearchClickListener(v -> {
-            allEvents.addAll(queriedEvents);
             queriedEvents.clear();
             adapter.notifyDataSetChanged();
             toolbarTitle.setVisibility(View.GONE);
@@ -227,6 +234,7 @@ public class FeedActivity extends AppCompatActivity {
                 //query for everything once
                 if (newText.length() > 0) {
                     Collection<Event> events = getByPrefix(allEventsMap, newText.toLowerCase(Locale.ROOT)).values();
+                    // todo if empty display something
                     queriedEvents.addAll(events);
                 }
                 adapter.notifyDataSetChanged();
@@ -245,5 +253,17 @@ public class FeedActivity extends AppCompatActivity {
 
     public SortedMap<String, Event> getByPrefix(NavigableMap<String, Event> myMap, String prefix ) {
         return myMap.subMap( prefix, prefix + Character.MAX_VALUE );
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        listen = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listen = true;
     }
 }
