@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -19,6 +22,7 @@ import com.example.capstone.R;
 import com.example.capstone.adapters.MoviesAdapter;
 import com.example.capstone.enums.Platforms;
 import com.example.capstone.methods.NavigationMethods;
+import com.example.capstone.methods.SearchVideoContentMethods;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
 
@@ -45,8 +49,11 @@ public class MovieSelectionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView rvMovies;
     private MoviesAdapter adapter;
+    private List<VideoContent> queriedMovies;
     private List<VideoContent> allMovies;
     private AsyncHttpClient client;
+    private SearchView searchMovies;
+    private TextView tvToolBarMovies;
 
 
 
@@ -61,13 +68,15 @@ public class MovieSelectionActivity extends AppCompatActivity {
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
         toolbar = findViewById(R.id.toolbar);
         rvMovies = findViewById(R.id.rvMovies);
+        searchMovies = findViewById(R.id.searchMovies);
+        tvToolBarMovies = findViewById(R.id.tvToolBarMovies);
 
         toolbar.setContentInsetsAbsolute(0, 0);
         NavigationMethods.setUpNavDrawer(MovieSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
-
         allMovies = new ArrayList<>();
-        adapter = new MoviesAdapter(this, allMovies);
+        queriedMovies = new ArrayList<>();
+        adapter = new MoviesAdapter(this, queriedMovies);
 
         rvMovies.setAdapter(adapter);
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
@@ -85,11 +94,13 @@ public class MovieSelectionActivity extends AppCompatActivity {
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
 
-                    allMovies.addAll(VideoContent.fromJsonArray(results, "Movie"));
-                    int size = allMovies.size();
+                    List<VideoContent> movies = VideoContent.fromJsonArray(results, "Movie");
+                    queriedMovies.addAll(movies);
+                    allMovies.addAll(movies);
+                    int size = queriedMovies.size();
 
                     for (int i = 0; i < size; i++) {
-                        VideoContent movie = allMovies.get(i);
+                        VideoContent movie = queriedMovies.get(i);
                         int id = movie.getTmdbID();
                         String watchProvidersUrl = "https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
                         int finalI = i;
@@ -132,6 +143,9 @@ public class MovieSelectionActivity extends AppCompatActivity {
                 Log.e("MovieSelectionActivity", "onFailure: ", throwable);
             }
         });
+
+        SearchVideoContentMethods.setUpSearchView(searchMovies, queriedMovies, allMovies, tvToolBarMovies, client, adapter, null);
+
     }
 
 

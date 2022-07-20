@@ -20,6 +20,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
 import com.example.capstone.adapters.TVshowsAdapter;
 import com.example.capstone.methods.NavigationMethods;
+import com.example.capstone.methods.SearchVideoContentMethods;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
 
@@ -131,62 +132,8 @@ public class TVShowSelectionActivity extends AppCompatActivity {
                 Log.e("TVShowSelectionActivity", "onFailure: ", throwable);
             }
         });
+        SearchVideoContentMethods.setUpSearchView(searchTV, queriedTVShows, allTVShows, tvToolBarTVShows, client, null, adapter);
 
-        searchTV.setQueryHint("Hit enter to search");
-        searchTV.setOnSearchClickListener(v -> {
-            queriedTVShows.clear();
-            adapter.notifyDataSetChanged();
-            tvToolBarTVShows.setVisibility(View.GONE);
-        });
-
-        searchTV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String searchMovie ="https://api.themoviedb.org/3/search/tv?api_key=61dda6141b919bc26c4c8a5d43de0b7e&language=en-US&query=" + query + "&page=1&include_adult=false";
-                client.get(searchMovie, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        JSONObject jsonObject = json.jsonObject;
-                        queriedTVShows.clear();
-                        try {
-                            JSONArray results = jsonObject.getJSONArray("results");
-                            Log.i("TVShowSelctionActivity", "onSuccess: " + results.toString());
-                            List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "TV Show");
-                            for (VideoContent tvShow: tvShows) {
-                                //todo add platforms to videocontent
-                                tvShow.setPlatforms(new ArrayList<>());
-                            }
-                            queriedTVShows.addAll(tvShows);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e("TVShowSelectionActivity", "onFailure: ", throwable);
-                    }
-                });
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.length() == 0) {
-                    queriedTVShows.clear();
-                    adapter.notifyDataSetChanged();
-                }
-                return false;
-            }
-        });
-
-        searchTV.setOnCloseListener(() -> {
-            tvToolBarTVShows.setVisibility(View.VISIBLE);
-            queriedTVShows.addAll(allTVShows);
-            adapter.notifyDataSetChanged();
-            return false;
-        });
 
     }
 }

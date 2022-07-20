@@ -25,14 +25,14 @@
             app:titleTextColor="@android:color/black"
             tools:layout_editor_absoluteX="53dp">
 
-            <ImageButton
+            <SearchView
+                android:id="@+id/searchMovies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_search" />
+                android:layout_gravity="end"/>
 
             <TextView
+                android:id="@+id/tvToolBarMovies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

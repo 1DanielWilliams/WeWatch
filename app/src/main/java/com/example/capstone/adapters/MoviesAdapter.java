@@ -91,35 +91,36 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             tvTitleVideoContent.setText(movie.getTitle());
             float voteAverage = movie.getVoteAverage().floatValue() / 2.0f;
             rbVoterAverageVideoContent.setRating(voteAverage);
-            List<String> platforms = movie.getPlatforms();
-
-            if (platforms == null) {
-                Log.i("Movies", "bind: " + getBindingAdapterPosition());
-            }
-            int platformSize = platforms.size();
-            if (platformSize == 0) {
-                tvAvailableOnContent.setVisibility(View.GONE);
-                tvExtraPlatformsContent.setVisibility(View.GONE);
-            } else {
-                int numFeatured = 1;
-                for (String platform : platforms) {
-                    if (numFeatured == 1) {
-                        DisplayPlatforms.displayIcon(ivFirst, platform);
-                    } else if (numFeatured == 2) {
-                        DisplayPlatforms.displayIcon(ivSecond, platform);
-
-                    } else {
-                        break;
-                    }
-                    numFeatured++;
-                }
-                int extraPlatforms = platformSize - numFeatured;
-                if (extraPlatforms < 1) {
-                    tvExtraPlatformsContent.setVisibility(View.GONE);
-                } else {
-                    tvExtraPlatformsContent.setText("+ " + String.valueOf(extraPlatforms));
-                }
-            }
+            //todo displaying platform errors
+//            List<String> platforms = movie.getPlatforms();
+//
+//            if (platforms == null) {
+//                Log.i("Movies", "bind: " + getBindingAdapterPosition());
+//            }
+//            int platformSize = platforms.size();
+//            if (platformSize == 0) {
+//                tvAvailableOnContent.setVisibility(View.GONE);
+//                tvExtraPlatformsContent.setVisibility(View.GONE);
+//            } else {
+//                int numFeatured = 1;
+//                for (String platform : platforms) {
+//                    if (numFeatured == 1) {
+//                        DisplayPlatforms.displayIcon(ivFirst, platform);
+//                    } else if (numFeatured == 2) {
+//                        DisplayPlatforms.displayIcon(ivSecond, platform);
+//
+//                    } else {
+//                        break;
+//                    }
+//                    numFeatured++;
+//                }
+//                int extraPlatforms = platformSize - numFeatured;
+//                if (extraPlatforms < 1) {
+//                    tvExtraPlatformsContent.setVisibility(View.GONE);
+//                } else {
+//                    tvExtraPlatformsContent.setText("+ " + String.valueOf(extraPlatforms));
+//                }
+//            }
 
 
 
