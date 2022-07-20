@@ -10,7 +10,10 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -41,7 +44,10 @@ public class TVShowSelectionActivity extends AppCompatActivity {
     private RecyclerView rvTVshows;
     private TVshowsAdapter adapter;
     private List<VideoContent> allTVShows;
+    private List<VideoContent> queriedTVShows;
     private AsyncHttpClient client;
+    private SearchView searchTV;
+    private TextView tvToolBarTVShows;
 
 
     @Override
@@ -54,12 +60,14 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
         toolbar = findViewById(R.id.toolbar);
         rvTVshows = findViewById(R.id.rvTVshows);
+        searchTV = findViewById(R.id.searchTV);
+        tvToolBarTVShows = findViewById(R.id.tvToolBarTVShows);
 
         toolbar.setContentInsetsAbsolute(0, 0);
 
-
         allTVShows = new ArrayList<>();
-        adapter = new TVshowsAdapter(this, allTVShows);
+        queriedTVShows = new ArrayList<>();
+        adapter = new TVshowsAdapter(this, queriedTVShows);
 
         NavigationMethods.setUpNavDrawer(TVShowSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
@@ -77,12 +85,13 @@ public class TVShowSelectionActivity extends AppCompatActivity {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
-
-                    allTVShows.addAll(VideoContent.fromJsonArray(results, "TV Show"));
-                    int size = allTVShows.size();
+//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
+                    List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "TV Show");
+                    queriedTVShows.addAll(tvShows);
+                    allTVShows.addAll(tvShows);
+                    int size = queriedTVShows.size();
                     for (int i = 0; i < size; i++) {
-                        VideoContent tvShow = allTVShows.get(i);
+                        VideoContent tvShow = queriedTVShows.get(i);
                         int id = tvShow.getTmdbID();
                         String watchProvidersUrl = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
                         client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
@@ -94,7 +103,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
                                     JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
                                     for (int i = 0; i < results.length(); i++) {
                                         JSONObject platform = results.getJSONObject(i);
-                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
+//                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
                                         platforms.add(platform.get("provider_name").toString());
                                     }
                                 } catch (JSONException e) {
@@ -120,8 +129,63 @@ public class TVShowSelectionActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e("TVShowSelectionActivity", "onFailure: ", throwable);
-
             }
+        });
+
+        searchTV.setQueryHint("Hit enter to search");
+        searchTV.setOnSearchClickListener(v -> {
+            queriedTVShows.clear();
+            adapter.notifyDataSetChanged();
+            tvToolBarTVShows.setVisibility(View.GONE);
+        });
+
+        searchTV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String searchMovie ="https://api.themoviedb.org/3/search/tv?api_key=61dda6141b919bc26c4c8a5d43de0b7e&language=en-US&query=" + query + "&page=1&include_adult=false";
+                client.get(searchMovie, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        JSONObject jsonObject = json.jsonObject;
+                        queriedTVShows.clear();
+                        try {
+                            JSONArray results = jsonObject.getJSONArray("results");
+                            Log.i("TVShowSelctionActivity", "onSuccess: " + results.toString());
+                            List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "TV Show");
+                            for (VideoContent tvShow: tvShows) {
+                                //todo add platforms to videocontent
+                                tvShow.setPlatforms(new ArrayList<>());
+                            }
+                            queriedTVShows.addAll(tvShows);
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.e("TVShowSelectionActivity", "onFailure: ", throwable);
+                    }
+                });
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() == 0) {
+                    queriedTVShows.clear();
+                    adapter.notifyDataSetChanged();
+                }
+                return false;
+            }
+        });
+
+        searchTV.setOnCloseListener(() -> {
+            tvToolBarTVShows.setVisibility(View.VISIBLE);
+            queriedTVShows.addAll(allTVShows);
+            adapter.notifyDataSetChanged();
+            return false;
         });
 
     }

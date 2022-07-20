@@ -25,18 +25,18 @@
             app:titleTextColor="@android:color/black"
             tools:layout_editor_absoluteX="53dp">
 
-            <ImageButton
+            <SearchView
+                android:id="@+id/searchTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:fitsSystemWindows="true"
-                android:backgroundTint="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_search" />
+                android:layout_gravity="end"/>
 
             <TextView
+                android:id="@+id/tvToolBarTVShows"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:visibility="visible"
                 android:text="TV Shows"
                 android:textColor="@color/black"
                 android:textSize="20sp"

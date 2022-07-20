@@ -72,8 +72,8 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
             float voteAverage = tvShow.getVoteAverage().floatValue() / 2.0f;
             rbVoterAverageVideoContent.setRating(voteAverage);
 
-            // todo: have placeholder if it goes wrong
-            Glide.with(context).load(tvShow.getBackdropUrl()).into(tvBackdropVideoContent);
+
+            Glide.with(context).load(tvShow.getBackdropUrl()).placeholder(R.drawable.no_image_available).error(R.drawable.no_image_available).into(tvBackdropVideoContent);
             tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
         }
 
