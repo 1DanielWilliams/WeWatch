@@ -133,6 +133,8 @@ public class VideoContentDetailFragment extends DialogFragment {
 
         Glide.with(view).load(posterUrl)
                 .override(width_px, height_px)
+                .placeholder(R.drawable.poster_no_image_available)
+                .error(R.drawable.poster_no_image_available)
                 .into(ivPoster);
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));
 

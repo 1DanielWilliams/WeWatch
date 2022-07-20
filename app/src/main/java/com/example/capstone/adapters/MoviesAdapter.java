@@ -124,8 +124,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
 
 
-            // todo: have placeholder if it goes wrong
-            Glide.with(context).load(movie.getBackdropUrl()).into(tvBackdropVideoContent);
+            Glide.with(context).load(movie.getBackdropUrl()).placeholder(R.drawable.no_image_available).error(R.drawable.no_image_available).into(tvBackdropVideoContent);
             tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
 
         }

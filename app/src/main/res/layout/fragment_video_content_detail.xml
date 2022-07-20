@@ -90,7 +90,9 @@
         android:textColor="@android:color/white"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivMovieIcon"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/tvRating"
