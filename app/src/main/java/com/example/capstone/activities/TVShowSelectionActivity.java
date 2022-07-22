@@ -19,6 +19,8 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
 import com.example.capstone.adapters.TVshowsAdapter;
+import com.example.capstone.methods.EndlessRecyclerViewScrollListener;
+import com.example.capstone.methods.FetchingVideoContentMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.methods.SearchVideoContentMethods;
 import com.example.capstone.models.VideoContent;
@@ -36,7 +38,7 @@ import okhttp3.Headers;
 public class TVShowSelectionActivity extends AppCompatActivity {
 
     private final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
-    private final String POPULAR_URL = "https://api.themoviedb.org/3/tv/popular?api_key=" + TMDB_KEY + "&language=en-US";
+    private final String POPULAR_URL = "https://api.themoviedb.org/3/tv/popular?api_key=" + TMDB_KEY + "&language=en-US&page=";
 
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
@@ -49,6 +51,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
     private AsyncHttpClient client;
     private SearchView searchTV;
     private TextView tvToolBarTVShows;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
 
     @Override
@@ -73,67 +76,22 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         NavigationMethods.setUpNavDrawer(TVShowSelectionActivity.this, navDrawerFeed, imBtnMenuFeed, drawerLayout);
 
         rvTVshows.setAdapter(adapter);
-        rvTVshows.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTVshows.setLayoutManager(linearLayoutManager);
 
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rvTVshows);
 
         client = new AsyncHttpClient();
-        client.get(POPULAR_URL, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                JSONObject jsonObject = json.jsonObject;
-
-                try {
-                    JSONArray results = jsonObject.getJSONArray("results");
-//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
-                    List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "TV Show");
-                    queriedTVShows.addAll(tvShows);
-                    allTVShows.addAll(tvShows);
-                    int size = queriedTVShows.size();
-                    for (int i = 0; i < size; i++) {
-                        VideoContent tvShow = queriedTVShows.get(i);
-                        int id = tvShow.getTmdbID();
-                        String watchProvidersUrl = "https://api.themoviedb.org/3/tv/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
-                        client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                                JSONObject object = json.jsonObject;
-                                List<String> platforms = new ArrayList<>();
-                                try {
-                                    JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
-                                    for (int i = 0; i < results.length(); i++) {
-                                        JSONObject platform = results.getJSONObject(i);
-//                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
-                                        platforms.add(platform.get("provider_name").toString());
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                tvShow.setPlatforms(platforms);
-
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                                Log.e("TVShowselectionActivity", "onFailure: ", throwable);
-                            }
-                        });
-                    }
-                } catch (JSONException e) {
-                    Log.e("MovieSelectionActivity", "onSuccess: ", e);
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e("TVShowSelectionActivity", "onFailure: ", throwable);
-            }
-        });
+        FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, 1);
         SearchVideoContentMethods.setUpSearchView(searchTV, queriedTVShows, allTVShows, tvToolBarTVShows, client, null, adapter);
 
-
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, page + 1);
+            }
+        };
+        rvTVshows.addOnScrollListener(scrollListener);
     }
 }

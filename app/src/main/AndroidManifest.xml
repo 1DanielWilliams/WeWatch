@@ -33,6 +33,7 @@
         <activity
             android:name=".activities.conversation.ConversationDetailActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".activities.conversation.ConversationActivity" />
         <activity
             android:name=".activities.TVShowSelectionActivity"

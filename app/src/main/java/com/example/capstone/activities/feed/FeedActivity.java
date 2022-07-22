@@ -24,9 +24,12 @@ import android.widget.Toast;
 import com.example.capstone.R;
 import com.example.capstone.adapters.EventsAdapter;
 import com.example.capstone.methods.DeletingEventsMethods;
+import com.example.capstone.methods.EndlessRecyclerViewScrollListener;
+import com.example.capstone.methods.EventFeedMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.livequery.ParseLiveQueryClient;
@@ -58,10 +61,12 @@ public class FeedActivity extends AppCompatActivity {
     private  SubscriptionHandling<Event> subscriptionHandling;
     private ImageButton ibFilterFeed;
     private TextView tvFilterFeed;
-    private final String ASCENDING_DATE = "ascendingDate";
-    private final String POPULAR_FILTER = "popularFilter";
-    private final String RATING_FILTER = "ratingFilter";
-    private String currFeedFilter = ASCENDING_DATE;
+    public final static String ASCENDING_DATE = "ascendingDate";
+    public final static String POPULAR_FILTER = "popularFilter";
+    public final static String RATING_FILTER = "ratingFilter";
+    private String currFeedFilter;
+    private EndlessRecyclerViewScrollListener scrollListener;
+
 
 
 
@@ -72,6 +77,7 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
 
         listen = true;
+        currFeedFilter = ASCENDING_DATE;
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         ibFilterFeed = findViewById(R.id.ibFilterFeed);
@@ -288,8 +294,19 @@ public class FeedActivity extends AppCompatActivity {
             popupMenu.show();
         });
 
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                //load from database
+                Date eventDate = queriedEvents.get(queriedEvents.size() - 1).getEarliestDate(); //todo different conditions for this too when filtering works
+                EventFeedMethods.loadFromApi(eventDate, queriedEvents, adapter, currFeedFilter);
+            }
+        };
+
+        rvEvents.addOnScrollListener(scrollListener);
 
     }
+
 
     @Override
     protected void onPause() {

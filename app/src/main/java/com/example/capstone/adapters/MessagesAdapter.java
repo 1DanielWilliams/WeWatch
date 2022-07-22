@@ -191,7 +191,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 cvItemMessage.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.END));
             }
 
-            // check if the message two above is of the same id, if not remove the bottom padding
+            // nothing needs a bottom padding besides the last messag eof a string of messages
 
             // removes message details if message before it is the same person
             if (position != messages.size() - 1) {
