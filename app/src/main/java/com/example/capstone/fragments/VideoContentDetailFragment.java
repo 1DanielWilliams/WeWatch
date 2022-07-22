@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -76,6 +77,9 @@ public class VideoContentDetailFragment extends DialogFragment {
         Button btnPostEvent = view.findViewById(R.id.btnPostEvent);
         TextView tvDateBtn= view.findViewById(R.id.tvDateBtn);
         Button btnWatchLater = view.findViewById(R.id.btnWatchLater);
+        ImageButton ibBackContentDetail = view.findViewById(R.id.ibBackContentDetail);
+
+        ibBackContentDetail.setOnClickListener(v -> this.dismiss());
 
         try {
             user = ParseUser.getCurrentUser().fetch();
