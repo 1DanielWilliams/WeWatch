@@ -14,10 +14,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.capstone.R;
+import com.example.capstone.fragments.OnMessageLongClickFragment;
 import com.example.capstone.methods.GroupChatMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
@@ -92,64 +95,65 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             cvItemMessage = itemView.findViewById(R.id.cvItemMessage);
             lavTypingIndicator = itemView.findViewById(R.id.lavTypingIndicator);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference groupDetailsRef = database.getReference("group_details");
-                    int position = getBindingAdapterPosition();
-                    Message message = messages.get(position);
+            itemView.setOnLongClickListener(v -> {
+                //start fragment with clickabole buttons, buttons on the fragment do these things
+//                FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                DatabaseReference groupDetailsRef = database.getReference("group_details");
+                int position = getBindingAdapterPosition();
+                Message message = messages.get(position);
 
-                    ParseUser user = ParseUser.getCurrentUser();
-                    String toUserId = message.getSenderID();
-                    String currId = user.getObjectId();
+                ParseUser user = ParseUser.getCurrentUser();
+                String toUserId = message.getSenderID();
+                String currId = user.getObjectId();
 
 
-                    String dmID =  user.getObjectId() + " " + toUserId;
-                    char[] dmIDArray = dmID.toCharArray();
-                    Arrays.sort(dmIDArray);
-                    dmID = String.valueOf(dmIDArray);
-                    if (!Objects.equals(message.getSenderID(), ParseUser.getCurrentUser().getObjectId())) {
-                        //check if the dm already exist
-                        String finalDmID = dmID;
-                        groupDetailsRef.get().addOnCompleteListener(task -> {
-                            boolean chatExist = false;
-                            for (DataSnapshot child : task.getResult().getChildren()) {
-                                if (finalDmID.equals(child.child("id").getValue())) {
-                                    chatExist = true;
-                                }
-                            }
-
-                            if (!chatExist) {
-                                Message firstMessage = new Message("", user.getObjectId());
-                                DatabaseReference push = groupDetailsRef.push();
-                                push.setValue(new GroupDetail(message.getSenderID(), finalDmID, firstMessage)).addOnCompleteListener(task1 -> {
-                                    DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
-                                    detailMembers.push().setValue(user.getObjectId());
-                                    detailMembers.push().setValue(toUserId);
-
-                                    DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
-                                    groupDetailRef.setValue(new TypingDetail(false));
-                                });
-
-                                ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
-                                List<String> participantsIds = new ArrayList<>();
-                                participantsIds.add(toUserId);
-                                participantsIds.add(currId);
-                                publicColumnsQuery.whereContainedIn(UserPublicColumns.KEY_USER_ID, participantsIds);
-                                publicColumnsQuery.findInBackground((userPublicColumns, e) -> userPublicColumns.forEach(userPublicColumn -> {
-                                    List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
-                                    groupChatIDs.add(finalDmID);
-                                    userPublicColumn.setGroupChatIds(groupChatIDs);
-                                    userPublicColumn.saveInBackground();
-                                }));
-                            }
-                            GroupChatMethods.toConversationDetail(context, finalDmID, false, toUserId);
-                        });
-                        return true;
-                    }
-                    return false;
+                if (!Objects.equals(message.getSenderID(), ParseUser.getCurrentUser().getObjectId())) {
+                    FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
+                    OnMessageLongClickFragment onMessageLongClickFragment = OnMessageLongClickFragment.newInstance(toUserId, currId);
+                    onMessageLongClickFragment.show(fm, "message_long_click");
+//                    String dmID =  user.getObjectId() + " " + toUserId;
+//                    char[] dmIDArray = dmID.toCharArray();
+//                    Arrays.sort(dmIDArray);
+//                    dmID = String.valueOf(dmIDArray);
+//                    //check if the dm already exist
+//                    final String finalDmID = dmID;
+//                    groupDetailsRef.get().addOnCompleteListener(task -> {
+//                        boolean chatExist = false;
+//                        for (DataSnapshot child : task.getResult().getChildren()) {
+//                            if (finalDmID.equals(child.child("id").getValue())) {
+//                                chatExist = true;
+//                            }
+//                        }
+//
+//                        if (!chatExist) {
+//                            Message firstMessage = new Message("", user.getObjectId());
+//                            DatabaseReference push = groupDetailsRef.push();
+//                            push.setValue(new GroupDetail(message.getSenderID(), finalDmID, firstMessage)).addOnCompleteListener(task1 -> {
+//                                DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
+//                                detailMembers.push().setValue(user.getObjectId());
+//                                detailMembers.push().setValue(toUserId);
+//
+//                                DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
+//                                groupDetailRef.setValue(new TypingDetail(false));
+//                            });
+//
+//                            ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
+//                            List<String> participantsIds = new ArrayList<>();
+//                            participantsIds.add(toUserId);
+//                            participantsIds.add(currId);
+//                            publicColumnsQuery.whereContainedIn(UserPublicColumns.KEY_USER_ID, participantsIds);
+//                            publicColumnsQuery.findInBackground((userPublicColumns, e) -> userPublicColumns.forEach(userPublicColumn -> {
+//                                List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
+//                                groupChatIDs.add(finalDmID);
+//                                userPublicColumn.setGroupChatIds(groupChatIDs);
+//                                userPublicColumn.saveInBackground();
+//                            }));
+//                        }
+//                        GroupChatMethods.toConversationDetail(context, finalDmID, false, toUserId);
+//                    });
+                    return true;
                 }
+                return false;
             });
 
             tvScreenNameMessage.setOnClickListener(v -> {
