@@ -26,12 +26,16 @@ public class Event extends ParseObject {
     public static final String KEY_UNIVERSITY = "university";
     public static final String KEY_IS_NEW_DATE = "isNewDate";
     public static final String KEY_IS_REMOVED_DATE = "isRemovedDate";
+    public static final String KEY_VOTE_AVERAGE = "voteAverage";
 
 
     public Event() {}
 
     public void setIsRemovedDate(boolean isRemovedDate) { put(KEY_IS_REMOVED_DATE, isRemovedDate);}
     public boolean getIsRemovedDate() {return getBoolean(KEY_IS_REMOVED_DATE); }
+
+    public void setVoteAverage(double voteAverage) { put(KEY_VOTE_AVERAGE, voteAverage);}
+    public double getVoteAverage() {return getDouble(KEY_VOTE_AVERAGE); }
 
     public void setIsNewDate(boolean isNewDate) { put(KEY_IS_NEW_DATE, isNewDate);}
     public boolean getIsNewDate() {return getBoolean(KEY_IS_NEW_DATE); }

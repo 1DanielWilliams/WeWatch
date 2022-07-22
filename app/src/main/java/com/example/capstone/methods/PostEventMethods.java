@@ -154,6 +154,7 @@ public class PostEventMethods {
 
             //new event
             if (events.size() == 0) {
+                event.setVoteAverage(videoContent.getVoteAverage());
                 event.saveInBackground(e1 -> {
                     if (e1 != null) {
                         Log.e("fragment", "done: trouble finding event", e1);

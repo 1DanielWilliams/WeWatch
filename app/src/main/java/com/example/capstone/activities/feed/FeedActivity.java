@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FeedActivity extends AppCompatActivity {
     private boolean listen;
@@ -64,8 +65,9 @@ public class FeedActivity extends AppCompatActivity {
     public final static String ASCENDING_DATE = "ascendingDate";
     public final static String POPULAR_FILTER = "popularFilter";
     public final static String RATING_FILTER = "ratingFilter";
-    private String currFeedFilter;
+    private AtomicReference<String> currFeedFilter;
     private EndlessRecyclerViewScrollListener scrollListener;
+//    private ;
 
 
 
@@ -76,8 +78,9 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+
         listen = true;
-        currFeedFilter = ASCENDING_DATE;
+        currFeedFilter = new AtomicReference<>(ASCENDING_DATE);
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         ibFilterFeed = findViewById(R.id.ibFilterFeed);
@@ -100,8 +103,8 @@ public class FeedActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(rvEvents);
 
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
-        query.addAscendingOrder("earliestDate");
-        query.whereEqualTo("university", ParseUser.getCurrentUser().getString("university"));
+        query.addAscendingOrder(Event.KEY_EARLIEST_DATE);
+        query.whereEqualTo(Event.KEY_UNIVERSITY, ParseUser.getCurrentUser().getString("university"));
         query.setLimit(20);
         query.findInBackground((events, e) -> {
             if (e != null) {
@@ -155,6 +158,7 @@ public class FeedActivity extends AppCompatActivity {
                                 }
 
                                 event.setEarliestUserIndex(0);
+                                event.setNumInterested(event.getInterestedUsers().get(0).size());
                                 event.saveInBackground();
                             } else {
                                 break;
@@ -261,45 +265,15 @@ public class FeedActivity extends AppCompatActivity {
         });
 
 
-        ibFilterFeed.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(FeedActivity.this, toolbarTitle, Gravity.CENTER, 0, R.style.PopupMenuMoreCentralized); //todo want it to bein the middle
-            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_feed_filter, popupMenu.getMenu());
-
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int itemID = item.getItemId();
-
-                    if(itemID == R.id.optionPopular) {
-                        //if events is not on feed
-                        if (!Objects.equals(currFeedFilter, POPULAR_FILTER)) {
-                            // query for popular filter
-                        }
-
-                        return true;
-                    } else if (itemID == R.id.optionAscendingDate) {
-                        if (!Objects.equals(currFeedFilter, ASCENDING_DATE)) {
-                            // query for ascending date filter
-                        }
-                        return true;
-                    } else if (itemID == R.id.optionRating) {
-                        if (!Objects.equals(currFeedFilter, RATING_FILTER)) {
-                            // query for ratings filter
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            popupMenu.show();
-        });
+        ibFilterFeed.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
+        tvFilterFeed.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
+        toolbarTitle.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 //load from database
-                Date eventDate = queriedEvents.get(queriedEvents.size() - 1).getEarliestDate(); //todo different conditions for this too when filtering works
-                EventFeedMethods.loadFromApi(eventDate, queriedEvents, adapter, currFeedFilter);
+                EventFeedMethods.loadFromApi(queriedEvents, adapter, currFeedFilter.get());
             }
         };
 
