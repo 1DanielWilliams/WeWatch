@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -71,7 +72,6 @@ public class OnETChange {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
 
                 if(s.toString().endsWith(".edu") && s.toString().contains("@")) {
                     ivX.setVisibility(View.GONE);

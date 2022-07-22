@@ -29,6 +29,9 @@
         <meta-data
             android:name="com.parse.CLIENT_KEY"
             android:value="@string/back4app_client_key" />
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
 
         <activity
             android:name=".activities.conversation.ConversationDetailActivity"
@@ -73,6 +76,7 @@
         </activity>
         <activity
             android:name=".activities.signup.SignUpActivityCredentials"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="false"
             android:parentActivityName=".activities.login.logOrSignActivity" />
         <activity

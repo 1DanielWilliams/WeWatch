@@ -97,11 +97,7 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
                 username = screeNameLower + String.valueOf(size + 1);
             }
             user.setUsername(username);
-            UserPublicColumns userPublicColumns = new UserPublicColumns();
-            userPublicColumns.saveInBackground();
-            userPublicColumns.setUserId(user.getObjectId());
-            userPublicColumns.setGroupChatIds(new ArrayList<>());
-            userPublicColumns.setWatchedContent(new ArrayList<>());
+
 
             // Signs a user up with this unique username
             user.signUpInBackground(e1 -> {
@@ -109,6 +105,12 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
                     Log.e(TAG, "done: Error creating account ", e1);
                     return;
                 }
+                UserPublicColumns userPublicColumns = new UserPublicColumns();
+                userPublicColumns.saveInBackground();
+                userPublicColumns.setUserId(user.getObjectId());
+                userPublicColumns.setGroupChatIds(new ArrayList<>());
+                userPublicColumns.setWatchedContent(new ArrayList<>());
+                userPublicColumns.saveInBackground();
 
                 LogInUser.loginUser(SignUpActivityConfirmation.this, username, password, etFinalPassword);
             });

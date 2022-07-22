@@ -7,6 +7,7 @@ import androidx.core.app.NavUtils;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,6 +43,9 @@ public class SignUpActivityCredentials extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup1);
 
+//        SignUpActivityCredentials.this.getWindow().setSoftInputMode(
+//                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         btnNextSignup = findViewById(R.id.btnSelectDate);
         btnCancelSignup = findViewById(R.id.btnCancelSignup);
         ivXName = findViewById(R.id.ivXName);
@@ -61,12 +65,7 @@ public class SignUpActivityCredentials extends AppCompatActivity {
             signUserUp();
         });
 
-        btnCancelSignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(SignUpActivityCredentials.this);
-            }
-        });
+        btnCancelSignup.setOnClickListener(v -> NavUtils.navigateUpFromSameTask(SignUpActivityCredentials.this));
 
         OnETChange.emailVerification(etSignEmail, ivXEmail, ivCheckmarkEmail);
         OnETChange.nameVerification(etSignName, ivXName, ivCheckmarkName);
