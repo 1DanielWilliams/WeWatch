@@ -67,7 +67,7 @@ public class FeedActivity extends AppCompatActivity {
     public final static String RATING_FILTER = "ratingFilter";
     private AtomicReference<String> currFeedFilter;
     private EndlessRecyclerViewScrollListener scrollListener;
-//    private ;
+
 
 
 
@@ -265,9 +265,9 @@ public class FeedActivity extends AppCompatActivity {
         });
 
 
-        ibFilterFeed.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
-        tvFilterFeed.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
-        toolbarTitle.setOnClickListener(v -> currFeedFilter.set(EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter)));
+        ibFilterFeed.setOnClickListener(v -> EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter));
+        tvFilterFeed.setOnClickListener(v -> EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter));
+        toolbarTitle.setOnClickListener(v -> EventFeedMethods.setupFilterMenu(this, toolbarTitle, queriedEvents, adapter, tvFilterFeed, currFeedFilter));
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
