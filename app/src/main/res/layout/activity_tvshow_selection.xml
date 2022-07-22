@@ -7,7 +7,9 @@
     android:id="@+id/drawerLayout"
     tools:openDrawer="start">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -31,18 +33,54 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"/>
 
-            <TextView
-                android:id="@+id/tvToolBarTVShows"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                android:text="TV Shows"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="100dp"
-                tools:layout_editor_absoluteY="28dp" />
+                android:id="@+id/toolbarFiltering"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/tvToolBarTVShows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:text="TV Shows"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_marginTop="7dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvFilterShows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Popular"
+                    android:visibility="visible"
+                    android:textSize="11sp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvToolBarTVShows" />
+
+                <ImageButton
+                    android:id="@+id/ibFilterShows"
+                    android:layout_width="13dp"
+                    android:layout_height="11dp"
+                    android:layout_marginTop="3dp"
+                    android:visibility="visible"
+                    android:layout_marginStart="1dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:rotation="180"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toEndOf="@+id/tvFilterShows"
+                    app:layout_constraintTop_toBottomOf="@+id/tvToolBarTVShows"
+                    app:srcCompat="@drawable/up_black_icon" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
             <ImageButton
                 android:id="@+id/imBtnMenuFeed"

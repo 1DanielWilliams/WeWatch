@@ -43,7 +43,7 @@ import okhttp3.Headers;
 
 public class MovieSelectionActivity extends AppCompatActivity {
 
-    public static final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
+    public static final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";
     public static final String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_KEY + "&language=en-US&page=";
 
 
@@ -111,9 +111,9 @@ public class MovieSelectionActivity extends AppCompatActivity {
                 if (Objects.equals(currFilter.get(), MovieSelectionActivity.POPULAR_FILTER)){
                     FetchingVideoContentMethods.fetchMovies(POPULAR_URL, queriedMovies, allMovies, adapter, client, page + 1);
                 } else if (Objects.equals(currFilter.get(), MovieSelectionActivity.NOW_PLAYING_FILTER)) {
-                    FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.NOW_PLAYING_URL, queriedMovies, allMovies, adapter, client, page + 1);
+                    FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.NOW_PLAYING_URL_MOVIES, queriedMovies, allMovies, adapter, client, page + 1);
                 } else if (Objects.equals(currFilter.get(), MovieSelectionActivity.TOP_RATED_FILTER)) {
-                    FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.TOP_RATED_URL, queriedMovies, allMovies, adapter, client, page + 1);
+                    FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.TOP_RATED_URL_MOVIES, queriedMovies, allMovies, adapter, client, page + 1);
                 }
             }
         };

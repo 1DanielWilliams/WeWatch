@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -32,13 +35,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
 
 public class TVShowSelectionActivity extends AppCompatActivity {
 
-    private final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";  //getString(R.string.tmdb_api_key);
-    private final String POPULAR_URL = "https://api.themoviedb.org/3/tv/popular?api_key=" + TMDB_KEY + "&language=en-US&page=";
+    public static final String TMDB_KEY = "61dda6141b919bc26c4c8a5d43de0b7e";
+    public static final String POPULAR_URL = "https://api.themoviedb.org/3/tv/popular?api_key=" + TMDB_KEY + "&language=en-US&page=";
 
     private ImageButton imBtnMenuFeed;
     private DrawerLayout drawerLayout;
@@ -51,7 +56,13 @@ public class TVShowSelectionActivity extends AppCompatActivity {
     private AsyncHttpClient client;
     private SearchView searchTV;
     private TextView tvToolBarTVShows;
+    public static final String POPULAR_FILTER = "popular";
+    public static final String TOP_RATED_FILTER = "topRatedFilter";
+    public static final String ON_AIR = "onAirFilter";
+    private AtomicReference<String> currFilter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private TextView tvFilterShows;
+    private ImageButton ibFilterShows;
 
 
     @Override
@@ -59,6 +70,9 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.example.capstone.R.layout.activity_tvshow_selection);
 
+        currFilter = new AtomicReference<>(POPULAR_FILTER);
+        tvFilterShows = findViewById(R.id.tvFilterShows);
+        ibFilterShows = findViewById(R.id.ibFilterShows);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
         drawerLayout = findViewById(R.id.drawerLayout);
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
@@ -89,9 +103,20 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, page + 1);
+                if(currFilter.get() == TVShowSelectionActivity.POPULAR_FILTER) {
+                    FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, page + 1);
+                } else if (currFilter.get() == TVShowSelectionActivity.ON_AIR) {
+                    FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.ON_AIR_URL_SHOWS, queriedTVShows, allTVShows, adapter, page + 1);
+                } else if (currFilter.get() == TVShowSelectionActivity.TOP_RATED_FILTER) {
+                    FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.TOP_RATED_URL_SHOWS, queriedTVShows, allTVShows, adapter, page + 1);
+                }
             }
         };
         rvTVshows.addOnScrollListener(scrollListener);
+
+        ibFilterShows.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuShows(this, tvToolBarTVShows, currFilter, queriedTVShows, tvFilterShows, client, allTVShows, adapter));
+        tvFilterShows.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuShows(this, tvToolBarTVShows, currFilter, queriedTVShows, tvFilterShows, client, allTVShows, adapter));
+        tvToolBarTVShows.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuShows(this, tvToolBarTVShows, currFilter, queriedTVShows, tvFilterShows, client, allTVShows, adapter));
+
     }
 }

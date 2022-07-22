@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/optionPopularShows"
+        android:title="Popular" />
+    <item android:id="@+id/optionTopRatedShows"
+        android:title="Top Rated" />
+    <item android:id="@+id/optionNowOnAirShows"
+        android:title="On Air" />
+</menu>
