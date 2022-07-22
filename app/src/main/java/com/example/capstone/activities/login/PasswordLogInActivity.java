@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.capstone.R;
-import com.example.capstone.activities.logOrSignActivity;
 import com.example.capstone.methods.LogInUser;
 import com.example.capstone.methods.OnETChange;
 

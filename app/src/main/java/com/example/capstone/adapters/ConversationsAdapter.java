@@ -1,8 +1,6 @@
 package com.example.capstone.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.capstone.R;
-import com.example.capstone.activities.ConversationDetailActivity;
 import com.example.capstone.methods.GroupChatMethods;
 import com.example.capstone.models.GroupDetail;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.ViewHolder>{
     private Context context;

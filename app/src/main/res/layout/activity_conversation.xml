@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
-        tools:context=".activities.ConversationActivity">
+        tools:context=".activities.conversation.ConversationActivity">
 
         <!--    TOOLBAR-->
         <androidx.appcompat.widget.Toolbar

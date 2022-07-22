@@ -2,6 +2,7 @@ package com.example.capstone.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +27,17 @@ public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> 
     private List<ParseUser> authors;
     private List<List<ParseUser>> interestedUsers;
     private List<AtomicBoolean> isInterested;
+    private Event event;
 
-    public DatesAdapter(Context context, List<String> dates, List<ParseUser> authors, List<List<ParseUser>> interestedUsers) {
+    public DatesAdapter(Context context, List<String> dates, List<ParseUser> authors, List<List<ParseUser>> interestedUsers, Event event) {
         this.context = context;
         this.dates = dates;
         this.authors = authors;
         this.interestedUsers = interestedUsers;
+        this.event = event;
 
         int interestedUsersSize = interestedUsers.size();
-        this.isInterested =  new ArrayList<>(interestedUsersSize);
+        this.isInterested =  new ArrayList<>();
         String currObjectID = ParseUser.getCurrentUser().getObjectId();
 
         for (int i = 0; i < interestedUsersSize; i++) {
@@ -43,10 +46,10 @@ public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> 
             for (int j = 0; j < parseUsersSize; j++) {
 
                 if (parseUsers.get(j).getObjectId() == currObjectID) {
-                    isInterested.set(i, new AtomicBoolean(true));
+                    isInterested.add(i, new AtomicBoolean(true));
                     break;
                 } else {
-                    isInterested.set(i, new AtomicBoolean(false));
+                    isInterested.add(i, new AtomicBoolean(false));
                 }
             }
         }
@@ -100,11 +103,25 @@ public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> 
 
             btnInterestedDates.setOnClickListener(v -> {
                 int position = getAbsoluteAdapterPosition();
-                //todo: need the events list in the adapter
                 if (!isInterested.get(position).get()) {
+                    //want to add this user to the interested users at this position:
+                    List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                    List<ParseUser> interestedUsersTime = interestedUsers.get(position);
+                    interestedUsersTime.add(ParseUser.getCurrentUser());
+                    event.setInterestedUsers(interestedUsers);
+                    event.saveInBackground();
 
+                    isInterested.get(position).set(true);
+                    notifyItemChanged(position);
                 } else {
+                    List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                    List<ParseUser> interestedUsersTime = interestedUsers.get(position);
+                    interestedUsersTime.remove(ParseUser.getCurrentUser());
+                    event.setInterestedUsers(interestedUsers);
+                    event.saveInBackground();
 
+                    isInterested.get(position).set(false);
+                    notifyItemChanged(position);
                 }
             });
         }
@@ -117,7 +134,7 @@ public class DatesAdapter extends RecyclerView.Adapter<DatesAdapter.ViewHolder> 
                 tvNumInterestedDates.setText(String.valueOf(numInterested) + " attending");
 
                 if (isInterestedInEvent) {
-                    btnInterestedDates.setBackgroundColor(Color.argb(70, 0, 255, 0));
+                    btnInterestedDates.setBackgroundColor(Color.argb(80, 0, 255, 0));
                 } else {
                     btnInterestedDates.setBackgroundColor(Color.argb(0, 0, 255, 0));
                 }

@@ -3,7 +3,6 @@ package com.example.capstone.methods;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.capstone.activities.FeedActivity;
+import com.example.capstone.activities.feed.FeedActivity;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.datepicker.CalendarConstraints;

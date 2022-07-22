@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import androidx.core.app.NavUtils;
 
-import com.example.capstone.activities.FeedActivity;
+import com.example.capstone.activities.feed.FeedActivity;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 

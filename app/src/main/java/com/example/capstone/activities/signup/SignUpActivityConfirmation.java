@@ -98,6 +98,7 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
             }
             user.setUsername(username);
             UserPublicColumns userPublicColumns = new UserPublicColumns();
+            userPublicColumns.saveInBackground();
             userPublicColumns.setUserId(user.getObjectId());
             userPublicColumns.setGroupChatIds(new ArrayList<>());
             userPublicColumns.setWatchedContent(new ArrayList<>());

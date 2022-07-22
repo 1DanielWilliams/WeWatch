@@ -1,8 +1,8 @@
-package com.example.capstone.activities;
+package com.example.capstone.activities.feed;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
@@ -25,11 +25,8 @@ import com.example.capstone.models.Event;
 import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.TypingDetail;
-import com.example.capstone.models.User;
 import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -77,11 +74,7 @@ public class DetailEventActivity extends AppCompatActivity {
         toolbar.setContentInsetsAbsolute(0, 0);
 
         upArrowDetail = findViewById(R.id.upArrowDetail);
-        upArrowDetail.setOnClickListener(v -> {
-            Intent i = new Intent(DetailEventActivity.this, FeedActivity.class);
-            startActivity(i);
-            finish();
-        });
+        upArrowDetail.setOnClickListener(v -> finish() );
 
         event = getIntent().getExtras().getParcelable("event");
 

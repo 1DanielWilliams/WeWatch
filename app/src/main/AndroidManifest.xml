@@ -31,14 +31,14 @@
             android:value="@string/back4app_client_key" />
 
         <activity
-            android:name=".activities.ConversationDetailActivity"
+            android:name=".activities.conversation.ConversationDetailActivity"
             android:exported="false"
-            android:parentActivityName=".activities.ConversationActivity" />
+            android:parentActivityName=".activities.conversation.ConversationActivity" />
         <activity
             android:name=".activities.TVShowSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ConversationActivity"
+            android:name=".activities.conversation.ConversationActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ProfileActivity"
@@ -47,7 +47,7 @@
             android:name=".activities.MovieSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.DetailEventActivity"
+            android:name=".activities.feed.DetailEventActivity"
             android:exported="false" />
         <activity
             android:name=".activities.login.PasswordLogInActivity"
@@ -62,7 +62,7 @@
             android:exported="false"
             android:parentActivityName=".activities.signup.SignUpActivityCredentials" />
         <activity
-            android:name=".activities.logOrSignActivity"
+            android:name=".activities.login.logOrSignActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,14 +73,14 @@
         <activity
             android:name=".activities.signup.SignUpActivityCredentials"
             android:exported="false"
-            android:parentActivityName=".activities.logOrSignActivity" />
+            android:parentActivityName=".activities.login.logOrSignActivity" />
         <activity
-            android:name=".activities.FeedActivity"
+            android:name=".activities.feed.FeedActivity"
             android:exported="false" />
         <activity
             android:name=".activities.login.UsernameLogInActivity"
             android:exported="false"
-            android:parentActivityName=".activities.logOrSignActivity" />
+            android:parentActivityName=".activities.login.logOrSignActivity" />
     </application>
 
 </manifest>

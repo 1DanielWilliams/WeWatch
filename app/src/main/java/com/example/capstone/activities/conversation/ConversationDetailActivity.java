@@ -1,4 +1,4 @@
-package com.example.capstone.activities;
+package com.example.capstone.activities.conversation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

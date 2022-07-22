@@ -1,6 +1,5 @@
-package com.example.capstone.activities;
+package com.example.capstone.activities.conversation;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -8,8 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -18,23 +15,14 @@ import com.example.capstone.adapters.ConversationsAdapter;
 import com.example.capstone.methods.DisplayConversations;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.GroupDetail;
-import com.example.capstone.models.Message;
-import com.example.capstone.models.UserPublicColumns;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ConversationActivity extends AppCompatActivity {
 

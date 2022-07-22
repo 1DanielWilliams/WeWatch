@@ -17,18 +17,16 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.capstone.R;
+import com.example.capstone.activities.login.logOrSignActivity;
 import com.example.capstone.adapters.WatchedContentAdapter;
 import com.example.capstone.models.UserPublicColumns;
 import com.example.capstone.models.VideoContent;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -37,7 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton upArrowProfile;
     private TextView tvScreenNameProfile;
     private TextView tvUsernameProfile;
-    private TextView tvNumFriendsProfile;
+//    private TextView tvNumFriendsProfile;
     private TextView tvNumWatchedProfile;
     private ImageButton iBtnLogoutMenu;
     private RecyclerView rvWatchedContent;
@@ -62,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         iBtnLogoutMenu = findViewById(R.id.iBtnLogoutMenu);
         tvScreenNameProfile = findViewById(R.id.tvScreenNameProfile);
         tvUsernameProfile = findViewById(R.id.tvUsernameProfile);
-        tvNumFriendsProfile = findViewById(R.id.tvNumFriendsProfile);
+//        tvNumFriendsProfile = findViewById(R.id.tvNumFriendsProfile);
         tvNumWatchedProfile = findViewById(R.id.tvNumWatchedProfile);
         upArrowProfile = findViewById(R.id.upArrowProfile);
         toolbar = findViewById(R.id.toolbar);
@@ -118,7 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
                 friends = new ArrayList<>();
                 user.saveInBackground();
             }
-            tvNumFriendsProfile.setText(String.valueOf(friends.size()));
+//            tvNumFriendsProfile.setText(String.valueOf(friends.size()));
 
 
 

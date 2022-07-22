@@ -1,4 +1,4 @@
-package com.example.capstone.activities;
+package com.example.capstone.activities.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.capstone.R;
-import com.example.capstone.activities.login.UsernameLogInActivity;
+import com.example.capstone.activities.feed.FeedActivity;
 import com.example.capstone.activities.signup.SignUpActivityCredentials;
 import com.parse.ParseUser;
 

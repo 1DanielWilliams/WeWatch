@@ -1,26 +1,21 @@
 package com.example.capstone.methods;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.capstone.R;
-import com.example.capstone.activities.FeedActivity;
-import com.example.capstone.activities.ConversationActivity;
+import com.example.capstone.activities.feed.FeedActivity;
+import com.example.capstone.activities.conversation.ConversationActivity;
 import com.example.capstone.activities.MovieSelectionActivity;
 import com.example.capstone.activities.ProfileActivity;
 import com.example.capstone.activities.TVShowSelectionActivity;
-import com.example.capstone.activities.logOrSignActivity;
+import com.example.capstone.activities.login.logOrSignActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseUser;
 

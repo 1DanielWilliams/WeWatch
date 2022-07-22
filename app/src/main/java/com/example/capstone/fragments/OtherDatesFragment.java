@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.example.capstone.R;
@@ -36,7 +37,6 @@ public class OtherDatesFragment extends DialogFragment {
     private List<String> allDates;
     private List<ParseUser> allAuthors;
     private List<List<ParseUser>> allInterestedUsers;
-    private FloatingActionButton fab;
 
 
     public OtherDatesFragment() {
@@ -71,8 +71,8 @@ public class OtherDatesFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         rvDates = view.findViewById(R.id.rvDates);
-        fab = view.findViewById(R.id.fabDates);
 
         ImageButton iBtnUpFromDates = view.findViewById(R.id.iBtnUpFromDates);
         iBtnUpFromDates.setOnClickListener(v -> this.dismiss());
@@ -81,24 +81,11 @@ public class OtherDatesFragment extends DialogFragment {
         allDates = event.getDates();
         allAuthors = event.getUsers();
         allInterestedUsers = event.getInterestedUsers();
-        adapter = new DatesAdapter(getContext(), allDates, allAuthors, allInterestedUsers);
+        adapter = new DatesAdapter(getContext(), allDates, allAuthors, allInterestedUsers, event);
 
         rvDates.setAdapter(adapter);
         rvDates.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter.notifyDataSetChanged();
-
-        fab.show();
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("OtherDatesFragment", "onClick: ");
-                //date selection
-                //append date + time to the event
-                //save event in background
-                //notify adapter changed
-            }
-        });
 
 
     }

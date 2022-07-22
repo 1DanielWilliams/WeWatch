@@ -98,7 +98,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
                     queriedMovies.addAll(movies);
                     allMovies.addAll(movies);
                     int size = queriedMovies.size();
-
+                    adapter.notifyDataSetChanged();
                     for (int i = 0; i < size; i++) {
                         VideoContent movie = queriedMovies.get(i);
                         int id = movie.getTmdbID();
@@ -122,7 +122,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
                                 }
 
                                 movie.setPlatforms(platforms);
-                                adapter.notifyItemInserted(finalI);
+                                adapter.notifyItemChanged(finalI);
                             }
 
                             @Override

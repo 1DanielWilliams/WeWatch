@@ -14,49 +14,83 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:fitsSystemWindows="true"
-        tools:context=".activities.FeedActivity">
+        tools:context=".activities.feed.FeedActivity">
 
         <!--    TOOLBAR-->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@android:color/black"
+        tools:layout_editor_absoluteX="53dp">
+
+
+        <SearchView
+            android:id="@+id/searchFeed"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toTopOf="parent"
-            app:titleTextColor="@android:color/black"
-            tools:layout_editor_absoluteX="53dp">
+            android:layout_gravity="end" />
 
-
-            <SearchView
-                android:id="@+id/searchFeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbarFiltering"
+            android:layout_gravity="center">
 
             <TextView
                 android:id="@+id/toolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginTop="7dp"
                 android:text="Feed"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:visibility="visible"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="100dp"
-                tools:layout_editor_absoluteY="28dp" />
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/imBtnMenuFeed"
+            <TextView
+                android:id="@+id/tvFilterFeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:text="By date"
+                android:visibility="visible"
+                android:textSize="11sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbarTitle" />
+
+            <ImageButton
+                android:id="@+id/ibFilterFeed"
+                android:layout_width="13dp"
+                android:layout_height="11dp"
+                android:layout_marginTop="3dp"
+                android:visibility="visible"
+                android:layout_marginStart="1dp"
                 android:backgroundTint="@android:color/transparent"
-                android:rotation="0"
-                android:src="@android:drawable/ic_menu_sort_by_size" />
-        </androidx.appcompat.widget.Toolbar>
+                android:rotation="180"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toEndOf="@+id/tvFilterFeed"
+                app:layout_constraintTop_toBottomOf="@+id/toolbarTitle"
+                app:srcCompat="@drawable/up_black_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ImageButton
+            android:id="@+id/imBtnMenuFeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:backgroundTint="@android:color/transparent"
+            android:rotation="0"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
+    </androidx.appcompat.widget.Toolbar>
         <!--    TOOLBAR-->
+
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvEvents"
@@ -64,6 +98,8 @@
             android:layout_height="760dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

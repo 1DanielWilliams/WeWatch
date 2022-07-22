@@ -11,7 +11,7 @@
         <entry key="app/src/main/res/layout/activity_detail_conversation.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/layout/activity_detail_event.xml" value="0.44567627494456763" />
         <entry key="app/src/main/res/layout/activity_detail_video_content.xml" value="0.36446024576822916" />
-        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.5111034463766697" />
+        <entry key="app/src/main/res/layout/activity_feed.xml" value="0.4702928870292887" />
         <entry key="app/src/main/res/layout/activity_feed_search.xml" value="0.15391192817443353" />
         <entry key="app/src/main/res/layout/activity_log_or_sign.xml" value="0.27790069580078125" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2798913043478261" />
@@ -44,6 +44,7 @@
         <entry key="app/src/main/res/layout/toolbar_with_cancel.xml" value="0.13043478260869565" />
         <entry key="app/src/main/res/menu/navigation_drawer.xml" value="0.1" />
         <entry key="app/src/main/res/menu/popup_menu.xml" value="0.8140263875325522" />
+        <entry key="app/src/main/res/menu/popup_menu_feed_filter.xml" value="0.2929506120726045" />
         <entry key="app/src/main/res/menu/profile_popup_menu.xml" value="0.46197916666666666" />
         <entry key="app/src/main/res/menu/search_feed.xml" value="0.2975630611372381" />
         <entry key="app/src/main/res/xml/searchable.xml" value="0.2975630611372381" />

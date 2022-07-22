@@ -47,6 +47,7 @@ public class SignUpActivityOptions extends AppCompatActivity {
             i.putExtra("password", password);
             i.putExtra("email", email);
             startActivity(i);
+
         });
 
     }

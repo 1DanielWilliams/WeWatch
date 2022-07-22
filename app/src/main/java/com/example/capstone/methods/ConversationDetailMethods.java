@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.capstone.activities.ConversationDetailActivity;
 import com.example.capstone.adapters.MessagesAdapter;
 import com.example.capstone.models.Message;
 import com.example.capstone.models.TypingDetail;
@@ -54,6 +53,7 @@ public class ConversationDetailMethods {
         String messageContent = etMessageContent.getText().toString();
         if (messageContent.equals("")) {
             Toast.makeText(context, "A message cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
         }
         etMessageContent.setText("");
 

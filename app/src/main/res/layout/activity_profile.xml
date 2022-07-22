@@ -81,30 +81,6 @@
         tools:srcCompat="@drawable/vertical_menu_black_90" />
 
     <TextView
-        android:id="@+id/textView22"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="39dp"
-        android:text="friends"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/tvNumWatchedProfile"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <TextView
-        android:id="@+id/tvNumFriendsProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="5dp"
-        android:text="20"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView22"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <TextView
         android:id="@+id/tvNumWatchedProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -154,7 +130,7 @@
         android:backgroundTint="@android:color/transparent"
         android:padding="0dp"
         android:stateListAnimator="@null"
-        android:text="Your list"
+        android:text="Wish List"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         android:textSize="16sp"

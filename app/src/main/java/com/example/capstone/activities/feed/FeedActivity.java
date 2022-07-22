@@ -1,26 +1,22 @@
-package com.example.capstone.activities;
+package com.example.capstone.activities.feed;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.appcompat.widget.ToolbarWidgetWrapper;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,8 +27,6 @@ import com.example.capstone.methods.DeletingEventsMethods;
 import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.models.Event;
 import com.google.android.material.navigation.NavigationView;
-import com.parse.FindCallback;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.livequery.ParseLiveQueryClient;
@@ -42,18 +36,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class FeedActivity extends AppCompatActivity {
     private boolean listen;
@@ -68,8 +55,15 @@ public class FeedActivity extends AppCompatActivity {
     private TextView toolbarTitle;
     private ParseLiveQueryClient parseLiveQueryClient;
     private SearchView searchFeed;
-    private NavigableMap<String, Event> allEventsMap;
     private  SubscriptionHandling<Event> subscriptionHandling;
+    private ImageButton ibFilterFeed;
+    private TextView tvFilterFeed;
+    private final String ASCENDING_DATE = "ascendingDate";
+    private final String POPULAR_FILTER = "popularFilter";
+    private final String RATING_FILTER = "ratingFilter";
+    private String currFeedFilter = ASCENDING_DATE;
+
+
 
 
     @Override
@@ -80,13 +74,14 @@ public class FeedActivity extends AppCompatActivity {
         listen = true;
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
+        ibFilterFeed = findViewById(R.id.ibFilterFeed);
+        tvFilterFeed = findViewById(R.id.tvFilterFeed);
         toolbarTitle.setText(ParseUser.getCurrentUser().getString("university"));
 
         parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
         rvEvents = findViewById(R.id.rvEvents);
         navDrawerFeed = findViewById(R.id.navDrawerFeed);
 
-        allEventsMap = new TreeMap<>();
         queriedEvents = new ArrayList<>();
         allEvents = new ArrayList<>();
         adapter = new EventsAdapter(this, queriedEvents);
@@ -163,8 +158,6 @@ public class FeedActivity extends AppCompatActivity {
                         }
 
                     }
-                } else { // not deleting the event
-                    allEventsMap.put(event.getTitle().toLowerCase(Locale.ROOT), event);
                 }
             }
             allEvents.addAll(events);
@@ -180,7 +173,9 @@ public class FeedActivity extends AppCompatActivity {
                 @Override
                 public void onEvent(ParseQuery<Event> queried, Event updatedEvent) {
                     if (listen) {
-                        FeedActivity.this.runOnUiThread(() -> adapter.itemUpdated(updatedEvent) );
+                        FeedActivity.this.runOnUiThread(() -> {
+                            adapter.itemUpdated(updatedEvent);
+                        });
                     }
                 }
             });
@@ -202,7 +197,7 @@ public class FeedActivity extends AppCompatActivity {
             });
 
             subscriptionHandling.handleEvent(SubscriptionHandling.Event.DELETE, (query1, deletedEvent) -> {
-                Toast.makeText(FeedActivity.this, deletedEvent.getTitle() + " expired", Toast.LENGTH_SHORT).show();
+                FeedActivity.this.runOnUiThread(() -> Toast.makeText(FeedActivity.this, deletedEvent.getTitle() + " expired", Toast.LENGTH_SHORT).show());
             });
 
         });
@@ -220,39 +215,80 @@ public class FeedActivity extends AppCompatActivity {
             queriedEvents.clear();
             adapter.notifyDataSetChanged();
             toolbarTitle.setVisibility(View.GONE);
+            tvFilterFeed.setVisibility(View.GONE);
+            ibFilterFeed.setVisibility(View.GONE);
         });
 
         searchFeed.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                queriedEvents.clear();
+                //query for everything once
+                if (query.length() > 0) {
+                    for (Event event : allEvents) {
+                        if (event.getTitle().toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))) {
+                            queriedEvents.add(event);
+                        }
+                    }
+                }
+                adapter.notifyDataSetChanged();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                queriedEvents.clear();
-                //query for everything once
-                if (newText.length() > 0) {
-                    Collection<Event> events = getByPrefix(allEventsMap, newText.toLowerCase(Locale.ROOT)).values();
-                    // todo if empty display something
-                    queriedEvents.addAll(events);
+                if (newText.length() == 0) {
+                    queriedEvents.clear();
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.notifyDataSetChanged();
                 return false;
             }
         });
 
         searchFeed.setOnCloseListener(() -> {
             toolbarTitle.setVisibility(View.VISIBLE);
+            tvFilterFeed.setVisibility(View.VISIBLE);
+            ibFilterFeed.setVisibility(View.VISIBLE);
             queriedEvents.addAll(allEvents);
             adapter.notifyDataSetChanged();
             return false;
         });
 
-    }
 
-    public SortedMap<String, Event> getByPrefix(NavigableMap<String, Event> myMap, String prefix ) {
-        return myMap.subMap( prefix, prefix + Character.MAX_VALUE );
+        ibFilterFeed.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(FeedActivity.this, toolbarTitle, Gravity.CENTER, 0, R.style.PopupMenuMoreCentralized); //todo want it to bein the middle
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_feed_filter, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    int itemID = item.getItemId();
+
+                    if(itemID == R.id.optionPopular) {
+                        //if events is not on feed
+                        if (!Objects.equals(currFeedFilter, POPULAR_FILTER)) {
+                            // query for popular filter
+                        }
+
+                        return true;
+                    } else if (itemID == R.id.optionAscendingDate) {
+                        if (!Objects.equals(currFeedFilter, ASCENDING_DATE)) {
+                            // query for ascending date filter
+                        }
+                        return true;
+                    } else if (itemID == R.id.optionRating) {
+                        if (!Objects.equals(currFeedFilter, RATING_FILTER)) {
+                            // query for ratings filter
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            popupMenu.show();
+        });
+
+
     }
 
     @Override
@@ -265,5 +301,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         listen = true;
+
+        //put code form
     }
 }

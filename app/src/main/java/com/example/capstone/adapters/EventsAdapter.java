@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
-import com.example.capstone.activities.DetailEventActivity;
-import com.example.capstone.activities.FeedActivity;
+import com.example.capstone.activities.feed.DetailEventActivity;
+import com.example.capstone.activities.feed.FeedActivity;
 import com.example.capstone.fragments.OtherDatesFragment;
 import com.example.capstone.methods.BinarySearch;
 import com.example.capstone.methods.DisplayPlatforms;
@@ -31,20 +31,13 @@ import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.livequery.ParseLiveQueryClient;
-import com.parse.livequery.SubscriptionHandling;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private Context context;
@@ -119,6 +112,18 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         int oldEventDatesSize = eventData.second.getDates().size();
         int updatedEventDateSize = updatedEventDates.size();
 
+        //todo check if earliest date is different
+        if (!updatedEvent.getEarliestDate().equals(events.get(eventData.first).getEarliestDate())) {
+            events.remove((int) eventData.first);
+            int updatedEventIndex = BinarySearch.indexOfEvents(events, updatedEvent.getEarliestDate());
+            events.add(updatedEventIndex, updatedEvent);
+            Toast.makeText(context, "New Date added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();
+            updatedEvent.setIsNewDate(true);
+            notifyDataSetChanged();
+            return;
+        }
+            //find out where to place new event
+            //delete old event
         if (updatedEventDateSize > oldEventDatesSize) {
             //check if the earliest date has changed
             Toast.makeText(context, "New Date added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();

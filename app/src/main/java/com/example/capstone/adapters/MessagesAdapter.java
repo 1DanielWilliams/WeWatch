@@ -121,7 +121,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                             }
 
                             if (!chatExist) {
-                                Message firstMessage = new Message("Hi!", user.getObjectId());
+                                Message firstMessage = new Message("", user.getObjectId());
                                 DatabaseReference push = groupDetailsRef.push();
                                 push.setValue(new GroupDetail(message.getSenderID(), finalDmID, firstMessage)).addOnCompleteListener(task1 -> {
                                     DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");

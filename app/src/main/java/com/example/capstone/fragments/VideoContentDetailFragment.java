@@ -1,18 +1,12 @@
 package com.example.capstone.fragments;
 
-import static com.example.capstone.methods.BinarySearch.earliestDateInEvent;
-
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,49 +14,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.capstone.R;
-import com.example.capstone.activities.FeedActivity;
-import com.example.capstone.activities.MovieSelectionActivity;
-import com.example.capstone.activities.TVShowSelectionActivity;
-import com.example.capstone.methods.BinarySearch;
 import com.example.capstone.methods.PostEventMethods;
-import com.example.capstone.methods.RemoveFromWishToWatch;
 import com.example.capstone.models.Event;
 import com.example.capstone.models.VideoContent;
-import com.google.android.material.datepicker.CalendarConstraints;
-import com.google.android.material.datepicker.DateValidatorPointForward;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.android.material.timepicker.TimeFormat;
-import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
-import okhttp3.Headers;
 
 public class VideoContentDetailFragment extends DialogFragment {
 
@@ -160,16 +124,18 @@ public class VideoContentDetailFragment extends DialogFragment {
         // determines if the user has already added this content to their wishToWatch
         AtomicBoolean inWishToWatch = new AtomicBoolean(PostEventMethods.isInWishToWatch(wishToWatch, videoContent));
 
-        if (!inWishToWatch.get()) {
-            btnWatchLater.setVisibility(View.VISIBLE);
+        if (inWishToWatch.get()) {
+            btnWatchLater.setEnabled(false);
         }
+
 
         btnWatchLater.setOnClickListener(v -> {
             wishToWatch.get().add(videoContent);
             user.put("wishToWatch", wishToWatch.get());
             user.saveInBackground();
-            btnWatchLater.setVisibility(View.GONE);
+            btnWatchLater.setEnabled(false);
         });
+
 
     }
 

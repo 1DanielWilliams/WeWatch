@@ -3,8 +3,7 @@ package com.example.capstone.methods;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.capstone.activities.ConversationDetailActivity;
-import com.example.capstone.activities.DetailEventActivity;
+import com.example.capstone.activities.conversation.ConversationDetailActivity;
 
 public class GroupChatMethods {
 
