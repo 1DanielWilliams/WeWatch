@@ -9,6 +9,8 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,7 +44,8 @@ import java.util.Objects;
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
     private Context context;
     private List<Event> events;
-    ParseLiveQueryClient parseLiveQueryClient;
+    private ParseLiveQueryClient parseLiveQueryClient;
+    private int lastPosition = -1;
     private final ColorStateList WHITE = ColorStateList.valueOf(Color.argb(255, 255, 255, 255));
     private final ColorStateList BLACK = ColorStateList.valueOf(Color.argb(255, 0, 0, 0));
     private final ColorStateList RED = ColorStateList.valueOf(Color.argb(255, 214, 41, 41));
@@ -71,7 +74,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         } catch (ParseException e) {
             Log.e("EventsAdapter", "onBindViewHolder: ", e);
         }
+
+        holder.setAnimation(holder.itemView, position);
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -112,8 +119,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         int oldEventDatesSize = eventData.second.getDates().size();
         int updatedEventDateSize = updatedEventDates.size();
 
-        //todo check if earliest date is different
-        if (!updatedEvent.getEarliestDate().equals(events.get(eventData.first).getEarliestDate())) {
+        //todo check if earliest date is different doesnt change posiiton
+        if (!updatedEvent.getEarliestDate().toInstant().equals(events.get(eventData.first).getEarliestDate().toInstant())) {
             events.remove((int) eventData.first);
             int updatedEventIndex = BinarySearch.indexOfEvents(events, updatedEvent.getEarliestDate());
             events.add(updatedEventIndex, updatedEvent);
@@ -243,13 +250,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 } else {
                     tvNumPlatformsLeft.setText("+ " + numPlatformsLeft);
                 }
+                tvAvailableOnEvent.setText("Available On:");
             } else {
                 tvAvailableOnEvent.setText("");
                 tvNumPlatformsLeft.setText("");
             }
 
 
-            // todo: needs placeholder
             Glide.with(context).load(event.getBackdropUrl()).into(ivBackdropEvent);
             ivBackdropEvent.setColorFilter(Color.argb(60, 0 , 0 , 0));
             if (event.getIsLive()) {
@@ -289,7 +296,18 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 tvRemovedDate.setVisibility(View.GONE);
                 btnDate.setStrokeColor(BLACK);
             }
+        }
 
+        private void setAnimation(View viewToAnimate, int position) {
+            if (position > lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            } else if (position < lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            }
         }
     }
 }

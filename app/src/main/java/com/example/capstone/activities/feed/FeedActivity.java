@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
@@ -67,6 +68,8 @@ public class FeedActivity extends AppCompatActivity {
     public final static String RATING_FILTER = "ratingFilter";
     private AtomicReference<String> currFeedFilter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private Button btnScrollToEvent;
+    private AtomicReference<Integer> indexToScroll;
 
 
 
@@ -80,11 +83,13 @@ public class FeedActivity extends AppCompatActivity {
 
 
         listen = true;
+        indexToScroll = new AtomicReference<>(-1);
         currFeedFilter = new AtomicReference<>(ASCENDING_DATE);
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         ibFilterFeed = findViewById(R.id.ibFilterFeed);
         tvFilterFeed = findViewById(R.id.tvFilterFeed);
+        btnScrollToEvent = findViewById(R.id.btnScrollToEvent);
         toolbarTitle.setText(ParseUser.getCurrentUser().getString("university"));
 
         parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
@@ -179,14 +184,12 @@ public class FeedActivity extends AppCompatActivity {
 
         subscriptionHandling = parseLiveQueryClient.subscribe(query);
         subscriptionHandling.handleSubscribe(q -> {
-            subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Event>() {
-                @Override
-                public void onEvent(ParseQuery<Event> queried, Event updatedEvent) {
-                    if (listen) {
-                        FeedActivity.this.runOnUiThread(() -> {
-                            adapter.itemUpdated(updatedEvent);
-                        });
-                    }
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, (queried, updatedEvent) -> {
+                if (listen) {
+                    FeedActivity.this.runOnUiThread(() -> {
+                        //check if it returned a certain number, if it did display the button
+                        adapter.itemUpdated(updatedEvent);
+                    });
                 }
             });
 
@@ -197,8 +200,9 @@ public class FeedActivity extends AppCompatActivity {
 
                         try {
                             TimeUnit.SECONDS.sleep(1);
-                            // todo, do not automatically scroll: add button to scroll to event
-                            rvEvents.smoothScrollToPosition(adapter.itemCreated(createdEvent));
+                            //set button to visible
+                            indexToScroll.set(adapter.itemCreated(createdEvent));
+                            btnScrollToEvent.setVisibility(View.VISIBLE);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -209,7 +213,6 @@ public class FeedActivity extends AppCompatActivity {
             subscriptionHandling.handleEvent(SubscriptionHandling.Event.DELETE, (query1, deletedEvent) -> {
                 FeedActivity.this.runOnUiThread(() -> Toast.makeText(FeedActivity.this, deletedEvent.getTitle() + " expired", Toast.LENGTH_SHORT).show());
             });
-
         });
 
 
@@ -279,6 +282,10 @@ public class FeedActivity extends AppCompatActivity {
 
         rvEvents.addOnScrollListener(scrollListener);
 
+        btnScrollToEvent.setOnClickListener(v -> {
+            rvEvents.smoothScrollToPosition(indexToScroll.get());
+            btnScrollToEvent.setVisibility(View.GONE);
+        });
     }
 
 
@@ -292,7 +299,5 @@ public class FeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         listen = true;
-
-        //put code form
     }
 }
