@@ -35,7 +35,7 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.example.capstone.R.layout.activity_signup3);
+        setContentView(com.example.capstone.R.layout.activity_signup_confirmation);
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);

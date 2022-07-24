@@ -27,7 +27,7 @@ public class UsernameLogInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login1);
+        setContentView(R.layout.activity_login_username);
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);

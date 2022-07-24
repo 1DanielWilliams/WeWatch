@@ -22,7 +22,7 @@ public class SignUpActivityOptions extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup2);
+        setContentView(R.layout.activity_signup_options);
 
         upArrowSign2 = findViewById(R.id.upArrowSign2);
         upArrowSign2.setOnClickListener(v -> {

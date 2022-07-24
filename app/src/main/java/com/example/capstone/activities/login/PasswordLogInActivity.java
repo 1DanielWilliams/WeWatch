@@ -23,7 +23,7 @@ public class PasswordLogInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.example.capstone.R.layout.activity_login2);
+        setContentView(com.example.capstone.R.layout.activity_login_password);
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);
