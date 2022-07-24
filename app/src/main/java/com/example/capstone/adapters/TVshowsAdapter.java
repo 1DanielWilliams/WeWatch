@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -17,15 +19,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.capstone.R;
 import com.example.capstone.fragments.VideoContentDetailFragment;
+import com.example.capstone.methods.DisplayPlatforms;
 import com.example.capstone.models.VideoContent;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHolder> {
     private Context context;
     private List<VideoContent> tvShows;
+    private int lastPosition = -1;
 
     public TVshowsAdapter(Context context, List<VideoContent> tvShows) {
         this.context = context;
@@ -43,6 +49,7 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoContent tvShow = tvShows.get(position);
         holder.bind(tvShow);
+//        holder.setAnimation(holder.itemView, position);
     }
 
     @Override
@@ -55,6 +62,14 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
         TextView tvTitleVideoContent;
         RatingBar rbVoterAverageVideoContent;
         ImageView tvBackdropVideoContent;
+        TextView tvAvailableOnContent;
+        TextView tvExtraPlatformsContent;
+        ImageView ivFirst;
+        ImageView ivSecond;
+
+
+
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +77,10 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
             rbVoterAverageVideoContent = itemView.findViewById(R.id.rbVoterAverageVideoContent);
             tvTitleVideoContent = itemView.findViewById(R.id.tvTitleVideoContent);
             tvBackdropVideoContent = itemView.findViewById(R.id.tvBackdropVideoContent);
+            tvAvailableOnContent = itemView.findViewById(R.id.tvAvailableOnContent);
+            tvExtraPlatformsContent = itemView.findViewById(R.id.tvExtraPlatformsContent);
+            ivFirst = itemView.findViewById(R.id.ivFirst);
+            ivSecond = itemView.findViewById(R.id.ivSecond);
 
             itemView.setOnClickListener(v -> onViewClicked());
 
@@ -75,30 +94,74 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
 
             Glide.with(context).load(tvShow.getBackdropUrl()).placeholder(R.drawable.no_image_available).error(R.drawable.no_image_available).into(tvBackdropVideoContent);
             tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
+
+            List<String> platforms = tvShow.getPlatforms();
+            if (platforms == null) {
+                tvAvailableOnContent.setVisibility(View.GONE);
+                tvExtraPlatformsContent.setVisibility(View.GONE);
+                return;
+            }
+            int platformSize = platforms.size();
+
+            if (platformSize == 0) {
+                tvAvailableOnContent.setVisibility(View.GONE);
+                tvExtraPlatformsContent.setVisibility(View.GONE);
+            } else {
+                int numFeatured = 1;
+                for (String platform : platforms) {
+                    if (numFeatured == 1) {
+                        DisplayPlatforms.displayIcon(ivFirst, platform);
+                    } else if (numFeatured == 2) {
+                        DisplayPlatforms.displayIcon(ivSecond, platform);
+
+                    } else {
+                        break;
+                    }
+                    numFeatured++;
+                }
+                int extraPlatforms = platformSize - numFeatured;
+                if (extraPlatforms < 1) {
+                    tvExtraPlatformsContent.setVisibility(View.GONE);
+                } else {
+                    tvExtraPlatformsContent.setText("+ " + String.valueOf(extraPlatforms));
+                }
+                tvAvailableOnContent.setVisibility(View.VISIBLE);
+            }
+
         }
 
         private void onViewClicked() {
             int position = getBindingAdapterPosition();
             // Retrieve the local videoContent object
-            VideoContent videoContent = tvShows.get(position);
+            AtomicReference<VideoContent> videoContent = new AtomicReference<>(tvShows.get(position));
             ParseQuery<VideoContent> query = ParseQuery.getQuery(VideoContent.class);
-            query.whereEqualTo("title", videoContent.getTitle());
-            query.whereEqualTo("typeOfContent", videoContent.getTypeOfContent());
+            query.whereEqualTo("title", videoContent.get().getTitle());
+            query.whereEqualTo("typeOfContent", videoContent.get().getTypeOfContent());
 
             // Search the parse database to see if this movie already exist so that the program will not save two versions of the same VideoContent
-            try {
-                List<VideoContent> videoContents = query.find();
-                if (videoContents.size() != 0) {
-                    videoContent = videoContents.get(0);
+            query.findInBackground((shows, e) -> {
+                if(shows.size() !=0) {
+                    videoContent.set(shows.get(0));
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
-            //get the title of the video content
-            FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
-            VideoContentDetailFragment videoContentDetailFragment = VideoContentDetailFragment.newInstance(videoContent);
-            videoContentDetailFragment.show(fm, "fragment_edit_name");
+                //get the title of the video content
+                FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
+                VideoContentDetailFragment videoContentDetailFragment = VideoContentDetailFragment.newInstance(videoContent.get());
+                videoContentDetailFragment.show(fm, "fragment_edit_name");
+            });
+
+        }
+
+        private void setAnimation(View viewToAnimate, int position) {
+            if (position > lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            } else if (position < lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            }
         }
     }
 }

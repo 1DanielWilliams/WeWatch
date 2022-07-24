@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import android.transition.TransitionInflater;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +59,22 @@ public class VideoContentDetailFragment extends DialogFragment {
         if (getArguments() != null) {
             videoContent = getArguments().getParcelable(ARG_PARAM1);
         }
+//
+        TransitionInflater inflater = TransitionInflater.from(requireContext());
+//        setEnterTransition(inflater.inflateTransition(R.transition.fade));
+//        setExitTransition(inflater.inflateTransition(R.transition.fade));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_video_content_detail, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+//        getDialog().getWindow().getAttributes().windowAnimations = R.transition.slide_in_right;
     }
 
     @Override
@@ -101,7 +112,6 @@ public class VideoContentDetailFragment extends DialogFragment {
 
         Glide.with(view).load(posterUrl)
                 .override(width_px, height_px)
-                .placeholder(R.drawable.poster_no_image_available)
                 .error(R.drawable.poster_no_image_available)
                 .into(ivPoster);
         ivPoster.setColorFilter(Color.argb(60, 0, 0 , 0));

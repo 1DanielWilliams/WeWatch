@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ import okhttp3.Headers;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     private Context context;
     private List<VideoContent> movies;
+    private int lastPosition = -1;
 
     public MoviesAdapter(Context context, List<VideoContent> videoContents) {
         this.context = context;
@@ -55,7 +58,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoContent movie = movies.get(position);
-            holder.bind(movie);
+        holder.bind(movie);
+//        holder.setAnimation(holder.itemView, position);
     }
 
     @Override
@@ -91,14 +95,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             tvTitleVideoContent.setText(movie.getTitle());
             float voteAverage = movie.getVoteAverage().floatValue() / 2.0f;
             rbVoterAverageVideoContent.setRating(voteAverage);
-            //todo displaying platform errors
             List<String> platforms = movie.getPlatforms();
+            Glide.with(context).load(movie.getBackdropUrl()).placeholder(R.drawable.no_image_available).error(R.drawable.no_image_available).into(tvBackdropVideoContent);
+            tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
+
 
             if (platforms == null) {
-                Log.i("Movies", "bind: " + getBindingAdapterPosition());
+                tvAvailableOnContent.setVisibility(View.GONE);
                 return;
             }
             int platformSize = platforms.size();
+
             if (platformSize == 0) {
                 tvAvailableOnContent.setVisibility(View.GONE);
                 tvExtraPlatformsContent.setVisibility(View.GONE);
@@ -121,14 +128,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 } else {
                     tvExtraPlatformsContent.setText("+ " + String.valueOf(extraPlatforms));
                 }
+                tvAvailableOnContent.setVisibility(View.VISIBLE);
             }
-
-
-
-
-            Glide.with(context).load(movie.getBackdropUrl()).placeholder(R.drawable.no_image_available).error(R.drawable.no_image_available).into(tvBackdropVideoContent);
-            tvBackdropVideoContent.setColorFilter(Color.argb(50, 0, 0 , 0));
-
         }
 
         private void onViewClicked() {
@@ -153,6 +154,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
             VideoContentDetailFragment videoContentDetailFragment = VideoContentDetailFragment.newInstance(videoContent);
             videoContentDetailFragment.show(fm, "fragment_edit_name");
+        }
+
+        private void setAnimation(View viewToAnimate, int position) {
+            if (position > lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            } else if (position < lastPosition) {
+                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
+                viewToAnimate.startAnimation(animation);
+                lastPosition = position;
+            }
         }
     }
 }

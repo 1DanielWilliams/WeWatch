@@ -49,8 +49,11 @@ public class DisplayPlatforms {
         } else if (platform.equals("Spectrum On Demand")) {
             iv.setImageResource(R.drawable.spectrum_on_demand);
             return true;
+        } else if(platform.equals("Hoopla")) {
+            iv.setImageResource(R.drawable.hoopla);
+            return true;
         } else {
-            Log.i("DIsplayingPlatforms", "idk: " + platform);
+            Log.i("DisplayingPlatforms", "idk: " + platform);
             return false;
         }
 

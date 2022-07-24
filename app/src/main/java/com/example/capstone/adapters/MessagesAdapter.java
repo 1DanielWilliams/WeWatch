@@ -96,9 +96,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             lavTypingIndicator = itemView.findViewById(R.id.lavTypingIndicator);
 
             itemView.setOnLongClickListener(v -> {
-                //start fragment with clickabole buttons, buttons on the fragment do these things
-//                FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                DatabaseReference groupDetailsRef = database.getReference("group_details");
                 int position = getBindingAdapterPosition();
                 Message message = messages.get(position);
 
@@ -111,46 +108,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                     FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
                     OnMessageLongClickFragment onMessageLongClickFragment = OnMessageLongClickFragment.newInstance(toUserId, currId);
                     onMessageLongClickFragment.show(fm, "message_long_click");
-//                    String dmID =  user.getObjectId() + " " + toUserId;
-//                    char[] dmIDArray = dmID.toCharArray();
-//                    Arrays.sort(dmIDArray);
-//                    dmID = String.valueOf(dmIDArray);
-//                    //check if the dm already exist
-//                    final String finalDmID = dmID;
-//                    groupDetailsRef.get().addOnCompleteListener(task -> {
-//                        boolean chatExist = false;
-//                        for (DataSnapshot child : task.getResult().getChildren()) {
-//                            if (finalDmID.equals(child.child("id").getValue())) {
-//                                chatExist = true;
-//                            }
-//                        }
-//
-//                        if (!chatExist) {
-//                            Message firstMessage = new Message("", user.getObjectId());
-//                            DatabaseReference push = groupDetailsRef.push();
-//                            push.setValue(new GroupDetail(message.getSenderID(), finalDmID, firstMessage)).addOnCompleteListener(task1 -> {
-//                                DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
-//                                detailMembers.push().setValue(user.getObjectId());
-//                                detailMembers.push().setValue(toUserId);
-//
-//                                DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
-//                                groupDetailRef.setValue(new TypingDetail(false));
-//                            });
-//
-//                            ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
-//                            List<String> participantsIds = new ArrayList<>();
-//                            participantsIds.add(toUserId);
-//                            participantsIds.add(currId);
-//                            publicColumnsQuery.whereContainedIn(UserPublicColumns.KEY_USER_ID, participantsIds);
-//                            publicColumnsQuery.findInBackground((userPublicColumns, e) -> userPublicColumns.forEach(userPublicColumn -> {
-//                                List<String> groupChatIDs = userPublicColumn.getGroupChatIds();
-//                                groupChatIDs.add(finalDmID);
-//                                userPublicColumn.setGroupChatIds(groupChatIDs);
-//                                userPublicColumn.saveInBackground();
-//                            }));
-//                        }
-//                        GroupChatMethods.toConversationDetail(context, finalDmID, false, toUserId);
-//                    });
                     return true;
                 }
                 return false;

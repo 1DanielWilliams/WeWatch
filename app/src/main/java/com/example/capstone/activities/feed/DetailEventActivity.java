@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,7 +36,9 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,6 +72,7 @@ public class DetailEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_event);
+
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);
@@ -104,9 +108,9 @@ public class DetailEventActivity extends AppCompatActivity {
             });
         });
 
-        iBtnGroupChatDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        iBtnGroupChatDetail.setOnClickListener(v -> {
+            Date currentDate = new Date(System.currentTimeMillis());
+            if (event.getEarliestDate().toInstant().isBefore(currentDate.toInstant().plus(Duration.ofHours(24)))) {
                 ParseUser user = ParseUser.getCurrentUser();
                 String groupChatID = (event.getDates().get(event.getEarliestUserIndex()) + event.getTitle() + event.getTypeOfContent()).replace(".", "");
 
@@ -117,63 +121,62 @@ public class DetailEventActivity extends AppCompatActivity {
                 ParseQuery<UserPublicColumns> publicColumnsQuery = ParseQuery.getQuery(UserPublicColumns.class);
                 publicColumnsQuery.whereEqualTo(UserPublicColumns.KEY_USER_ID, user.getObjectId());
                 AtomicBoolean inGroupChat = new AtomicBoolean(false);
-                publicColumnsQuery.findInBackground(new FindCallback<UserPublicColumns>() {
-                    @Override
-                    public void done(List<UserPublicColumns> userPublicColumns, ParseException e) {
-                        UserPublicColumns userPublicColumn = userPublicColumns.get(0);
-                        List<String> userGroupChatIDs = userPublicColumn.getGroupChatIds();
-                        userGroupChatIDs.forEach(s -> {
-                            if (Objects.equals(s, groupChatID)) {
-                                inGroupChat.set(true);
+                publicColumnsQuery.findInBackground((userPublicColumns, e) -> {
+                    UserPublicColumns userPublicColumn = userPublicColumns.get(0);
+                    List<String> userGroupChatIDs = userPublicColumn.getGroupChatIds();
+                    userGroupChatIDs.forEach(s -> {
+                        if (Objects.equals(s, groupChatID)) {
+                            inGroupChat.set(true);
+                        }
+                    });
+
+
+                    if (isInterested.get() && !inGroupChat.get()) {
+
+                        userGroupChatIDs.add(groupChatID);
+                        userPublicColumn.setGroupChatIds(userGroupChatIDs);
+                        userPublicColumn.saveInBackground();
+
+                        // Determines if a groupchat exist
+                        AtomicBoolean groupChatExist = new AtomicBoolean(false);
+                        AtomicReference<String> groupDetailKey = new AtomicReference<>();
+                        groupDetailsRef.get().addOnCompleteListener(task -> {
+                            for (DataSnapshot child : task.getResult().getChildren()) {
+                                if (groupChatID.equals(child.child("id").getValue())) {
+                                    groupChatExist.set(true);
+                                    groupDetailKey.set(child.getKey());
+                                    break;
+                                }
                             }
+
+                            if (groupChatExist.get()) {
+                                DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
+                                appendUser.push().setValue(user.getObjectId());
+
+                            } else {
+                                Message firstMessage = new Message("Hi!", user.getObjectId());
+                                DatabaseReference push = groupDetailsRef.push();
+                                push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
+                                    DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
+                                    detailMembers.push().setValue(user.getObjectId());
+
+                                    DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
+                                    groupDetailRef.setValue(new TypingDetail(false));
+                                });
+                                groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
+                            }
+                            GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
                         });
 
+                    } else if (isInterested.get() && inGroupChat.get()) {
+                        GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
 
-                        if (isInterested.get() && !inGroupChat.get()) {
-
-                            userGroupChatIDs.add(groupChatID);
-                            userPublicColumn.setGroupChatIds(userGroupChatIDs);
-                            userPublicColumn.saveInBackground();
-
-                            // Determines if a groupchat exist
-                            AtomicBoolean groupChatExist = new AtomicBoolean(false);
-                            AtomicReference<String> groupDetailKey = new AtomicReference<>();
-                            groupDetailsRef.get().addOnCompleteListener(task -> {
-                                for (DataSnapshot child : task.getResult().getChildren()) {
-                                    if (groupChatID.equals(child.child("id").getValue())) {
-                                        groupChatExist.set(true);
-                                        groupDetailKey.set(child.getKey());
-                                        break;
-                                    }
-                                }
-
-                                if (groupChatExist.get()) {
-                                    DatabaseReference appendUser = database.getReference("group_details/" + groupDetailKey.get() + "/members");
-                                    appendUser.push().setValue(user.getObjectId());
-
-                                } else {
-                                    Message firstMessage = new Message("Hi!", user.getObjectId());
-                                    DatabaseReference push = groupDetailsRef.push();
-                                    push.setValue(new GroupDetail(event.getTitle() + " @ " + event.getDates().get(event.getEarliestUserIndex()), groupChatID, firstMessage)).addOnCompleteListener(task1 -> {
-                                        DatabaseReference detailMembers = database.getReference("group_details/" + push.getKey() + "/members");
-                                        detailMembers.push().setValue(user.getObjectId());
-
-                                        DatabaseReference groupDetailRef = database.getReference("group_details/" + push.getKey() + "/typing_detail");
-                                        groupDetailRef.setValue(new TypingDetail(false));
-                                    });
-                                    groupMessagesRef.child(groupChatID).push().setValue(firstMessage);
-                                }
-                                GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
-                            });
-
-                        } else if (isInterested.get() && inGroupChat.get()) {
-                            GroupChatMethods.toConversationDetail(DetailEventActivity.this, groupChatID, true, "");
-
-                        } else {
-                            Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
-                        }
+                    } else {
+                        Toast.makeText(DetailEventActivity.this, "Indicate that you are interested first! ", Toast.LENGTH_SHORT).show();
                     }
                 });
+            } else {
+                Toast.makeText(this, "Come back 24hrs before the event!", Toast.LENGTH_LONG).show();
             }
 
         });
