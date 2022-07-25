@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activities.conversation.ConversationDetailActivity">
 
     <!--    TOOLBAR-->
-
     <View
         android:id="@+id/view6"
         android:layout_width="match_parent"
@@ -81,9 +81,7 @@
         android:layout_width="410dp"
         android:layout_height="756dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="2dp"
         app:layout_constraintBottom_toTopOf="@+id/btnSend"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view6" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

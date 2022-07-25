@@ -92,12 +92,12 @@
 
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEvents"
-            android:layout_width="match_parent"
-            android:layout_height="760dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEvents"
+        android:layout_width="match_parent"
+        android:layout_height="760dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <Button
         android:id="@+id/btnScrollToEvent"

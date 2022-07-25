@@ -55,6 +55,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.login.PasswordLogInActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:parentActivityName=".activities.login.UsernameLogInActivity" />
         <activity
@@ -64,6 +65,7 @@
         <activity
             android:name=".activities.signup.SignUpActivityOptions"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".activities.signup.SignUpActivityCredentials" />
         <activity
             android:name=".activities.login.logOrSignActivity"
@@ -84,6 +86,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.login.UsernameLogInActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:parentActivityName=".activities.login.logOrSignActivity" />
     </application>
