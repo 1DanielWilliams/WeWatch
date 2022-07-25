@@ -49,7 +49,7 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoContent tvShow = tvShows.get(position);
         holder.bind(tvShow);
-//        holder.setAnimation(holder.itemView, position);
+        holder.setAnimation(holder.itemView, position);
     }
 
     @Override

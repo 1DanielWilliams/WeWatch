@@ -104,8 +104,8 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvEvents.setLayoutManager(linearLayoutManager);
 
-        SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(rvEvents);
+//        SnapHelper snapHelper = new LinearSnapHelper();
+//        snapHelper.attachToRecyclerView(rvEvents);
 
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.addAscendingOrder(Event.KEY_EARLIEST_DATE);
@@ -133,12 +133,13 @@ public class FeedActivity extends AppCompatActivity {
                     // serial search through each date in dates
                         // checks if the date is invalid if so does this, on else break
                     int currYear = LocalDate.now().getYear();
+                    int numDatesToRemove = 0;
                     for (String dateStr : dates) {
                         try {
                             Date date = new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dateStr + " " + currYear);
                             if (date.before(currDate)) {
                                 int indexToRemove = 0;
-
+                                numDatesToRemove++;
                                 List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
                                 interestedUsers.remove(indexToRemove);
                                 event.setInterestedUsers(interestedUsers);
@@ -152,9 +153,6 @@ public class FeedActivity extends AppCompatActivity {
                                 DeletingEventsMethods.removeChatId(groupChatID, event);
 
 
-                                dates.remove(0);
-                                event.setDates(dates);
-
                                 //gets the new earliest date and updates earliestUserIndex
                                 try {
                                     event.setEarliestDate(new SimpleDateFormat("MMM dd hh:mm aa yyyy").parse(dates.get(0) + " " + currYear));
@@ -164,7 +162,6 @@ public class FeedActivity extends AppCompatActivity {
 
                                 event.setEarliestUserIndex(0);
                                 event.setNumInterested(event.getInterestedUsers().get(0).size());
-                                event.saveInBackground();
                             } else {
                                 break;
                             }
@@ -173,6 +170,11 @@ public class FeedActivity extends AppCompatActivity {
                         }
 
                     }
+                    if (numDatesToRemove > 0) {
+                        dates.subList(0, numDatesToRemove).clear();
+                    }
+                    event.setDates(dates);
+                    event.saveInBackground();
                 }
             }
             allEvents.addAll(events);

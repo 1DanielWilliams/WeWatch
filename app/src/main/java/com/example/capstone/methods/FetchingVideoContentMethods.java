@@ -42,17 +42,16 @@ public class FetchingVideoContentMethods {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
+                    Log.i("FetchingVideoContent", "onSuccess: " + results.length());
 
                     List<VideoContent> movies = VideoContent.fromJsonArray(results, "Movie");
                     queriedMovies.addAll(movies);
                     allMovies.addAll(movies);
                     int size = queriedMovies.size();
-                    adapter.notifyDataSetChanged();
                     for (int i = 0; i < size; i++) {
                         VideoContent movie = queriedMovies.get(i);
                         int id = movie.getTmdbID();
                         String watchProvidersUrl = "https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + MovieSelectionActivity.TMDB_KEY;
-                        int finalI = i;
                         client.get(watchProvidersUrl, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -63,15 +62,12 @@ public class FetchingVideoContentMethods {
 
                                     for (int i = 0; i < results.length(); i++) {
                                         JSONObject platform = results.getJSONObject(i);
-                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
                                         platforms.add(platform.get("provider_name").toString());
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                } catch (JSONException ignored) {
                                 }
 
                                 movie.setPlatforms(platforms);
-                                adapter.notifyItemChanged(finalI);
                             }
 
                             @Override
@@ -83,8 +79,11 @@ public class FetchingVideoContentMethods {
                 } catch (JSONException e) {
                     Log.e("MovieSelectionActivity", "onSuccess: ", e);
                 }
-
-
+                if (page == 1) {
+                    adapter.notifyItemRangeInserted(0, (page * 20) - 1);
+                } else {
+                    adapter.notifyItemRangeInserted((page - 1) * 20, (page * 20) - 1);
+                }
             }
 
             @Override
@@ -105,7 +104,6 @@ public class FetchingVideoContentMethods {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-//                    Log.i("MovieSelectionActivity", "Results: " + results.toString());
                     List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "TV Show");
                     queriedTVShows.addAll(tvShows);
                     allTVShows.addAll(tvShows);
@@ -123,7 +121,6 @@ public class FetchingVideoContentMethods {
                                     JSONArray results = object.getJSONObject("results").getJSONObject("US").getJSONArray("flatrate");
                                     for (int i = 0; i < results.length(); i++) {
                                         JSONObject platform = results.getJSONObject(i);
-//                                        Log.i("VideoContent", "onSuccess: " + platform.get("provider_name").toString());
                                         platforms.add(platform.get("provider_name").toString());
                                     }
                                 } catch (JSONException e) {
@@ -140,10 +137,13 @@ public class FetchingVideoContentMethods {
                             }
                         });
                     }
-                } catch (JSONException e) {
-                    Log.e("TVShowSeelctionActivity", "onSuccess: ", e);
+                } catch (JSONException ignored) {
                 }
-                adapter.notifyDataSetChanged();
+                if (page == 1) {
+                    adapter.notifyItemRangeInserted(0, (page * 20) - 1);
+                } else {
+                    adapter.notifyItemRangeInserted((page - 1) * 20, (page * 20) - 1);
+                }
             }
 
             @Override

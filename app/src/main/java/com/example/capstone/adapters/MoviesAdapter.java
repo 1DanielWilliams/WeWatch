@@ -59,7 +59,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoContent movie = movies.get(position);
         holder.bind(movie);
-//        holder.setAnimation(holder.itemView, position);
+
+        holder.setAnimation(holder.itemView, position); // todo change so that that a scroll listener determines
     }
 
     @Override

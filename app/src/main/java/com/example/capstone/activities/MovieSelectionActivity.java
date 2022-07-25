@@ -120,9 +120,9 @@ public class MovieSelectionActivity extends AppCompatActivity {
 
         rvMovies.addOnScrollListener(scrollListener);
 
-        ibFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));        ibFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
-        tvFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));        ibFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
-        tvToolBarMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));        ibFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
+        ibFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
+        tvFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
+        tvToolBarMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
 
     }
 

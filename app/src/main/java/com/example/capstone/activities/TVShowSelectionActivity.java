@@ -103,11 +103,11 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if(currFilter.get() == TVShowSelectionActivity.POPULAR_FILTER) {
+                if(Objects.equals(currFilter.get(), TVShowSelectionActivity.POPULAR_FILTER)) {
                     FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, page + 1);
-                } else if (currFilter.get() == TVShowSelectionActivity.ON_AIR) {
+                } else if (Objects.equals(currFilter.get(), TVShowSelectionActivity.ON_AIR)) {
                     FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.ON_AIR_URL_SHOWS, queriedTVShows, allTVShows, adapter, page + 1);
-                } else if (currFilter.get() == TVShowSelectionActivity.TOP_RATED_FILTER) {
+                } else if (Objects.equals(currFilter.get(), TVShowSelectionActivity.TOP_RATED_FILTER)) {
                     FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.TOP_RATED_URL_SHOWS, queriedTVShows, allTVShows, adapter, page + 1);
                 }
             }
