@@ -9,4 +9,21 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name="spinnerFeed">
+        <item>By date</item>
+        <item>Popular</item>
+        <item>Highly rated</item>
+    </string-array>
+
+    <string-array name="spinnerMovie">
+        <item>Popular</item>
+        <item>Top Rated</item>
+        <item>Now Playing</item>
+    </string-array>
+
+    <string-array name="spinnerShows">
+        <item>Popular</item>
+        <item>Top Rated</item>
+        <item>On Air</item>
+    </string-array>
 </resources>

@@ -29,6 +29,7 @@ import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.methods.SearchVideoContentMethods;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +76,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_selection);
 
-        currFilter = new AtomicReference<>(POPULAR_FILTER);
+        currFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultMovie"));
         ibFilterMovies = findViewById(R.id.ibFilterMovies);
         tvFilterMovies = findViewById(R.id.tvFilterMovies);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
@@ -101,7 +102,17 @@ public class MovieSelectionActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(rvMovies);
 
         client = new AsyncHttpClient();
-        FetchingVideoContentMethods.fetchMovies(POPULAR_URL, queriedMovies, allMovies, adapter, client, 1);
+
+        if (Objects.equals(currFilter.get(), MovieSelectionActivity.POPULAR_FILTER)){
+            FetchingVideoContentMethods.fetchMovies(POPULAR_URL, queriedMovies, allMovies, adapter, client,  1);
+            tvFilterMovies.setText("Popular");
+        } else if (Objects.equals(currFilter.get(), MovieSelectionActivity.NOW_PLAYING_FILTER)) {
+            FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.NOW_PLAYING_URL_MOVIES, queriedMovies, allMovies, adapter, client, 1);
+            tvFilterMovies.setText("Top Rated");
+        } else if (Objects.equals(currFilter.get(), MovieSelectionActivity.TOP_RATED_FILTER)) {
+            FetchingVideoContentMethods.fetchMovies(FetchingVideoContentMethods.TOP_RATED_URL_MOVIES, queriedMovies, allMovies, adapter, client, 1);
+            tvFilterMovies.setText("Now Playing");
+        }
 
         SearchVideoContentMethods.setUpSearchView(searchMovies, queriedMovies, allMovies, tvToolBarMovies, client, adapter, null);
 

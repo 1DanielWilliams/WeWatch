@@ -41,6 +41,26 @@ public class EventFeedMethods {
         });
     }
 
+    public static void initialLoad(List<Event> queriedEvents, EventsAdapter adapter, String currFeedFilter, TextView tvFilterFeed) {
+        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
+        query.whereEqualTo(Event.KEY_UNIVERSITY, ParseUser.getCurrentUser().getString("university"));
+        if (Objects.equals(currFeedFilter, FeedActivity.ASCENDING_DATE)) {
+            query.addAscendingOrder(Event.KEY_EARLIEST_DATE);
+            tvFilterFeed.setText("By date");
+        } else if (Objects.equals(currFeedFilter, FeedActivity.POPULAR_FILTER)) {
+            query.addDescendingOrder(Event.KEY_NUM_INTERESTED);
+            tvFilterFeed.setText("Popular");
+        } else if (Objects.equals(currFeedFilter, FeedActivity.RATING_FILTER)) {
+            query.addDescendingOrder(Event.KEY_VOTE_AVERAGE);
+            tvFilterFeed.setText("Rating");
+        }
+        query.setLimit(20);
+        query.findInBackground((events, e) -> {
+            queriedEvents.addAll(events);
+            adapter.notifyDataSetChanged();
+        });
+    }
+
     public static void setupFilterMenu(Context context, TextView toolbarTitle, List<Event> queriedEvents, EventsAdapter adapter, TextView tvFilterFeed, final AtomicReference<String> currFeedFilter) {
         PopupMenu filterMenu  = new PopupMenu(context, toolbarTitle, Gravity.CENTER, 0, R.style.PopupMenuMoreCentralized);
         filterMenu.getMenuInflater().inflate(R.menu.popup_menu_feed_filter, filterMenu.getMenu());

@@ -28,9 +28,9 @@
         <entry key="app/src/main/res/layout/activity_signup1.xml" value="0.46494903564453127" />
         <entry key="app/src/main/res/layout/activity_signup2.xml" value="0.24260947122158377" />
         <entry key="app/src/main/res/layout/activity_signup3.xml" value="0.33270263671875" />
-        <entry key="app/src/main/res/layout/activity_signup_confirmation.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_signup_credentials.xml" value="0.11539154052734375" />
-        <entry key="app/src/main/res/layout/activity_signup_options.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_signup_confirmation.xml" value="0.2977066040039062" />
+        <entry key="app/src/main/res/layout/activity_signup_credentials.xml" value="0.24060516357421874" />
+        <entry key="app/src/main/res/layout/activity_signup_options.xml" value="0.43977203369140627" />
         <entry key="app/src/main/res/layout/activity_tvshow_selection.xml" value="0.410323709536308" />
         <entry key="app/src/main/res/layout/fragment_on_message_long_click.xml" value="0.37523203471013755" />
         <entry key="app/src/main/res/layout/fragment_other_dates.xml" value="0.44650475540843015" />

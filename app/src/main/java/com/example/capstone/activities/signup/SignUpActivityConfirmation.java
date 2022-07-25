@@ -54,6 +54,7 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
         String email = previousIntent.getStringExtra("email");
         String password = previousIntent.getStringExtra("password");
 
+
         etFinalName.setText(screenName);
         etFinalEmail.setText(email);
         etFinalPassword.setText(password);
@@ -66,6 +67,14 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
             user.setEmail(email);
             user.setPassword(password);
             user.put("screenName", screenName);
+
+            String defaultFeed = previousIntent.getStringExtra(SignUpActivityOptions.SPINNER_FEED_INTENT);
+            String defaultShow = previousIntent.getStringExtra(SignUpActivityOptions.SPINNER_SHOW_INTENT);
+            String defaultMovie = previousIntent.getStringExtra(SignUpActivityOptions.SPINNER_MOVIE_INTENT);
+
+            user.put("defaultFeed", defaultFeed);
+            user.put("defaultShow", defaultShow);
+            user.put("defaultMovie", defaultMovie);
 
             // determines the university an individual attends
             String university = email.split("@")[1].replace(".edu", "");

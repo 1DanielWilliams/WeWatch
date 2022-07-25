@@ -28,6 +28,7 @@ import com.example.capstone.methods.NavigationMethods;
 import com.example.capstone.methods.SearchVideoContentMethods;
 import com.example.capstone.models.VideoContent;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +71,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.example.capstone.R.layout.activity_tvshow_selection);
 
-        currFilter = new AtomicReference<>(POPULAR_FILTER);
+        currFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultShow"));
         tvFilterShows = findViewById(R.id.tvFilterShows);
         ibFilterShows = findViewById(R.id.ibFilterShows);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
@@ -97,7 +98,18 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(rvTVshows);
 
         client = new AsyncHttpClient();
-        FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, 1);
+
+        if(Objects.equals(currFilter.get(), TVShowSelectionActivity.POPULAR_FILTER)) {
+            FetchingVideoContentMethods.fetchTvShows(client, POPULAR_URL, queriedTVShows, allTVShows, adapter, 1);
+            tvFilterShows.setText("Popular");
+        } else if (Objects.equals(currFilter.get(), TVShowSelectionActivity.ON_AIR)) {
+            FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.ON_AIR_URL_SHOWS, queriedTVShows, allTVShows, adapter, 1);
+            tvFilterShows.setText("Top Rated");
+        } else if (Objects.equals(currFilter.get(), TVShowSelectionActivity.TOP_RATED_FILTER)) {
+            FetchingVideoContentMethods.fetchTvShows(client, FetchingVideoContentMethods.TOP_RATED_URL_SHOWS, queriedTVShows, allTVShows, adapter, 1);
+            tvFilterShows.setText("On Air");
+        }
+
         SearchVideoContentMethods.setUpSearchView(searchTV, queriedTVShows, allTVShows, tvToolBarTVShows, client, null, adapter);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {

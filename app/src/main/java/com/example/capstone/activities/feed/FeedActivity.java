@@ -84,7 +84,7 @@ public class FeedActivity extends AppCompatActivity {
 
         listen = true;
         indexToScroll = new AtomicReference<>(-1);
-        currFeedFilter = new AtomicReference<>(ASCENDING_DATE);
+        currFeedFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultFeed"));
         searchFeed = findViewById(R.id.searchFeed);
         toolbarTitle = findViewById(R.id.toolbarTitle);
         ibFilterFeed = findViewById(R.id.ibFilterFeed);
@@ -104,8 +104,9 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvEvents.setLayoutManager(linearLayoutManager);
 
-//        SnapHelper snapHelper = new LinearSnapHelper();
-//        snapHelper.attachToRecyclerView(rvEvents);
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(rvEvents);
+
 
         ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
         query.addAscendingOrder(Event.KEY_EARLIEST_DATE);
@@ -178,9 +179,7 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
             allEvents.addAll(events);
-            queriedEvents.addAll(events);
-            queriedEvents.removeAll(deletedEvents);
-            adapter.notifyDataSetChanged();
+            EventFeedMethods.initialLoad(queriedEvents, adapter, currFeedFilter.get(), tvFilterFeed);
         });
 
 
@@ -277,7 +276,6 @@ public class FeedActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                //load from database
                 EventFeedMethods.loadFromApi(queriedEvents, adapter, currFeedFilter.get());
             }
         };
