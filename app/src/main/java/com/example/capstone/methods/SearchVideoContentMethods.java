@@ -3,6 +3,7 @@ package com.example.capstone.methods;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -18,26 +19,30 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Headers;
 
 public class SearchVideoContentMethods {
-    public static void setUpSearchView(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, MoviesAdapter moviesAdapter, TVshowsAdapter tVshowsAdapter) {
+    public static void setUpSearchView(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, MoviesAdapter moviesAdapter, TVshowsAdapter tVshowsAdapter, TextView tvFilter, ImageButton ibFilter, AtomicBoolean infiniteScroll) {
         if (moviesAdapter != null) {
-            setUpSearchViewMovies(searchView, queriedContent, allContent, tvToolBarTitle, client, moviesAdapter);
+            setUpSearchViewMovies(searchView, queriedContent, allContent, tvToolBarTitle, client, moviesAdapter, tvFilter, ibFilter, infiniteScroll);
         } else {
-            setUpSearchViewTVShows(searchView, queriedContent, allContent, tvToolBarTitle, client, tVshowsAdapter);
+            setUpSearchViewTVShows(searchView, queriedContent, allContent, tvToolBarTitle, client, tVshowsAdapter, tvFilter, ibFilter, infiniteScroll);
         }
 
     }
 
 
-    private static void setUpSearchViewMovies(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, MoviesAdapter adapter) {
+    private static void setUpSearchViewMovies(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, MoviesAdapter adapter, TextView tvFilterMovies, ImageButton ibFilterMovies, AtomicBoolean infiniteScroll) {
         searchView.setQueryHint("Hit enter to search");
         searchView.setOnSearchClickListener(v -> {
             queriedContent.clear();
             adapter.notifyDataSetChanged();
             tvToolBarTitle.setVisibility(View.GONE);
+            tvFilterMovies.setVisibility(View.GONE);
+            ibFilterMovies.setVisibility(View.GONE);
+            infiniteScroll.set(false);
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -84,18 +89,25 @@ public class SearchVideoContentMethods {
 
         searchView.setOnCloseListener(() -> {
             tvToolBarTitle.setVisibility(View.VISIBLE);
+            tvFilterMovies.setVisibility(View.VISIBLE);
+            ibFilterMovies.setVisibility(View.VISIBLE);
             queriedContent.addAll(allContent);
+            infiniteScroll.set(true);
             adapter.notifyDataSetChanged();
             return false;
         });
     }
 
-    private static void setUpSearchViewTVShows(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, TVshowsAdapter adapter) {
+    private static void setUpSearchViewTVShows(SearchView searchView, List<VideoContent> queriedContent, List<VideoContent> allContent, TextView tvToolBarTitle, AsyncHttpClient client, TVshowsAdapter adapter, TextView tvFilterShows, ImageButton ibFilterShows, AtomicBoolean infiniteScroll) {
         searchView.setQueryHint("Hit enter to search");
         searchView.setOnSearchClickListener(v -> {
             queriedContent.clear();
             adapter.notifyDataSetChanged();
             tvToolBarTitle.setVisibility(View.GONE);
+            tvFilterShows.setVisibility(View.GONE);
+            ibFilterShows.setVisibility(View.GONE);
+            infiniteScroll.set(false);
+
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -142,7 +154,10 @@ public class SearchVideoContentMethods {
 
         searchView.setOnCloseListener(() -> {
             tvToolBarTitle.setVisibility(View.VISIBLE);
+            tvFilterShows.setVisibility(View.VISIBLE);
+            ibFilterShows.setVisibility(View.VISIBLE);
             queriedContent.addAll(allContent);
+            infiniteScroll.set(true);
             adapter.notifyDataSetChanged();
             return false;
         });

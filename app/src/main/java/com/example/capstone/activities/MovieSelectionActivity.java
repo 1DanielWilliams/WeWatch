@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
@@ -66,6 +67,8 @@ public class MovieSelectionActivity extends AppCompatActivity {
     private AtomicReference<String> currFilter;
     private TextView tvFilterMovies;
     private ImageButton ibFilterMovies;
+    private AtomicBoolean infiniteScroll;
+
 
 
 
@@ -77,6 +80,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_selection);
 
         currFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultMovie"));
+        infiniteScroll = new AtomicBoolean(true);
         ibFilterMovies = findViewById(R.id.ibFilterMovies);
         tvFilterMovies = findViewById(R.id.tvFilterMovies);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
@@ -114,7 +118,7 @@ public class MovieSelectionActivity extends AppCompatActivity {
             tvFilterMovies.setText("Now Playing");
         }
 
-        SearchVideoContentMethods.setUpSearchView(searchMovies, queriedMovies, allMovies, tvToolBarMovies, client, adapter, null);
+        SearchVideoContentMethods.setUpSearchView(searchMovies, queriedMovies, allMovies, tvToolBarMovies, client, adapter, null, tvFilterMovies, ibFilterMovies, infiniteScroll);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override

@@ -42,7 +42,6 @@ public class FetchingVideoContentMethods {
 
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
-                    Log.i("FetchingVideoContent", "onSuccess: " + results.length());
 
                     List<VideoContent> movies = VideoContent.fromJsonArray(results, "Movie");
                     queriedMovies.addAll(movies);
@@ -160,19 +159,25 @@ public class FetchingVideoContentMethods {
             int itemID = item.getItemId();
 
             if (itemID == R.id.optionPopularMovies && !Objects.equals(currFilter.get(), MovieSelectionActivity.POPULAR_FILTER)){
+                allMovies.clear();
                 queriedMovies.clear();
+                adapter.notifyDataSetChanged();
                 fetchMovies(MovieSelectionActivity.POPULAR_URL, queriedMovies, allMovies, adapter, client, 1);
                 tvFilterMovies.setText("Popular");
                 currFilter.set(MovieSelectionActivity.POPULAR_FILTER);
                 return true;
             } else if (itemID == R.id.optionTopRatedMovies && !Objects.equals(currFilter.get(), MovieSelectionActivity.TOP_RATED_FILTER)){
+                allMovies.clear();
                 queriedMovies.clear();
+                adapter.notifyDataSetChanged();
                 fetchMovies(TOP_RATED_URL_MOVIES, queriedMovies, allMovies, adapter, client, 1);
                 tvFilterMovies.setText("Top Rated");
                 currFilter.set(MovieSelectionActivity.TOP_RATED_FILTER);
                 return true;
             } else if (itemID == R.id.optionNowPlayingMovies && !Objects.equals(currFilter.get(), MovieSelectionActivity.NOW_PLAYING_FILTER)) {
+                allMovies.clear();
                 queriedMovies.clear();
+                adapter.notifyDataSetChanged();
                 fetchMovies(NOW_PLAYING_URL_MOVIES, queriedMovies, allMovies, adapter, client, 1);
                 tvFilterMovies.setText("Now Playing");
                 currFilter.set(MovieSelectionActivity.NOW_PLAYING_FILTER);
@@ -192,19 +197,25 @@ public class FetchingVideoContentMethods {
             int itemID = item.getItemId();
 
             if (itemID == R.id.optionPopularShows && !Objects.equals(currFilter.get(), TVShowSelectionActivity.POPULAR_FILTER)) {
+                allTVShows.clear();
                 queriedTVShows.clear();
+                adapter.notifyDataSetChanged();
                 fetchTvShows(client, TVShowSelectionActivity.POPULAR_URL, queriedTVShows, allTVShows, adapter, 1);
                 currFilter.set(TVShowSelectionActivity.POPULAR_FILTER);
                 tvFilterShows.setText("Popular");
                 return true;
             } else if (itemID == R.id.optionTopRatedShows && !Objects.equals(currFilter.get(), TVShowSelectionActivity.TOP_RATED_FILTER)) {
+                allTVShows.clear();
                 queriedTVShows.clear();
+                adapter.notifyDataSetChanged();
                 fetchTvShows(client, TOP_RATED_URL_SHOWS, queriedTVShows, allTVShows, adapter, 1);
                 currFilter.set(TVShowSelectionActivity.TOP_RATED_FILTER);
                 tvFilterShows.setText("Top Rated");
                 return true;
-            } else if (itemID == R.id.optionNowOnAirShows && currFilter.get() != TVShowSelectionActivity.ON_AIR) {
+            } else if (itemID == R.id.optionNowOnAirShows && !Objects.equals(currFilter.get(), TVShowSelectionActivity.ON_AIR)) {
+                allTVShows.clear();
                 queriedTVShows.clear();
+                adapter.notifyDataSetChanged();
                 fetchTvShows(client, ON_AIR_URL_SHOWS, queriedTVShows, allTVShows, adapter, 1);
                 currFilter.set(TVShowSelectionActivity.ON_AIR);
                 tvFilterShows.setText("On Air");

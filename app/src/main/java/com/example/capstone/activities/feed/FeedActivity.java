@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class FeedActivity extends AppCompatActivity {
@@ -70,6 +71,7 @@ public class FeedActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener scrollListener;
     private Button btnScrollToEvent;
     private AtomicReference<Integer> indexToScroll;
+    private AtomicBoolean infiniteScroll;
 
 
 
@@ -83,6 +85,7 @@ public class FeedActivity extends AppCompatActivity {
 
 
         listen = true;
+        infiniteScroll = new AtomicBoolean(true);
         indexToScroll = new AtomicReference<>(-1);
         currFeedFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultFeed"));
         searchFeed = findViewById(R.id.searchFeed);
@@ -231,6 +234,7 @@ public class FeedActivity extends AppCompatActivity {
             toolbarTitle.setVisibility(View.GONE);
             tvFilterFeed.setVisibility(View.GONE);
             ibFilterFeed.setVisibility(View.GONE);
+            infiniteScroll.set(false);
         });
 
         searchFeed.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -264,6 +268,7 @@ public class FeedActivity extends AppCompatActivity {
             tvFilterFeed.setVisibility(View.VISIBLE);
             ibFilterFeed.setVisibility(View.VISIBLE);
             queriedEvents.addAll(allEvents);
+            infiniteScroll.set(true);
             adapter.notifyDataSetChanged();
             return false;
         });
@@ -276,7 +281,9 @@ public class FeedActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                EventFeedMethods.loadFromApi(queriedEvents, adapter, currFeedFilter.get());
+                if (infiniteScroll.get()) {
+                    EventFeedMethods.loadFromApi(queriedEvents, adapter, currFeedFilter.get());
+                }
             }
         };
 

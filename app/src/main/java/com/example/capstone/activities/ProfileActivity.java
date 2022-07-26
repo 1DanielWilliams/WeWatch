@@ -35,7 +35,6 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton upArrowProfile;
     private TextView tvScreenNameProfile;
     private TextView tvUsernameProfile;
-//    private TextView tvNumFriendsProfile;
     private TextView tvNumWatchedProfile;
     private ImageButton iBtnLogoutMenu;
     private RecyclerView rvWatchedContent;
@@ -60,7 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
         iBtnLogoutMenu = findViewById(R.id.iBtnLogoutMenu);
         tvScreenNameProfile = findViewById(R.id.tvScreenNameProfile);
         tvUsernameProfile = findViewById(R.id.tvUsernameProfile);
-//        tvNumFriendsProfile = findViewById(R.id.tvNumFriendsProfile);
         tvNumWatchedProfile = findViewById(R.id.tvNumWatchedProfile);
         upArrowProfile = findViewById(R.id.upArrowProfile);
         toolbar = findViewById(R.id.toolbar);
@@ -69,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity {
         upArrowProfile.setOnClickListener(v -> finish());
 
 
-        //todo if watched button is selected; in the future just make it visible when flicked. otherwise this should all happen off rip
         allWatchedContent = new ArrayList<>();
         adapter = new WatchedContentAdapter(this, allWatchedContent);
         rvWatchedContent.setAdapter(adapter);
@@ -79,7 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         String userID = getIntent().getStringExtra("id");
 
-        if (Objects.equals(userID, ParseUser.getCurrentUser().getObjectId())) { //todo doesnt work
+        if (Objects.equals(userID, ParseUser.getCurrentUser().getObjectId())) {
             iBtnLogoutMenu.setVisibility(View.VISIBLE);
         }
         iBtnLogoutMenu.setOnClickListener(v -> {

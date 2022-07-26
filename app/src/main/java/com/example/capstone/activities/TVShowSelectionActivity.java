@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Headers;
@@ -64,6 +65,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener scrollListener;
     private TextView tvFilterShows;
     private ImageButton ibFilterShows;
+    private AtomicBoolean infiniteScroll;
 
 
     @Override
@@ -72,6 +74,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
         setContentView(com.example.capstone.R.layout.activity_tvshow_selection);
 
         currFilter = new AtomicReference<>(ParseUser.getCurrentUser().getString("defaultShow"));
+        infiniteScroll = new AtomicBoolean(true);
         tvFilterShows = findViewById(R.id.tvFilterShows);
         ibFilterShows = findViewById(R.id.ibFilterShows);
         imBtnMenuFeed = findViewById(R.id.imBtnMenuFeed);
@@ -110,7 +113,7 @@ public class TVShowSelectionActivity extends AppCompatActivity {
             tvFilterShows.setText("On Air");
         }
 
-        SearchVideoContentMethods.setUpSearchView(searchTV, queriedTVShows, allTVShows, tvToolBarTVShows, client, null, adapter);
+        SearchVideoContentMethods.setUpSearchView(searchTV, queriedTVShows, allTVShows, tvToolBarTVShows, client, null, adapter, tvFilterShows, ibFilterShows, infiniteScroll);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
