@@ -26,7 +26,11 @@ public class OnETChange {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btn.setBackgroundColor(Color.argb(255, 0, 0, 0));
+                if (s.length() > 0) {
+                    btn.setBackgroundColor(Color.argb(255, 0, 0, 0));
+                } else {
+                    btn.setBackgroundColor(Color.argb(255, 128, 128, 128));
+                }
             }
 
             @Override
