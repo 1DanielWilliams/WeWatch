@@ -102,11 +102,29 @@ public class DetailEventActivity extends AppCompatActivity {
         });
 
         iBtnDelete.setOnClickListener(v -> {
-            event.deleteInBackground(e -> {
-                Intent i = new Intent(DetailEventActivity.this, FeedActivity.class);
-                startActivity(i);
+            List<String> dates = event.getDates();
+            if (dates.size() == 1) {
+                event.deleteInBackground(e -> {
+                    finish();
+                });
+            } else {
+                // todo delete first index of dates, of interested users, of authors, change num interested
+                dates.remove(0);
+                event.setDates(dates);
+
+                List<List<ParseUser>> interestedUsers = event.getInterestedUsers();
+                interestedUsers.remove(0);
+                event.setInterestedUsers(interestedUsers);
+
+                List<ParseUser> authors = event.getUsers();
+                authors.remove(0);
+                event.setUsers(authors);
+
+                event.setNumInterested(interestedUsers.get(0).size());
+                event.saveInBackground();
                 finish();
-            });
+            }
+
         });
 
         iBtnGroupChatDetail.setOnClickListener(v -> {
