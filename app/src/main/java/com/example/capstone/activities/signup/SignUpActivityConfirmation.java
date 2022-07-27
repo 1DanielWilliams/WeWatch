@@ -10,10 +10,13 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.capstone.R;
 import com.example.capstone.methods.LogInUser;
+import com.example.capstone.methods.SignUpErrorsUtil;
 import com.example.capstone.models.UserPublicColumns;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -109,9 +112,9 @@ public class SignUpActivityConfirmation extends AppCompatActivity {
 
 
             // Signs a user up with this unique username
-            user.signUpInBackground(e1 -> {
-                if (e1 != null) {
-                    Log.e(TAG, "done: Error creating account ", e1);
+            user.signUpInBackground(signUpError -> {
+                if (signUpError != null) {
+                    Toast.makeText(this, SignUpErrorsUtil.errorMessage(signUpError.getCode()), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 UserPublicColumns userPublicColumns = new UserPublicColumns();
