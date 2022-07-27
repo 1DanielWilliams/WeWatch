@@ -230,7 +230,7 @@
         android:text="Share"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton5" />
+        app:layout_constraintTop_toBottomOf="@+id/ibShareDetail" />
 
     <ImageButton
         android:id="@+id/iBtnGroupChatDetail"
@@ -253,11 +253,11 @@
         android:backgroundTint="@android:color/transparent"
         android:src="@drawable/calendar_white_circle_50"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton5"
+        app:layout_constraintEnd_toStartOf="@+id/ibShareDetail"
         tools:src="@drawable/calendar_white_circle_50" />
 
     <ImageButton
-        android:id="@+id/imageButton5"
+        android:id="@+id/ibShareDetail"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"

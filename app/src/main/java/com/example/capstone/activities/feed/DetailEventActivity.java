@@ -59,6 +59,7 @@ public class DetailEventActivity extends AppCompatActivity {
     private ImageButton iBtnOtherDates;
     private ImageButton iBtnGroupChatDetail;
     private FirebaseDatabase database;
+    private ImageButton ibShareDetail;
 
     private ImageButton iBtnInterested;
     private TextView tvInterested;
@@ -187,6 +188,17 @@ public class DetailEventActivity extends AppCompatActivity {
             otherDatesFragment.show(fm, "other_dates");
         });
 
+        ibShareDetail.setOnClickListener(v -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Hey, you should log on to watch " + event.getTitle() + " on WeWatch @" + event.getDates().get(0) + " with " +  event.getInterestedUsers().get(0).size() + " other students.");
+            sendIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+        });
+
+
     }
 
     private void onInterestedClick() throws ParseException {
@@ -242,6 +254,7 @@ public class DetailEventActivity extends AppCompatActivity {
         iBtnOtherDates = findViewById(R.id.iBtnOtherDates);
         iBtnGroupChatDetail = findViewById(R.id.iBtnGroupChatDetail);
         database = FirebaseDatabase.getInstance();
+        ibShareDetail = findViewById(R.id.ibShareDetail);
 
         tvDateDetail.setText(event.getDates().get(0));
         tvTitleDetail.setText(event.getTitle());
