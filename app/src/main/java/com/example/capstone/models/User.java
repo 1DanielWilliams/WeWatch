@@ -4,7 +4,6 @@ public class User {
     private String object_ID;
     private String username;
     private String screenName;
-//    private String groupIDs; will add later
 
     // Empty constructor for firebase
     public User() {}
@@ -27,29 +26,3 @@ public class User {
         return this.screenName;
     }
 }
-
-
-/*
-messages:
-    $groupID
-        message object
-            message_content
-            senderID
-            time_date,
-        message object
-users:
-    userobject
-        groups:
-            group ids
-        userID
-        username
-        screenName,
-    userobject
-groupDetails:
-    name
-    id
-    members
-        userids
-    recent message
-        message object
- */

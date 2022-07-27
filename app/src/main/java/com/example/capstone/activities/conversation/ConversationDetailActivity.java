@@ -82,7 +82,8 @@ public class ConversationDetailActivity extends AppCompatActivity {
         groupDetailsRef = database.getReference("group_details");
 
         rvMessages.setAdapter(adapter);
-        rvMessages.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        rvMessages.setLayoutManager(linearLayoutManager);
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);
@@ -92,9 +93,9 @@ public class ConversationDetailActivity extends AppCompatActivity {
         // Formats the group chats name
         ConversationDetailMethods.setChatName(groupChatId, gcNameConversationDetail, getIntent());
 
-        ConversationDetailMethods.populateMessages(groupChatRef, allMessages, adapter);
+        ConversationDetailMethods.populateMessages(groupChatRef, allMessages, adapter, rvMessages, linearLayoutManager);
 
-        ConversationDetailMethods.isTypingLogic(groupDetailsRef, groupChatId, database, currUser, allMessages, adapter, rvMessages, etMessageContent);
+        ConversationDetailMethods.isTypingLogic(groupDetailsRef, groupChatId, database, currUser, allMessages, adapter, rvMessages, etMessageContent, linearLayoutManager);
 
         btnSend.setOnClickListener(v -> ConversationDetailMethods.onMessageSend(this, etMessageContent, database, currUser, groupChatId, groupDetailsRef));
 

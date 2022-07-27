@@ -141,7 +141,7 @@ public class OnETChange {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-                    TypingDetail typingDetail = new TypingDetail(false);
+                    TypingDetail typingDetail = new TypingDetail(false, currUser.getObjectId(), currUser.getUsername(), currUser.getString("screenName"));
                     typingDetailRef.setValue(typingDetail);
                 }
             }

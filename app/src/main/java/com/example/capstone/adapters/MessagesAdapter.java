@@ -1,14 +1,12 @@
 package com.example.capstone.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,33 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.capstone.R;
-import com.example.capstone.fragments.OnMessageLongClickFragment;
-import com.example.capstone.methods.GroupChatMethods;
+import com.example.capstone.fragments.ProfileOrDmFragment;
 import com.example.capstone.methods.NavigationMethods;
-import com.example.capstone.models.GroupDetail;
 import com.example.capstone.models.Message;
-import com.example.capstone.models.TypingDetail;
-import com.example.capstone.models.UserPublicColumns;
-import com.facebook.stetho.common.StringUtil;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
     private Context context;
@@ -106,7 +87,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
                 if (!Objects.equals(message.getSenderID(), ParseUser.getCurrentUser().getObjectId())) {
                     FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
-                    OnMessageLongClickFragment onMessageLongClickFragment = OnMessageLongClickFragment.newInstance(toUserId, currId);
+                    ProfileOrDmFragment onMessageLongClickFragment = ProfileOrDmFragment.newInstance(toUserId, currId);
                     onMessageLongClickFragment.show(fm, "message_long_click");
                     return true;
                 }

@@ -23,8 +23,6 @@ import com.example.capstone.models.UserPublicColumns;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -34,10 +32,10 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link OnMessageLongClickFragment#newInstance} factory method to
+ * Use the {@link ProfileOrDmFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OnMessageLongClickFragment extends DialogFragment {
+public class ProfileOrDmFragment extends DialogFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,12 +46,12 @@ public class OnMessageLongClickFragment extends DialogFragment {
     private String toUserId;
     private String currId;
 
-    public OnMessageLongClickFragment() {
+    public ProfileOrDmFragment() {
         // Required empty public constructor
     }
 
-    public static OnMessageLongClickFragment newInstance(String toUserId, String currId) {
-        OnMessageLongClickFragment fragment = new OnMessageLongClickFragment();
+    public static ProfileOrDmFragment newInstance(String toUserId, String currId) {
+        ProfileOrDmFragment fragment = new ProfileOrDmFragment();
         Bundle args = new Bundle();
         args.putString(TO_USER_ID, toUserId);
         args.putString(CURR_ID, currId);

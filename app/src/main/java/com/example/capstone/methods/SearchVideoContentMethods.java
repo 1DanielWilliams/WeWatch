@@ -56,7 +56,6 @@ public class SearchVideoContentMethods {
                         queriedContent.clear();
                         try {
                             JSONArray results = jsonObject.getJSONArray("results");
-                            Log.i("TVShowSelctionActivity", "onSuccess: " + results.toString());
                             List<VideoContent> tvShows = VideoContent.fromJsonArray(results, "Movie");
                             for (VideoContent tvShow: tvShows) {
                                 //todo add platforms to videocontent
@@ -64,8 +63,7 @@ public class SearchVideoContentMethods {
                             }
                             queriedContent.addAll(tvShows);
                             adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } catch (JSONException ignored) {
                         }
                     }
 
