@@ -119,14 +119,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         int oldEventDatesSize = eventData.second.getDates().size();
         int updatedEventDateSize = updatedEventDates.size();
 
-        //todo check if earliest date is different doesnt change posiiton
+        // if the earliest date has changed
         if (!updatedEvent.getEarliestDate().toInstant().equals(events.get(eventData.first).getEarliestDate().toInstant())) {
             events.remove((int) eventData.first);
+            notifyItemRemoved((int) eventData.first);
             int updatedEventIndex = BinarySearch.indexOfEvents(events, updatedEvent.getEarliestDate());
             events.add(updatedEventIndex, updatedEvent);
+            notifyItemInserted(updatedEventIndex);
             Toast.makeText(context, "New Date added for " + updatedEvent.getTitle(), Toast.LENGTH_SHORT).show();
             updatedEvent.setIsNewDate(true);
-            notifyDataSetChanged();
             return;
         }
             //find out where to place new event
