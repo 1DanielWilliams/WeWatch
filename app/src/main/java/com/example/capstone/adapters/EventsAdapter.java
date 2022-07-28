@@ -45,10 +45,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     private Context context;
     private List<Event> events;
     private ParseLiveQueryClient parseLiveQueryClient;
-    private int lastPosition = -1;
     private final ColorStateList WHITE = ColorStateList.valueOf(Color.argb(255, 255, 255, 255));
     private final ColorStateList BLACK = ColorStateList.valueOf(Color.argb(255, 0, 0, 0));
     private final ColorStateList RED = ColorStateList.valueOf(Color.argb(255, 214, 41, 41));
+    private boolean isScrollUp = false;
 
 
 
@@ -75,10 +75,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             Log.e("EventsAdapter", "onBindViewHolder: ", e);
         }
 
-        holder.setAnimation(holder.itemView, position);
+        holder.setAnimation(holder.itemView);
     }
 
-
+    public void setScrollUp(boolean scrollUp) {
+        this.isScrollUp = scrollUp;
+    }
 
     @Override
     public int getItemCount() {
@@ -299,16 +301,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             }
         }
 
-        private void setAnimation(View viewToAnimate, int position) {
-            if (position > lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
-            } else if (position < lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
+        private void setAnimation(View viewToAnimate) {
+            Animation animation;
+            if (isScrollUp) {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+            } else {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
             }
+            viewToAnimate.startAnimation(animation);
         }
     }
 }

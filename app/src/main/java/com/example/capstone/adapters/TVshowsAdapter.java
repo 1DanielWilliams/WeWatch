@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHolder> {
     private Context context;
     private List<VideoContent> tvShows;
-    private int lastPosition = -1;
+    private boolean isScrollUp = false;
 
     public TVshowsAdapter(Context context, List<VideoContent> tvShows) {
         this.context = context;
@@ -49,7 +49,11 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoContent tvShow = tvShows.get(position);
         holder.bind(tvShow);
-        holder.setAnimation(holder.itemView, position);
+        holder.setAnimation(holder.itemView);
+    }
+
+    public void setScrollUp(boolean scrollUp) {
+        this.isScrollUp = scrollUp;
     }
 
     @Override
@@ -152,16 +156,14 @@ public class TVshowsAdapter extends RecyclerView.Adapter<TVshowsAdapter.ViewHold
 
         }
 
-        private void setAnimation(View viewToAnimate, int position) {
-            if (position > lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
-            } else if (position < lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
+        private void setAnimation(View viewToAnimate) {
+            Animation animation;
+            if (isScrollUp) {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+            } else {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
             }
+            viewToAnimate.startAnimation(animation);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.capstone.activities;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -139,6 +140,13 @@ public class MovieSelectionActivity extends AppCompatActivity {
         tvFilterMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
         tvToolBarMovies.setOnClickListener(v -> FetchingVideoContentMethods.setUpFilterMenuMovies(this, tvToolBarMovies, queriedMovies, allMovies, adapter, client, tvFilterMovies, currFilter));
 
+        rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                adapter.setScrollUp(dy >= 0);
+            }
+        });
     }
 
 

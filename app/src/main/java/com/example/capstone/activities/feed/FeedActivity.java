@@ -1,5 +1,6 @@
 package com.example.capstone.activities.feed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -292,6 +293,14 @@ public class FeedActivity extends AppCompatActivity {
         btnScrollToEvent.setOnClickListener(v -> {
             rvEvents.smoothScrollToPosition(indexToScroll.get());
             btnScrollToEvent.setVisibility(View.GONE);
+        });
+
+        rvEvents.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                adapter.setScrollUp(dy >= 0);
+            }
         });
     }
 

@@ -41,6 +41,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private Context context;
     private List<VideoContent> movies;
     private int lastPosition = -1;
+    private boolean isScrollUp = false;
 
     public MoviesAdapter(Context context, List<VideoContent> videoContents) {
         this.context = context;
@@ -60,7 +61,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         VideoContent movie = movies.get(position);
         holder.bind(movie);
 
-        holder.setAnimation(holder.itemView, position); // todo change so that that a scroll listener determines
+        holder.setAnimation(holder.itemView);
+    }
+
+    public void setScrollUp(boolean scrollUp) {
+        this.isScrollUp = scrollUp;
     }
 
     @Override
@@ -157,16 +162,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             videoContentDetailFragment.show(fm, "fragment_edit_name");
         }
 
-        private void setAnimation(View viewToAnimate, int position) {
-            if (position > lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
-            } else if (position < lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position;
+        private void setAnimation(View viewToAnimate) {
+            Animation animation;
+            if (isScrollUp) {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_right);
+            } else {
+                animation = AnimationUtils.loadAnimation(context, R.transition.slide_in_left);
             }
+            viewToAnimate.startAnimation(animation);
+
         }
     }
 }
