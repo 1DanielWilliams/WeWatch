@@ -56,7 +56,7 @@ This app is centered around finding other students at your college to watch movi
 1. Implemented pagination using infinte scrolling 
 2. Group chat that uses firebase to fetch and send messages in realtime to parcipants. Supports typing indicators to let a user know if another user is typing.
     * <img src='./demos/groupchatdemo1.gif' title='Group chat Walkthrough' width='300' alt='Group chat Walkthrough' />
-<!--     * <img src='./demos/DMDemo3.gif' title='Direct message Walkthrough' width='300' alt='Direct Message Walkthrough' /> -->
+    * <img src='./demos/DmDemo.gif' title='Direct message Walkthrough' width='300' alt='Direct Message Walkthrough' />
 4. Algorithm that governs the logic of the feed page. A single movie/TV show post can contain multiple times within them, binary search is used to efficiently insert the dates. Events are automatically deleted upon the date expiring. The feed page supports simultaneous UI updates when an event in view has an updated date, or when an event is created/deleted.
     * <img src='./demos/feedUpdates4.gif' title='Feed Walkthrough' width='300' alt='Feed Walkthrough' />
 
